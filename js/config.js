@@ -151,8 +151,8 @@ RB.config = {
     Raphael: [
       { name: "Een ijsje gaan eten", art: "icecream", need: { 6: 10 } },         // plus tot 100
       { name: "Een lolly", art: "lolly", need: { 8: 10 } },                       // min tot 100
-      { name: "Frietjes gaan eten", art: "fries", need: { 9: 10, 10: 10 } },      // plus + min tot 200
-      { name: "Een cadeautje krijgen", art: "gift", need: { 11: 10 } },           // plus en min tot 200
+      { name: "Frietjes gaan eten", art: "fries", need: { 6: 10, 8: 10, 9: 10 } }, // rood + oranje + paars
+      { name: "Een cadeautje krijgen", art: "gift", need: { 6: 10, 8: 10, 9: 10, 10: 10, 11: 10 } }, // 10 van alles
     ],
   },
   // (verbruik-in-volgorde blijft gelden: elke kleur telt eerst voor het eerste cadeautje in de rij)
