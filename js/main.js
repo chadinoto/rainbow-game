@@ -25,6 +25,7 @@
     game: $("game-screen"),
     celebrate: $("celebrate-screen"),
     treasure: $("treasure-screen"),
+    rewards: $("rewards-screen"),
     settings: $("settings-screen"),
   };
 
@@ -60,6 +61,45 @@
     return g[1] + g[2] + g[3] + g[4] + g[5];
   }
 
+  // Punten: elke diamant is zijn niveau waard (1..5)
+  function points(p) {
+    const g = p.gems;
+    return g[1] * 1 + g[2] * 2 + g[3] * 3 + g[4] * 4 + g[5] * 5;
+  }
+
+  // Hoeveel cadeautje-drempels al gehaald zijn
+  function rewardsReached(pts) {
+    return cfg.REWARDS.filter((r) => pts >= r.points).length;
+  }
+
+  // Het eerstvolgende cadeautje (of null als alles gehaald is)
+  function nextReward(pts) {
+    return cfg.REWARDS.find((r) => pts < r.points) || null;
+  }
+
+  // Voortgangsbalk naar het volgende cadeautje (mini = tijdens spel, big = cadeautjes-scherm)
+  function renderTracker(el, big) {
+    const pts = points(player);
+    const next = nextReward(pts);
+    if (!next) {
+      el.innerHTML = `<div class="tracker-done">Alle cadeautjes gehaald! ${RB.art.treat("gift")}</div>`;
+      return;
+    }
+    const prevPts = cfg.REWARDS.filter((r) => r.points <= pts).reduce((m, r) => Math.max(m, r.points), 0);
+    const span = next.points - prevPts;
+    const pct = Math.max(0, Math.min(100, ((pts - prevPts) / span) * 100));
+    const left = next.points - pts;
+    const label = big
+      ? `Nog ${left} ${left === 1 ? "punt" : "punten"} tot: ${next.name}`
+      : `Nog ${left} tot je cadeautje`;
+    el.innerHTML = `
+      <div class="tracker-row">
+        <div class="tracker-bar"><span class="tracker-fill" style="width:${pct}%"></span></div>
+        <span class="tracker-treat">${RB.art.treat(next.art)}</span>
+      </div>
+      <p class="tracker-label">${label}</p>`;
+  }
+
   // Stapel diamanten in een kist; grootte/kleur/glans per niveau (gedeeld door schatkist + feest)
   function renderPile(el, gems) {
     let html = "", n = 0;
@@ -89,13 +129,15 @@
     renderPlayers();
     renderStartLevels();
     $("hello-line").textContent = "Kies je spel:";
-    const label = $("chest-count-label");
     const t = total(player);
-    if (t > 0) {
-      label.textContent = `${t} ${t === 1 ? "diamant" : "diamanten"} in je schatkist`;
-    } else {
-      label.textContent = "Je schatkist is nog leeg";
-    }
+    $("chest-count-label").textContent =
+      t > 0 ? `${t} ${t === 1 ? "diamant" : "diamanten"}` : "Nog geen diamanten";
+
+    // cadeautjes-knop: toont het eerstvolgende cadeautje + de punten
+    const pts = points(player);
+    const nx = nextReward(pts);
+    $("reward-btn-icon").innerHTML = RB.art.treat(nx ? nx.art : "gift");
+    $("reward-count-label").textContent = `${pts} ${pts === 1 ? "punt" : "punten"}`;
   }
 
   // Wie speelt er? (Lea / Mama / Papa) met eigen resultaten
@@ -147,6 +189,7 @@
     player.collected = 0;
     save();
     show("game");
+    renderTracker($("game-tracker"), false);
     RB.rainbow.render($("rainbow"), 0);
     nextExercise();
   }
@@ -281,8 +324,23 @@
       setTimeout(() => {
         renderPile($("reward-pile"), player.gems); // nu mét de nieuwe diamant
         $("reward-chest").classList.add("bounce");
+        maybeShowPrize(); // heeft ze net genoeg punten voor een cadeautje?
       }, 2050);
     });
+  }
+
+  // Toont het cadeautje-feest als er een puntendrempel gehaald is
+  function maybeShowPrize() {
+    const reached = rewardsReached(points(player));
+    if (reached <= player.seenRewards) return;
+    const prize = cfg.REWARDS[player.seenRewards];
+    player.seenRewards++;
+    save();
+
+    $("prize-art").innerHTML = RB.art.treat(prize.art);
+    $("prize-name").textContent = prize.name;
+    $("prize-pop").classList.add("show");
+    setTimeout(() => RB.audio.speak("Hoera! Je hebt een cadeautje verdiend: " + prize.name), 300);
   }
 
   // ---------- SCHATKIST ----------
@@ -302,6 +360,32 @@
     } else {
       count.textContent = "Maak een regenboog af om je eerste diamant te verdienen.";
     }
+  }
+
+  // ---------- CADEAUTJES ----------
+  function showRewards() {
+    renderRewards();
+    show("rewards");
+  }
+
+  function renderRewards() {
+    $("rewards-title").textContent = "Cadeautjes van " + state.currentPlayer;
+    const pts = points(player);
+    $("points-total").textContent = `${pts} ${pts === 1 ? "punt" : "punten"}`;
+    renderTracker($("rewards-tracker"), true);
+
+    const list = $("rewards-list");
+    list.innerHTML = "";
+    cfg.REWARDS.forEach((r) => {
+      const earned = pts >= r.points;
+      const row = document.createElement("div");
+      row.className = "reward-row" + (earned ? " earned" : "");
+      row.innerHTML = `
+        <span class="reward-row-icon">${RB.art.treat(r.art)}</span>
+        <span class="reward-row-text"><b>${r.name}</b><small>${r.points} punten</small></span>
+        <span class="reward-row-state">${earned ? RB.art.icon("check") : ""}</span>`;
+      list.appendChild(row);
+    });
   }
 
   function dropConfetti() {
@@ -388,6 +472,24 @@
       startGame();
     });
 
+    $("open-rewards").addEventListener("click", () => {
+      RB.audio.unlock();
+      RB.audio.setEnabled(state.soundOn);
+      showRewards();
+    });
+    $("rewards-home").addEventListener("click", () => {
+      renderStart();
+      show("start");
+    });
+    $("rewards-play").addEventListener("click", () => {
+      RB.audio.unlock();
+      RB.audio.setEnabled(state.soundOn);
+      startGame();
+    });
+    $("prize-ok").addEventListener("click", () => {
+      $("prize-pop").classList.remove("show");
+    });
+
     $("open-settings").addEventListener("click", () => {
       renderSettings();
       show("settings");
@@ -425,6 +527,13 @@
   }
 
   // ---------- START ----------
+  // reeds behaalde cadeautjes markeren als "gezien" (geen oude pop-ups)
+  for (const name of cfg.PLAYERS) {
+    const p = state.players[name];
+    p.seenRewards = Math.max(p.seenRewards || 0, rewardsReached(points(p)));
+  }
+  save();
+
   initArt();
   wire();
   if (RB.auth.isUnlocked()) {

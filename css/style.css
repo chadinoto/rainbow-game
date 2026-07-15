@@ -116,9 +116,18 @@ html, body {
   box-shadow: var(--shadow-2);
   text-align: center;
 }
-.start-card { padding: clamp(24px, 4vw, 40px); max-width: 460px; width: 100%; max-height: 94vh; overflow-y: auto; }
+.start-card { padding: clamp(22px, 3.5vw, 38px); max-width: min(720px, 94vw); width: 100%; max-height: 94vh; overflow-y: auto; }
 .icon-btn.corner { position: absolute; top: clamp(12px, 3vw, 20px); right: clamp(12px, 3vw, 20px); z-index: 6; }
-.start-levels { display: flex; flex-direction: column; gap: 10px; margin: 8px 0 6px; text-align: left; }
+.start-levels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 8px 0 12px;
+  text-align: left;
+}
+.start-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.start-actions .chest-button { margin: 0; }
+.mascot-start { width: clamp(80px, 16vw, 104px); }
 
 /* wie speelt er? */
 .mini-label { font-size: 14px; font-weight: 700; color: var(--ink-faint); margin: 14px 0 8px; }
@@ -506,7 +515,7 @@ html, body {
 .chest-button:active { transform: scale(0.97); }
 .chest-mini { width: 48px; height: 42px; display: inline-flex; flex: 0 0 auto; }
 
-.treasure-card {
+.treasure-card, .rewards-card {
   position: relative;
   z-index: 1;
   background: var(--card);
@@ -518,7 +527,83 @@ html, body {
   width: 100%;
   text-align: center;
 }
-#treasure-home { position: absolute; top: clamp(12px, 3vw, 20px); left: clamp(12px, 3vw, 20px); z-index: 5; }
+#treasure-home, #rewards-home { position: absolute; top: clamp(12px, 3vw, 20px); left: clamp(12px, 3vw, 20px); z-index: 5; }
+
+/* ---------- cadeautjes / punten ---------- */
+.treat { width: 100%; height: 100%; display: block; }
+.reward-btn-icon { width: 34px; height: 34px; display: inline-flex; flex: 0 0 auto; }
+
+.reward-tracker.mini { width: min(430px, 88vw); margin-bottom: 2px; }
+.reward-tracker.big { max-width: 420px; margin: 2px auto 18px; }
+.tracker-row { display: flex; align-items: center; gap: 9px; }
+.tracker-bar {
+  flex: 1;
+  height: 15px;
+  border-radius: 999px;
+  background: var(--card-2);
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px oklch(0.5 0.05 320 / 0.12);
+}
+.tracker-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), oklch(0.82 0.14 45));
+  transition: width 0.5s var(--ease);
+}
+.tracker-treat { width: 34px; height: 34px; flex: 0 0 auto; display: inline-flex; }
+.tracker-label { font-size: 13px; color: var(--ink-soft); font-weight: 600; margin: 5px 0 0; text-align: center; }
+.reward-tracker.mini .tracker-label { font-size: 12px; }
+.tracker-done { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; color: var(--yes-ink); }
+.tracker-done .treat { width: 26px; height: 26px; }
+
+.points-total { font-size: clamp(28px, 7vw, 40px); font-weight: 800; color: var(--accent-deep); margin: 4px 0 12px; }
+.rewards-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.reward-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  background: var(--card);
+  text-align: left;
+}
+.reward-row.earned { border-color: var(--yes-line); background: var(--yes); }
+.reward-row-icon { width: 46px; height: 46px; flex: 0 0 auto; }
+.reward-row-text { flex: 1; display: flex; flex-direction: column; }
+.reward-row-text b { font-size: 17px; font-weight: 700; }
+.reward-row-text small { color: var(--ink-soft); font-size: 13px; }
+.reward-row.earned .reward-row-text small { color: var(--yes-ink); }
+.reward-row-state { width: 26px; flex: 0 0 auto; color: var(--yes-ink); display: flex; align-items: center; justify-content: center; }
+.reward-row-state .ic { width: 26px; height: 26px; }
+
+/* cadeautje-feest (over het feestscherm) */
+.prize-pop {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: oklch(0.45 0.05 320 / 0.45);
+}
+.prize-pop.show { display: flex; animation: fadeIn 0.3s var(--ease); }
+.prize-card {
+  background: var(--card);
+  border-radius: 32px;
+  box-shadow: var(--shadow-2);
+  padding: clamp(24px, 5vw, 40px);
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  animation: prizeIn 0.5s var(--ease);
+}
+@keyframes prizeIn { 0% { transform: scale(0.6); opacity: 0; } 60% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+.prize-art { width: clamp(90px, 26vw, 130px); margin: 0 auto 10px; }
+.prize-title { font-size: clamp(22px, 5vw, 28px); font-weight: 800; margin: 0 0 6px; color: var(--ink); }
+.prize-name { font-size: 20px; font-weight: 700; color: var(--accent-deep); margin: 0 0 18px; }
 .treasure-title { font-size: clamp(26px, 6vw, 38px); font-weight: 800; margin: 0 0 10px; }
 .chest-scene { position: relative; width: min(300px, 74vw); margin: 8px auto 4px; }
 
@@ -597,6 +682,7 @@ html, body {
   .rainbow { width: min(360px, 92vw); }
   .icon-btn { width: 46px; height: 46px; }
   .opt { min-width: 80px; min-height: 80px; }
+  .start-levels { grid-template-columns: 1fr; }
 }
 /* korte, brede schermen: regenboog compacter zodat alles past */
 @media (max-height: 680px) {

@@ -247,13 +247,15 @@ RB.art = {
         `<path d="M5 60 Q4 7 32 7 Q60 7 59 60 L59 30 Q55 15 32 15 Q9 15 5 30 Z" fill="#8A5CC4"/>`
       );
     if (name === "Mama")
+      // zwart lang haar, iets bruinere huid
       return face(
-        `<path d="M7 44 Q6 7 32 7 Q58 7 57 44 L57 28 Q53 15 32 15 Q11 15 7 28 Z" fill="#E23D82"/>`
+        `<path d="M6 48 Q5 7 32 7 Q59 7 58 48 L58 28 Q54 15 32 15 Q10 15 6 28 Z" fill="#2B2B33"/>`,
+        { skin: "#DCA878" }
       );
-    // Papa
+    // Papa: donkerbruin kort haar + stoppelbaardje
     return face(
-      `<path d="M10 26 Q13 9 32 9 Q51 9 54 26 Q47 17 32 17 Q17 17 10 26 Z" fill="#2C66B0"/>`,
-      { extra: `<path d="M24 46 Q32 51 40 46" stroke="#2C66B0" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.45"/>` }
+      `<path d="M10 27 Q13 9 32 9 Q51 9 54 27 Q47 17 32 17 Q17 17 10 27 Z" fill="#4A3320"/>`,
+      { extra: `<path d="M13 41 Q32 57 51 41 Q47 54 32 55 Q17 54 13 41 Z" fill="#3A2A18" opacity="0.22"/>` }
     );
   },
 
@@ -315,6 +317,48 @@ RB.art = {
                 <path d="M12 2 C12.8 8 16 11.2 22 12 C16 12.8 12.8 16 12 22 C11.2 16 8 12.8 2 12 C8 11.2 11.2 8 12 2 Z" fill="${gold}"/></g></g>`;
     }
     return wrap(this._plus(20, 28, 10, green) + this._minus(40, 28, 10, coral) + stars);
+  },
+
+  /* ---------- cadeautjes (frietjes / ijsje / cadeau) ---------- */
+  treat(name) {
+    const s = (inner) => `<svg viewBox="0 0 48 48" class="treat">${inner}</svg>`;
+    switch (name) {
+      case "fries":
+        return s(`
+          <rect x="14" y="9" width="4.5" height="22" rx="2.2" fill="#F6C915"/>
+          <rect x="19.5" y="6" width="4.5" height="25" rx="2.2" fill="#F8D64A"/>
+          <rect x="25" y="8" width="4.5" height="23" rx="2.2" fill="#F6C915"/>
+          <rect x="30.5" y="11" width="4.5" height="20" rx="2.2" fill="#F8D64A"/>
+          <path d="M11 22 L37 22 L34 44 Q34 46 32 46 L16 46 Q14 46 14 44 Z" fill="#F0554C"/>
+          <rect x="11" y="22" width="26" height="7" fill="#fff" opacity="0.9"/>
+          <rect x="18" y="31" width="3" height="12" fill="#fff" opacity="0.45"/>
+          <rect x="26" y="31" width="3" height="12" fill="#fff" opacity="0.45"/>`);
+      case "icecream":
+        return s(`
+          <path d="M15 25 L33 25 L24 46 Z" fill="#E0A860"/>
+          <path d="M18 29 L30 29 M20 33 L28 33" stroke="#B9834A" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="19" cy="20" r="8" fill="#F291B7"/>
+          <circle cx="29" cy="20" r="8" fill="#FBE0A6"/>
+          <circle cx="24" cy="13" r="8" fill="#9AD0C2"/>
+          <circle cx="24" cy="6" r="2.6" fill="#F0554C"/>`);
+      case "gift":
+        return s(`
+          <rect x="8" y="21" width="32" height="21" rx="3" fill="#8A5CC4"/>
+          <rect x="8" y="21" width="32" height="7" rx="3" fill="#7A4EB0"/>
+          <rect x="21" y="21" width="6" height="21" fill="#F6C915"/>
+          <rect x="8" y="23" width="32" height="5" fill="#F6C915"/>
+          <path d="M24 21 Q15 11 11 17 Q15 23 24 21 Z" fill="#F6C915"/>
+          <path d="M24 21 Q33 11 37 17 Q33 23 24 21 Z" fill="#F6C915"/>
+          <circle cx="24" cy="20" r="3" fill="#F0AE2E"/>`);
+      case "cake":
+        return s(`
+          <path d="M10 26 L38 26 L38 42 Q38 44 36 44 L12 44 Q10 44 10 42 Z" fill="#F291B7"/>
+          <path d="M10 30 Q17 36 24 30 Q31 36 38 30 L38 27 L10 27 Z" fill="#fff" opacity="0.9"/>
+          <rect x="22.5" y="10" width="3" height="10" rx="1.5" fill="#F6C915"/>
+          <circle cx="24" cy="8" r="2.4" fill="#F0554C"/>`);
+      default:
+        return s(`<circle cx="24" cy="24" r="14" fill="#8A5CC4"/>`);
+    }
   },
 
   /* ---------- zachte achtergrond-blobs ---------- */

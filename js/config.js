@@ -77,6 +77,14 @@ RB.config = {
   // De spelers; elk houdt een eigen verzameling bij
   PLAYERS: ["Lea", "Mama", "Papa"],
 
+  // Elke diamant is punten waard = zijn niveau (niveau 1 = 1 punt ... niveau 5 = 5 punten).
+  // Bij deze puntendrempels verdient ze een echt cadeautje. Pas gerust aan / voeg toe.
+  REWARDS: [
+    { points: 30, name: "Frietjes gaan eten", art: "fries" },
+    { points: 60, name: "Een ijsje gaan eten", art: "icecream" },
+    { points: 100, name: "Een cadeautje krijgen", art: "gift" },
+  ],
+
   // Kleine, vrolijke complimentjes (nooit competitief, nooit "fout")
   PRAISE: [
     "Goed gedaan!", "Knap hoor!", "Wauw, super!", "Jaaa, gelukt!",
