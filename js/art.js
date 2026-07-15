@@ -39,6 +39,8 @@ RB.art = {
         return wrap(`<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.6" r="0.7" fill="currentColor"/>`);
       case "play":
         return `<svg viewBox="0 0 24 24" class="ic"><path d="M7 5 L19 12 L7 19 Z" fill="currentColor"/></svg>`;
+      case "backspace":
+        return wrap(`<path d="M9 5 L21 5 L21 19 L9 19 L3 12 Z"/><line x1="12.5" y1="9.5" x2="17.5" y2="14.5"/><line x1="17.5" y1="9.5" x2="12.5" y2="14.5"/>`);
       default:
         return "";
     }

@@ -55,7 +55,15 @@ RB.exercises = {
     if (level === 3) return this._addSub(10);
     if (level === 4) return this._recognize(20);
     if (level === 5) return this._addSub(20);
-    return this._addSub(100); // niveau 6 (Raphael): plus en min tot 100
+    if (level === 6) return this._numpad(this._addSub(100)); // Raphael: plus/min tot 100, zelf typen
+    if (level === 7) return this._numpad(this._addSub(20));  // Lea: plus/min tot 20, zelf typen
+    return this._addSub(20);
+  },
+
+  // markeert een oefening als "zelf typen" (numpad i.p.v. keuzeknoppen)
+  _numpad(ex) {
+    ex.input = "numpad";
+    return ex;
   },
 
   // Kiest een getal, maar bij een bereik >10 vaker boven de 10 (moeilijker)

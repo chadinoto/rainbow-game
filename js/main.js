@@ -37,9 +37,7 @@
   function grandTotal(s) {
     let n = 0;
     for (const name of cfg.PLAYERS) {
-      if (!s.players[name]) continue;
-      const g = s.players[name].gems;
-      n += g[1] + g[2] + g[3] + g[4] + g[5] + (g[6] || 0);
+      if (s.players[name]) n += total(s.players[name]);
     }
     return n;
   }
@@ -80,9 +78,11 @@
   }
 
   // Totaal aantal diamanten van een speler (alle niveaus samen)
+  const LEVELS_ALL = [1, 2, 3, 4, 5, 6, 7];
   function total(p) {
-    const g = p.gems;
-    return g[1] + g[2] + g[3] + g[4] + g[5] + (g[6] || 0);
+    let n = 0;
+    for (const k of LEVELS_ALL) n += p.gems[k] || 0;
+    return n;
   }
 
   // Punten: elke diamant telt als 1 (niet gewogen per niveau)
@@ -90,46 +90,54 @@
     return total(p);
   }
 
+  // De cadeautjes-lijst van een speler (Raphael heeft eigen cadeautjes; rest = standaard)
+  function rewardsForName(name) {
+    return (cfg.PLAYER_REWARDS && cfg.PLAYER_REWARDS[name]) || cfg.REWARDS;
+  }
+  function curRewards() {
+    return rewardsForName(state.currentPlayer);
+  }
+
   // Hoeveel diamanten van kleur c al opgebruikt zijn door eerdere cadeautjes
-  function consumedBefore(index, c) {
+  function consumedBefore(rewards, index, c) {
     let s = 0;
     for (let j = 0; j < index; j++) {
-      const n = cfg.REWARDS[j].need;
+      const n = rewards[j].need;
       if (n && n[c]) s += n[c];
     }
     return s;
   }
 
   // Beschikbare diamanten van kleur c voor het cadeautje op deze plek (na eerder verbruik)
-  function availFor(index, c, p) {
-    return Math.max(0, (p.gems[c] || 0) - consumedBefore(index, c));
+  function availFor(rewards, index, c, p) {
+    return Math.max(0, (p.gems[c] || 0) - consumedBefore(rewards, index, c));
   }
 
   // Is aan de eis van een cadeautje voldaan? (diamanten per kleur, in volgorde verbruikt)
-  function rewardMet(r, p) {
-    const i = cfg.REWARDS.indexOf(r);
+  function rewardMet(rewards, r, p) {
+    const i = rewards.indexOf(r);
     if (r.points && points(p) < r.points) return false;
-    if (r.need) for (const c of Object.keys(r.need)) if (availFor(i, c, p) < r.need[c]) return false;
+    if (r.need) for (const c of Object.keys(r.need)) if (availFor(rewards, i, c, p) < r.need[c]) return false;
     return true;
   }
 
-  // Hoeveel cadeautjes al behaald zijn (in volgorde: frietjes eerst)
-  function rewardsReached(p) {
+  // Hoeveel cadeautjes al behaald zijn (in volgorde)
+  function rewardsReached(rewards, p) {
     let n = 0;
-    for (const r of cfg.REWARDS) {
-      if (rewardMet(r, p)) n++;
+    for (const r of rewards) {
+      if (rewardMet(rewards, r, p)) n++;
       else break;
     }
     return n;
   }
 
   // Het eerstvolgende (nog niet behaalde) cadeautje
-  function nextReward(p) {
-    return cfg.REWARDS[rewardsReached(p)] || null;
+  function nextReward(rewards, p) {
+    return rewards[rewardsReached(rewards, p)] || null;
   }
 
-  // Voortgang als duidelijke regels: "6/10 blauwe diamanten" (voor score board + detail)
-  function rewardProgressHTML(r) {
+  // Voortgang als duidelijke regels: "6/10 blauwe diamanten" (voor score board)
+  function rewardProgressHTML(rewards, r) {
     const line = (color, have, target, labelText) => {
       const pct = Math.max(0, Math.min(100, (have / target) * 100));
       return `
@@ -142,20 +150,20 @@
         </div>`;
     };
     if (r.need) {
-      const i = cfg.REWARDS.indexOf(r);
+      const i = rewards.indexOf(r);
       return Object.keys(r.need)
-        .map((l) => line(cfg.LEVEL_GEM[l].color, availFor(i, l, player), r.need[l], `${cfg.LEVEL_GEM[l].label} diamanten`))
+        .map((l) => line(cfg.LEVEL_GEM[l].color, availFor(rewards, i, l, player), r.need[l], `${cfg.LEVEL_GEM[l].label} diamanten`))
         .join("");
     }
     return line("#F3C233", points(player), r.points, "punten");
   }
 
   // Compacte samenvatting voor de lijst (bv. "blauwe 6/10 · groene 3/10")
-  function summaryText(r) {
+  function summaryText(rewards, r) {
     if (r.need) {
-      const i = cfg.REWARDS.indexOf(r);
+      const i = rewards.indexOf(r);
       return Object.keys(r.need)
-        .map((l) => `${cfg.LEVEL_GEM[l].label} ${Math.min(availFor(i, l, player), r.need[l])}/${r.need[l]}`)
+        .map((l) => `${cfg.LEVEL_GEM[l].label} ${Math.min(availFor(rewards, i, l, player), r.need[l])}/${r.need[l]}`)
         .join(" · ");
     }
     return `${Math.min(points(player), r.points)}/${r.points} punten`;
@@ -163,16 +171,17 @@
 
   // Voortgang van een cadeautje in het score board (klik op een cadeautje → wisselt hier)
   function renderTracker(el) {
-    const r = focusedReward || nextReward(player);
+    const rewards = curRewards();
+    const r = focusedReward || nextReward(rewards, player);
     if (!r) {
       el.innerHTML = `<div class="tracker-done">Alle cadeautjes gehaald! <span class="tracker-treat">${RB.art.treat("gift")}</span></div>`;
       return;
     }
-    const met = rewardMet(r, player);
+    const met = rewardMet(rewards, r, player);
     el.innerHTML = `
       <div class="tracker-head"><span class="tracker-treat">${RB.art.treat(r.art)}</span><b>${r.name}</b></div>
       ${met ? `<p class="tracker-met">Dit heb je al behaald!</p>` : ""}
-      ${rewardProgressHTML(r)}`;
+      ${rewardProgressHTML(rewards, r)}`;
   }
 
   function refreshRewards() {
@@ -183,7 +192,7 @@
   // Stapel diamanten in een kist; grootte/kleur/glans per niveau (gedeeld door schatkist + feest)
   function renderPile(el, gems) {
     let html = "", n = 0;
-    for (const lvl of [1, 2, 3, 4, 5, 6]) {
+    for (const lvl of LEVELS_ALL) {
       const lg = cfg.LEVEL_GEM[lvl];
       for (let i = 0; i < (gems[lvl] || 0) && n < 36; i++, n++) {
         html += `<span class="mini-gem g${lvl}${lg.shiny ? " shiny" : ""}">${RB.gems.svg(lg.color, false)}</span>`;
@@ -291,7 +300,16 @@
     $("encourage").textContent = "";
     $("encourage").className = "encourage";
 
-    renderOptions(current.options);
+    // keuzeknoppen of numpad, afhankelijk van de oefening
+    if (current.input === "numpad") {
+      $("options").classList.add("hidden");
+      $("numpad").classList.remove("hidden");
+      numpadClear();
+    } else {
+      $("numpad").classList.add("hidden");
+      $("options").classList.remove("hidden");
+      renderOptions(current.options);
+    }
     setTimeout(() => RB.audio.speak(current.speakText), 250);
   }
 
@@ -307,9 +325,52 @@
     });
   }
 
+  // ---------- NUMPAD (zelf typen) ----------
+  function numpadClear() {
+    const d = $("numpad-display");
+    d.textContent = "";
+    d.classList.remove("right", "wrong");
+  }
+
+  function numpadKey(k) {
+    if (locked) return;
+    const d = $("numpad-display");
+    if (k === "del") d.textContent = d.textContent.slice(0, -1);
+    else if (k === "ok") numpadSubmit();
+    else if (d.textContent.length < 3) d.textContent += k; // max 3 cijfers (tot 100)
+  }
+
+  function numpadSubmit() {
+    const raw = $("numpad-display").textContent;
+    if (raw === "") return;
+    const val = parseInt(raw, 10);
+    if (val === current.answer) onCorrect(null);
+    else onWrongNumpad();
+  }
+
+  function onWrongNumpad() {
+    wrongTries++;
+    roundWrong++;
+    RB.audio.soft();
+    const d = $("numpad-display");
+    d.classList.remove("wrong");
+    void d.offsetWidth;
+    d.classList.add("wrong");
+    setTimeout(() => numpadClear(), 500);
+
+    if (roundWrong >= cfg.MAX_WRONG) {
+      loseRainbow();
+      return;
+    }
+    const nudge = cfg.NUDGE[Math.floor(Math.random() * cfg.NUDGE.length)];
+    $("encourage").textContent = nudge;
+    $("encourage").className = "encourage nudge";
+    showHelp();
+  }
+
   function onAnswer(val, btn) {
     if (locked) return;
-    if (val === current.answer) handleCorrect(btn);
+    if (val === current.answer) onCorrect(btn);
     else handleWrong(btn);
   }
 
@@ -368,9 +429,10 @@
     if (current.repeatText) setTimeout(() => RB.audio.speak(current.repeatText), 200);
   }
 
-  function handleCorrect(btn) {
+  function onCorrect(btn) {
     locked = true;
-    btn.classList.add("chosen-right");
+    if (btn) btn.classList.add("chosen-right");
+    else $("numpad-display").classList.add("right"); // numpad: display groen
     RB.audio.correct(); // vrolijk deuntje
 
     const praise = cfg.PRAISE[Math.floor(Math.random() * cfg.PRAISE.length)];
@@ -442,9 +504,10 @@
 
   // Toont het cadeautje-feest als er een puntendrempel gehaald is
   function maybeShowPrize() {
-    const reached = rewardsReached(player);
+    const rewards = curRewards();
+    const reached = rewardsReached(rewards, player);
     if (reached <= player.seenRewards) return;
-    const prize = cfg.REWARDS[player.seenRewards];
+    const prize = rewards[player.seenRewards];
     player.seenRewards++;
     save();
 
@@ -476,16 +539,17 @@
 
   // De cadeautjes-ladder (wat je al hebt en nog kan verdienen)
   function renderRewardsList(el) {
-    const earnedCount = rewardsReached(player);
-    const focusIdx = focusedReward ? cfg.REWARDS.indexOf(focusedReward) : earnedCount;
+    const rewards = curRewards();
+    const earnedCount = rewardsReached(rewards, player);
+    const focusIdx = focusedReward ? rewards.indexOf(focusedReward) : earnedCount;
     el.innerHTML = "";
-    cfg.REWARDS.forEach((r, i) => {
+    rewards.forEach((r, i) => {
       const isEarned = i < earnedCount;
       const isNext = i === earnedCount;
       const row = document.createElement("div");
       row.className =
         "reward-row" + (isEarned ? " earned" : isNext ? " next" : " locked") + (i === focusIdx ? " focused" : "");
-      const small = isEarned ? "Behaald!" : summaryText(r);
+      const small = isEarned ? "Behaald!" : summaryText(rewards, r);
       row.innerHTML = `
         <span class="reward-row-icon">${RB.art.treat(r.art)}</span>
         <span class="reward-row-text"><b>${r.name}</b><small>${small}</small></span>
@@ -557,12 +621,12 @@
     }
   }
 
-  // beginscore toepassen: waardeert op tot minstens de seed-waarden (nooit minder)
+  // beginscore toepassen: zet de diamanten exact op de seed-waarden
   function applySeed(s, seed) {
     for (const name of Object.keys(seed)) {
       if (!s.players[name]) continue;
       const sp = seed[name];
-      if (sp.gems) for (const k of [1, 2, 3, 4, 5]) s.players[name].gems[k] = Math.max(s.players[name].gems[k] || 0, sp.gems[k] || 0);
+      if (sp.gems) for (const k of LEVELS_ALL) s.players[name].gems[k] = sp.gems[k] || 0;
     }
   }
 
@@ -570,7 +634,8 @@
   function reconcileSeen() {
     for (const name of cfg.PLAYERS) {
       const p = state.players[name];
-      p.seenRewards = Math.max(p.seenRewards || 0, rewardsReached(p));
+      if (!p) continue;
+      p.seenRewards = Math.max(p.seenRewards || 0, rewardsReached(rewardsForName(name), p));
     }
   }
 
@@ -618,6 +683,11 @@
 
     // het huisje staat op elke pagina
     document.querySelectorAll(".home-btn").forEach((b) => b.addEventListener("click", goHome));
+
+    // numpad-toetsen (zelf typen)
+    document.querySelectorAll(".np-key").forEach((b) =>
+      b.addEventListener("click", () => numpadKey(b.getAttribute("data-key")))
+    );
 
     $("repeat-sound").addEventListener("click", () => {
       if (current) RB.audio.speak(current.repeatText || current.speakText);

@@ -491,6 +491,7 @@ html, body {
 .lr4 { width: 25px; height: 28px; }
 .lr5 { width: 29px; height: 32px; }
 .lr6 { width: 31px; height: 34px; }
+.lr7 { width: 30px; height: 33px; }
 .rewards-heading { font-size: 15px; font-weight: 700; color: var(--ink-soft); margin: 4px 0 10px; }
 
 .toggle-row { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 0; font-size: 16px; font-weight: 600; }
@@ -686,6 +687,7 @@ html, body {
 .chest-pile .mini-gem.g4 { width: 24px; height: 27px; }
 .chest-pile .mini-gem.g5 { width: 27px; height: 30px; }
 .chest-pile .mini-gem.g6 { width: 29px; height: 32px; }
+.chest-pile .mini-gem.g7 { width: 28px; height: 31px; }
 /* extra glans voor de moeilijkste diamant */
 .mini-gem.shiny .gem-svg { filter: drop-shadow(0 0 3px #FFE9A8) drop-shadow(0 0 5px #F4C534); }
 .mini-gem.shiny { animation: gemTwinkle 2.2s ease-in-out infinite; }
@@ -719,6 +721,39 @@ html, body {
   100% { transform: translate(176px, 24px) scale(0.24) rotate(0); opacity: 0; }
 }
 .treasure-total { font-size: 16px; font-weight: 700; color: var(--yes-ink); margin: 4px 0 16px; }
+
+/* ---------- numpad (zelf typen) ---------- */
+.hidden { display: none !important; }
+.numpad { width: min(320px, 84vw); display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.numpad-display {
+  width: 100%;
+  min-height: 60px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  box-shadow: inset 0 2px 5px oklch(0.5 0.05 320 / 0.09);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(30px, 8vw, 42px); font-weight: 800; color: var(--ink);
+  letter-spacing: 5px;
+}
+.numpad-display.right { background: var(--yes); border-color: var(--yes-line); color: var(--yes-ink); animation: rightPop 0.5s var(--ease); }
+.numpad-display.wrong { animation: wiggleWrong 0.4s var(--ease); }
+.numpad-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+.np-key {
+  font-family: var(--font);
+  font-size: clamp(24px, 6vw, 30px); font-weight: 800; color: var(--ink);
+  min-height: 60px;
+  border: none; border-radius: 18px;
+  background: linear-gradient(180deg, oklch(1 0 0), oklch(0.965 0.012 320));
+  box-shadow: 0 5px 12px oklch(0.5 0.05 320 / 0.12), inset 0 2px 0 oklch(1 0 0 / 0.8);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s var(--ease), box-shadow 0.1s var(--ease);
+}
+.np-key:active { transform: translateY(2px) scale(0.97); box-shadow: 0 2px 6px oklch(0.5 0.05 320 / 0.12); }
+.np-key .ic { width: 28px; height: 28px; color: var(--ink-soft); }
+.np-ok { background: linear-gradient(180deg, oklch(0.79 0.115 6), oklch(0.69 0.14 8)); color: oklch(0.99 0.012 80); }
+.np-del { background: var(--card-2); }
 
 /* ---------- smalle schermen ---------- */
 @media (max-width: 560px) {
