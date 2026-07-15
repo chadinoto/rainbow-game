@@ -320,6 +320,18 @@ RB.art = {
       });
       return wrap(g);
     }
+    if (id === 8) {
+      // tellen tot 200: twee brede getal-tegels
+      const tiles = [["100", "#F0812E", "#FCE4CE"], ["200", "#E23D5A", "#FBD7DE"]];
+      let g = "";
+      tiles.forEach((t, i) => {
+        const x = 7 + i * 36;
+        g += `<rect x="${x}" y="12" width="33" height="28" rx="6" fill="${t[2]}" stroke="${t[1]}" stroke-width="2"/>
+              <text x="${x + 16.5}" y="31" text-anchor="middle" font-family="ui-rounded, system-ui, sans-serif"
+                    font-size="12.5" font-weight="800" fill="${t[1]}">${t[0]}</text>`;
+      });
+      return wrap(g);
+    }
     if (id === 6) {
       // plus én min tot 100
       return wrap(

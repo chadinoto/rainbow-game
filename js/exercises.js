@@ -57,6 +57,7 @@ RB.exercises = {
     if (level === 5) return this._addSub(20);
     if (level === 6) return this._numpad(this._addSub(100)); // Raphael: plus/min tot 100, zelf typen
     if (level === 7) return this._numpad(this._addSub(20));  // Lea: plus/min tot 20, zelf typen
+    if (level === 8) return this._recognizeType(200);        // Raphael: tellen tot 200 (horen + typen)
     return this._addSub(20);
   },
 
@@ -99,13 +100,30 @@ RB.exercises = {
     return {
       type: "recognize",
       instruction: "Welk getal hoor je?",
-      speakText: "Waar is de " + this._word(target) + "?",
+      speakText: "Zoek het getal " + this._word(target) + ".",
       mainHTML: RB.art.listenBadge(),
       options: this._options(target, 1, maxN),
       answer: target,
       help: null,
       helpText: "Luister nog eens en zoek dat cijfer.",
-      repeatText: "Waar is de " + this._word(target) + "?",
+      repeatText: "Zoek het getal " + this._word(target) + ".",
+    };
+  },
+
+  // --- Getal horen en zelf typen, tot maxN (bv. tellen tot 200) ---
+  _recognizeType(maxN) {
+    const target = this._rndInt(1, maxN);
+    return {
+      type: "recognize-type",
+      instruction: "Welk getal hoor je? Typ het in.",
+      speakText: "Welk getal is dit? " + this._word(target) + ".",
+      mainHTML: RB.art.listenBadge(),
+      options: [],
+      answer: target,
+      input: "numpad",
+      help: null,
+      helpText: "Luister nog eens en typ het getal.",
+      repeatText: "Het getal is " + this._word(target) + ".",
     };
   },
 
@@ -139,13 +157,13 @@ RB.exercises = {
     return {
       type: "sub",
       instruction: "Hoeveel blijven er over?",
-      speakText: `${this._word(a)} min ${this._word(b)}`,
+      speakText: `${this._word(a)}, min ${this._word(b)}`,
       mainHTML: `<span class="num">${a}</span><span class="op">−</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
       options: this._options(answer, 0, maxTotal),
       answer: answer,
       help: { a, b, op: "-" },
       helpText: "Er gaan er een paar weg. Tel wat er overblijft.",
-      repeatText: `${this._word(a)} min ${this._word(b)}`,
+      repeatText: `${this._word(a)} minus ${this._word(b)}`,
     };
   },
 
