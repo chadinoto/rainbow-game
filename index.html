@@ -61,7 +61,7 @@
 
     <!-- ============ SPEL SCHERM ============ -->
     <section id="game-screen" class="screen">
-      <button id="home-btn" class="icon-btn" title="Terug" data-icon="home"></button>
+      <button class="icon-btn home-btn" title="Naar huis" data-icon="home"></button>
 
       <div class="play-area">
         <!-- de echte regenboog die zich per goede oefening vult -->
@@ -82,6 +82,7 @@
 
     <!-- ============ FEEST SCHERM ============ -->
     <section id="celebrate-screen" class="screen">
+      <button class="icon-btn home-btn" title="Naar huis" data-icon="home"></button>
       <div id="confetti" class="confetti" aria-hidden="true"></div>
       <div class="celebrate-card">
         <h1 class="celebrate-title">Je regenboog is af!</h1>
@@ -104,7 +105,7 @@
         <p id="treasure-total" class="treasure-total"></p>
 
         <div class="celebrate-buttons">
-          <button id="again-btn" class="btn-primary">Nog een keer</button>
+          <button id="again-btn" class="btn-primary"><span class="btn-ic" data-icon="play"></span>Nog een keer</button>
           <button id="celebrate-treasure" class="ghost-link">Mijn schatkist bekijken</button>
         </div>
       </div>
@@ -122,7 +123,7 @@
 
     <!-- ============ SCHATKIST SCHERM ============ -->
     <section id="treasure-screen" class="screen">
-      <button id="treasure-home" class="icon-btn" title="Terug" data-icon="home"></button>
+      <button class="icon-btn home-btn" title="Naar huis" data-icon="home"></button>
       <div class="treasure-card">
         <h2 class="treasure-title" id="treasure-title">Mijn schatkist</h2>
         <div class="chest-scene">
@@ -139,12 +140,13 @@
         <h3 class="rewards-heading">Wat je kan verdienen</h3>
         <div id="treasure-rewards" class="rewards-list"></div>
 
-        <button id="treasure-play" class="btn-primary">Verder spelen</button>
+        <button id="treasure-play" class="btn-primary"><span class="btn-ic" data-icon="play"></span>Verder spelen</button>
       </div>
     </section>
 
     <!-- ============ INSTELLINGEN (voor mama & papa) ============ -->
     <section id="settings-screen" class="screen">
+      <button class="icon-btn home-btn" title="Naar huis" data-icon="home"></button>
       <div class="settings-card">
         <h2>Voor mama &amp; papa</h2>
 

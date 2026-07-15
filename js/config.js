@@ -69,7 +69,7 @@ RB.config = {
 
   // Nederlandse getalwoorden (voor de voorleesstem)
   WORDS: [
-    "nul", "een", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht",
+    "nul", "één", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht",
     "negen", "tien", "elf", "twaalf", "dertien", "veertien", "vijftien",
     "zestien", "zeventien", "achttien", "negentien", "twintig",
   ],

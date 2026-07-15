@@ -517,17 +517,20 @@
   }
 
   // ---------- KNOPPEN AAN ELKAAR KOPPELEN ----------
+  function goHome() {
+    window.speechSynthesis && window.speechSynthesis.cancel();
+    renderStart();
+    show("start");
+  }
+
   function wire() {
     $("login-form").addEventListener("submit", (e) => {
       e.preventDefault();
       tryLogin();
     });
 
-    $("home-btn").addEventListener("click", () => {
-      window.speechSynthesis && window.speechSynthesis.cancel();
-      renderStart();
-      show("start");
-    });
+    // het huisje staat op elke pagina
+    document.querySelectorAll(".home-btn").forEach((b) => b.addEventListener("click", goHome));
 
     $("repeat-sound").addEventListener("click", () => {
       if (current) RB.audio.speak(current.repeatText || current.speakText);
@@ -543,10 +546,6 @@
       RB.audio.unlock();
       RB.audio.setEnabled(state.soundOn);
       showTreasure();
-    });
-    $("treasure-home").addEventListener("click", () => {
-      renderStart();
-      show("start");
     });
     $("treasure-play").addEventListener("click", () => {
       RB.audio.unlock();
