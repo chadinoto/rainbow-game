@@ -1,0 +1,150 @@
+/* ============================================================
+   exercises.js — oefeningen maken per niveau
+   Niveau 1: cijfers zoeken tot 10 (hoort een getal, tikt het cijfer aan)
+   Niveau 2: plus tot 10
+   Niveau 3: plus en min tot 10
+   Niveau 4: cijfers zoeken tot 20
+   Niveau 5: plus en min tot 20
+   ============================================================ */
+
+window.RB = window.RB || {};
+
+RB.exercises = {
+  _rndInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  },
+
+  _shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  },
+
+  // Bouwt de antwoordknoppen: juiste antwoord + buurgetallen, door elkaar
+  _options(answer, min, max) {
+    const n = RB.config.N_OPTIONS;
+    const set = new Set([answer]);
+    let guard = 0;
+    while (set.size < n && guard < 100) {
+      guard++;
+      let cand = answer + this._rndInt(-3, 3);
+      if (cand < min) cand = min + (min - cand); // spiegel binnen bereik
+      if (cand > max) cand = max - (cand - max);
+      if (cand >= min && cand <= max) set.add(cand);
+    }
+    // als het nog niet vol is (klein bereik), vul rustig aan
+    let f = min;
+    while (set.size < n && f <= max) {
+      set.add(f);
+      f++;
+    }
+    return this._shuffle(Array.from(set));
+  },
+
+  _word(n) {
+    return RB.config.WORDS[n] || String(n);
+  },
+
+  // Geeft een oefening-object terug voor het gevraagde niveau
+  generate(level) {
+    if (level === 1) return this._recognize(10);
+    if (level === 2) return this._add(10);
+    if (level === 3) return this._addSub(10);
+    if (level === 4) return this._recognize(20);
+    return this._addSub(20);
+  },
+
+  // --- Cijfer herkennen (of tellen) tot maxN ---
+  _recognize(maxN) {
+    const useCount = Math.random() < 0.4; // soms tellen we voorwerpjes
+
+    if (useCount) {
+      // tellen houden we behapbaar (max 10 voorwerpjes)
+      const target = this._rndInt(1, Math.min(maxN, 10));
+      const names = RB.art.OBJECTS;
+      const name = names[this._rndInt(0, names.length - 1)];
+      const objs = Array.from({ length: target }, () => RB.art.object(name)).join("");
+      return {
+        type: "count",
+        instruction: "Hoeveel zie je?",
+        speakText: "Hoeveel zie je?",
+        mainHTML: `<div class="count-objects">${objs}</div>`,
+        options: this._options(target, 1, maxN),
+        answer: target,
+        help: null,
+        helpText: "Tel maar met je vinger, één voor één.",
+      };
+    }
+
+    const target = this._rndInt(1, maxN);
+    return {
+      type: "recognize",
+      instruction: "Welk getal hoor je?",
+      speakText: "Waar is de " + this._word(target) + "?",
+      mainHTML: RB.art.listenBadge(),
+      options: this._options(target, 1, maxN),
+      answer: target,
+      help: null,
+      helpText: "Luister nog eens en zoek dat cijfer.",
+      repeatText: "Waar is de " + this._word(target) + "?",
+    };
+  },
+
+  // --- Optellen ---
+  _add(maxTotal) {
+    const answer = this._rndInt(2, maxTotal);
+    const a = this._rndInt(1, answer - 1);
+    const b = answer - a;
+    return {
+      type: "add",
+      instruction: "Hoeveel is het samen?",
+      speakText: `${this._word(a)} plus ${this._word(b)}`,
+      mainHTML: `<span class="num">${a}</span><span class="op">+</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
+      options: this._options(answer, 0, maxTotal),
+      answer: answer,
+      help: { a, b, op: "+" },
+      helpText: "Tel de stipjes allemaal samen.",
+      repeatText: `${this._word(a)} plus ${this._word(b)}`,
+    };
+  },
+
+  // --- Optellen én aftrekken ---
+  _addSub(maxTotal) {
+    if (Math.random() < 0.5) return this._add(maxTotal);
+
+    // aftrekken: begingetal - iets, antwoord >= 0
+    const a = this._rndInt(2, maxTotal);
+    const b = this._rndInt(1, a);
+    const answer = a - b;
+    return {
+      type: "sub",
+      instruction: "Hoeveel blijven er over?",
+      speakText: `${this._word(a)} min ${this._word(b)}`,
+      mainHTML: `<span class="num">${a}</span><span class="op">−</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
+      options: this._options(answer, 0, maxTotal),
+      answer: answer,
+      help: { a, b, op: "-" },
+      helpText: "Er gaan er een paar weg. Tel wat er overblijft.",
+      repeatText: `${this._word(a)} min ${this._word(b)}`,
+    };
+  },
+
+  // Bouwt de visuele hulp (stipjes) voor plus/min
+  helpHTML(help) {
+    if (!help) return "";
+    if (help.op === "+") {
+      const dotsA = '<span class="dot">●</span>'.repeat(help.a);
+      const dotsB = '<span class="dot dot-b">●</span>'.repeat(help.b);
+      return `<div class="dots">${dotsA}<span class="plus-gap">+</span>${dotsB}</div>`;
+    }
+    // aftrekken: eerst a stipjes, waarvan b doorstreept
+    let dots = "";
+    for (let i = 0; i < help.a; i++) {
+      dots += `<span class="dot ${i >= help.a - help.b ? "gone" : ""}">●</span>`;
+    }
+    return `<div class="dots">${dots}</div>`;
+  },
+};

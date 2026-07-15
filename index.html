@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Regenboog maken</title>
+
+  <!-- als app op het beginscherm (iPad/iPhone/Android) -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F7ECF2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Regenboog" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ============ LOGIN ============ -->
+    <section id="login-screen" class="screen active">
+      <div class="blobs" aria-hidden="true"></div>
+      <div class="login-card">
+        <div id="login-mascot" class="login-mascot"></div>
+        <h1 class="title">Even inloggen</h1>
+        <p class="subtitle">Typ het wachtwoord om te spelen.</p>
+        <form id="login-form" autocomplete="off">
+          <input id="login-input" class="login-input" type="password" inputmode="text"
+                 placeholder="Wachtwoord" autocomplete="current-password" />
+          <button id="login-btn" class="btn-primary" type="submit">Verder</button>
+        </form>
+        <p id="login-error" class="login-error"></p>
+      </div>
+    </section>
+
+    <!-- ============ START SCHERM ============ -->
+    <section id="start-screen" class="screen">
+      <div class="blobs" aria-hidden="true"></div>
+      <button id="open-settings" class="icon-btn corner" title="Instellingen" data-icon="settings"></button>
+      <div class="start-card">
+        <div id="mascot-start" class="mascot-start"></div>
+        <h1 class="title">Regenboog maken</h1>
+
+        <p class="mini-label">Wie speelt er?</p>
+        <div id="player-row" class="player-row"></div>
+
+        <p class="subtitle" id="hello-line">Kies je spel:</p>
+        <div id="start-levels" class="start-levels"></div>
+
+        <button id="open-treasure" class="chest-button">
+          <span class="chest-mini" id="chest-mini"></span>
+          <span class="chest-count-label" id="chest-count-label"></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ SPEL SCHERM ============ -->
+    <section id="game-screen" class="screen">
+      <button id="home-btn" class="icon-btn" title="Terug" data-icon="home"></button>
+
+      <div class="play-area">
+        <!-- de echte regenboog die zich per goede oefening vult -->
+        <div id="rainbow" class="rainbow" aria-label="Jouw regenboog"></div>
+
+        <div class="question-card">
+          <button id="repeat-sound" class="icon-btn ghost" title="Nog eens horen" data-icon="sound"></button>
+          <p id="instruction" class="instruction">Welk getal hoor je?</p>
+          <div id="question-main" class="question-main"></div>
+          <div id="help-area" class="help-area"></div>
+        </div>
+
+        <div id="options" class="options"></div>
+
+        <p id="encourage" class="encourage"></p>
+      </div>
+    </section>
+
+    <!-- ============ FEEST SCHERM ============ -->
+    <section id="celebrate-screen" class="screen">
+      <div id="confetti" class="confetti" aria-hidden="true"></div>
+      <div class="celebrate-card">
+        <h1 class="celebrate-title">Je regenboog is af!</h1>
+        <div id="celebrate-rainbow" class="celebrate-rainbow"></div>
+
+        <!-- het figuurtje geeft je een diamant, die in de open schatkist valt -->
+        <div class="reward-scene">
+          <div id="reward-mascot" class="reward-mascot"></div>
+          <div id="reward-fly" class="reward-fly"></div>
+          <div class="reward-chest-wrap">
+            <div class="chest3d" id="reward-chest">
+              <div class="chest-layer chest-back"></div>
+              <div id="reward-pile" class="chest-pile"></div>
+              <div class="chest-layer chest-front"></div>
+              <div class="chest-layer chest-lid" id="reward-lid"></div>
+            </div>
+          </div>
+        </div>
+
+        <p id="treasure-total" class="treasure-total"></p>
+
+        <div class="celebrate-buttons">
+          <button id="again-btn" class="btn-primary">Nog een keer</button>
+          <button id="celebrate-treasure" class="ghost-link">Mijn schatkist bekijken</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCHATKIST SCHERM ============ -->
+    <section id="treasure-screen" class="screen">
+      <button id="treasure-home" class="icon-btn" title="Terug" data-icon="home"></button>
+      <div class="treasure-card">
+        <h2 class="treasure-title" id="treasure-title">Mijn schatkist</h2>
+        <div class="chest-scene">
+          <div class="chest3d">
+            <div class="chest-layer chest-back"></div>
+            <div id="gem-pile" class="chest-pile"></div>
+            <div class="chest-layer chest-front"></div>
+            <div class="chest-layer chest-lid" id="treasure-lid"></div>
+          </div>
+        </div>
+        <p id="treasure-count" class="treasure-count"></p>
+        <button id="treasure-play" class="btn-primary">Verder spelen</button>
+      </div>
+    </section>
+
+    <!-- ============ INSTELLINGEN (voor mama & papa) ============ -->
+    <section id="settings-screen" class="screen">
+      <div class="settings-card">
+        <h2>Voor mama &amp; papa</h2>
+
+        <label class="toggle-row">
+          <span>Geluid en stem</span>
+          <input type="checkbox" id="sound-toggle" />
+        </label>
+
+        <div class="reset-block">
+          <button id="reset-player" class="reset-btn">Verzameling van <span id="reset-player-name">Lea</span> wissen</button>
+          <button id="reset-all" class="reset-btn">Alles van iedereen wissen</button>
+        </div>
+
+        <div class="settings-actions end">
+          <button id="close-settings" class="btn-primary small">Klaar</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Geen ES-modules: gewone scripts, zodat het werkt door dubbelklikken (file://) -->
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/gems.js"></script>
+  <script src="js/rainbow.js"></script>
+  <script src="js/exercises.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
