@@ -92,19 +92,20 @@ RB.config = {
   // Niveaus waar je het antwoord zelf typt (numpad) i.p.v. keuzeknoppen
   NUMPAD_LEVELS: [6, 7, 8, 9, 10, 11],
 
-  // De beloningsdiamant per niveau: hoe moeilijker, hoe groter, andere kleur en meer glans
+  // De beloningsdiamant per niveau: hoger niveau = groter (leuk), maar dat verandert
+  // NIETS aan de cadeautjes — die tellen het AANTAL diamanten per kleur (10 stuks), geen punten.
   LEVEL_GEM: {
-    1: { color: "#5FB6E6", size: 0.80, label: "blauwe" },              // licht blauw, klein
-    2: { color: "#6FC15E", size: 0.94, label: "groene" },              // groen
-    3: { color: "#A986DE", size: 1.08, label: "paarse" },              // paars
-    4: { color: "#EF8FB0", size: 1.20, label: "roze" },                // roze, groter
-    5: { color: "#F3C233", size: 1.36, shiny: true, label: "gouden" }, // goud
+    1: { color: "#5FB6E6", size: 0.80, label: "blauwe" },
+    2: { color: "#6FC15E", size: 0.94, label: "groene" },
+    3: { color: "#A986DE", size: 1.08, label: "paarse" },
+    4: { color: "#EF8FB0", size: 1.20, label: "roze" },
+    5: { color: "#F3C233", size: 1.36, shiny: true, label: "gouden" },
     6: { color: "#E23D5A", size: 1.50, shiny: true, label: "rode" },       // Raphael: plus tot 100
     7: { color: "#22B2C9", size: 1.44, shiny: true, label: "turkooizen" }, // Lea: zelf typen tot 20
     8: { color: "#F0812E", size: 1.52, shiny: true, label: "oranje" },     // Raphael: min tot 100
-    9: { color: "#7A5BD8", size: 1.54, shiny: true, label: "paarse" },     // Raphael: plus tot 200
-    10: { color: "#E0559E", size: 1.56, shiny: true, label: "roze" },      // Raphael: min tot 200
-    11: { color: "#2FA88E", size: 1.60, shiny: true, label: "groene" },    // Raphael: plus en min tot 200
+    9: { color: "#7A5BD8", size: 1.54, shiny: true, label: "indigo" },     // Raphael: plus tot 200
+    10: { color: "#E0559E", size: 1.56, shiny: true, label: "magenta" },   // Raphael: min tot 200
+    11: { color: "#2FA88E", size: 1.60, shiny: true, label: "petrol" },    // Raphael: plus en min tot 200
   },
 
   // Nederlandse getalwoorden (voor de voorleesstem)
