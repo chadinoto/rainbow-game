@@ -25,7 +25,6 @@
     game: $("game-screen"),
     celebrate: $("celebrate-screen"),
     treasure: $("treasure-screen"),
-    rewards: $("rewards-screen"),
     settings: $("settings-screen"),
   };
 
@@ -130,14 +129,11 @@
     renderStartLevels();
     $("hello-line").textContent = "Kies je spel:";
     const t = total(player);
-    $("chest-count-label").textContent =
-      t > 0 ? `${t} ${t === 1 ? "diamant" : "diamanten"}` : "Nog geen diamanten";
-
-    // cadeautjes-knop: toont het eerstvolgende cadeautje + de punten
     const pts = points(player);
-    const nx = nextReward(pts);
-    $("reward-btn-icon").innerHTML = RB.art.treat(nx ? nx.art : "gift");
-    $("reward-count-label").textContent = `${pts} ${pts === 1 ? "punt" : "punten"}`;
+    $("chest-count-label").innerHTML =
+      t > 0
+        ? `${t} ${t === 1 ? "diamant" : "diamanten"} · ${pts} ${pts === 1 ? "punt" : "punten"}`
+        : "Nog geen diamanten";
   }
 
   // Wie speelt er? (Lea / Mama / Papa) met eigen resultaten
@@ -166,8 +162,13 @@
     cfg.LEVELS.forEach((lv) => {
       const b = document.createElement("button");
       b.className = "level-card" + (lv.id === player.level ? " selected" : "");
+      const lg = cfg.LEVEL_GEM[lv.id];
       b.innerHTML = `<span class="level-pic">${RB.art.levelPic(lv.id)}</span>
-        <span class="level-text"><b>${lv.name}</b><small>${lv.desc}</small></span>`;
+        <span class="level-text"><b>${lv.name}</b><small>${lv.desc}</small></span>
+        <span class="level-reward" title="Je verdient een diamant van ${lv.id} ${lv.id === 1 ? "punt" : "punten"}">
+          <span class="lr-gem lr${lv.id}">${RB.gems.svg(lg.color, false)}</span>
+          <b>${lv.id}</b>
+        </span>`;
       b.addEventListener("click", () => chooseLevel(lv));
       list.appendChild(b);
     });
@@ -232,7 +233,7 @@
     wrongTries++;
     RB.audio.soft();
 
-    // knop wiebelt zachtjes en gaat dan rustig 'uit' (verkleint de keuze → het lukt)
+    // knop wiebelt zachtjes en gaat dan rustig 'uit'
     btn.classList.add("wiggle-wrong");
     setTimeout(() => {
       btn.classList.remove("wiggle-wrong");
@@ -240,12 +241,35 @@
       btn.disabled = true;
     }, 400);
 
+    // te veel gokken → de regenboog begint opnieuw (maar de schatkist blijft)
+    if (wrongTries >= cfg.MAX_WRONG) {
+      loseRainbow();
+      return;
+    }
+
     const nudge = cfg.NUDGE[Math.floor(Math.random() * cfg.NUDGE.length)];
     const enc = $("encourage");
     enc.textContent = nudge;
     enc.className = "encourage nudge";
+    showHelp();
+  }
 
-    if (wrongTries >= 1) showHelp();
+  // Regenboog verloren: zacht bericht, alleen de huidige regenboog reset
+  function loseRainbow() {
+    locked = true;
+    const enc = $("encourage");
+    enc.textContent = "Oei! Deze regenboog begint opnieuw. Jij kan het!";
+    enc.className = "encourage nudge";
+    setTimeout(() => RB.audio.speak("Oei! We beginnen deze regenboog opnieuw. Jij kan het!"), 250);
+
+    player.collected = 0;
+    save();
+    $("rainbow").classList.add("lost");
+    setTimeout(() => {
+      $("rainbow").classList.remove("lost");
+      RB.rainbow.render($("rainbow"), 0);
+      nextExercise();
+    }, 1900);
   }
 
   function showHelp() {
@@ -353,38 +377,31 @@
   function renderTreasure() {
     $("treasure-title").textContent = "Schatkist van " + state.currentPlayer;
     renderPile($("gem-pile"), player.gems);
-    const count = $("treasure-count");
     const t = total(player);
-    if (t > 0) {
-      count.textContent = `Je hebt ${t} ${t === 1 ? "diamant" : "diamanten"} verzameld!`;
-    } else {
-      count.textContent = "Maak een regenboog af om je eerste diamant te verdienen.";
-    }
-  }
-
-  // ---------- CADEAUTJES ----------
-  function showRewards() {
-    renderRewards();
-    show("rewards");
-  }
-
-  function renderRewards() {
-    $("rewards-title").textContent = "Cadeautjes van " + state.currentPlayer;
     const pts = points(player);
-    $("points-total").textContent = `${pts} ${pts === 1 ? "punt" : "punten"}`;
-    renderTracker($("rewards-tracker"), true);
+    $("treasure-count").innerHTML =
+      t > 0
+        ? `${t} ${t === 1 ? "diamant" : "diamanten"} &nbsp;·&nbsp; <b>${pts} ${pts === 1 ? "punt" : "punten"}</b>`
+        : "Maak een regenboog af om je eerste diamant te verdienen.";
+    renderTracker($("treasure-tracker"), true);
+    renderRewardsList($("treasure-rewards"));
+  }
 
-    const list = $("rewards-list");
-    list.innerHTML = "";
+  // De cadeautjes-ladder (wat je al hebt en nog kan verdienen)
+  function renderRewardsList(el) {
+    const pts = points(player);
+    el.innerHTML = "";
     cfg.REWARDS.forEach((r) => {
       const earned = pts >= r.points;
+      const left = r.points - pts;
       const row = document.createElement("div");
       row.className = "reward-row" + (earned ? " earned" : "");
+      const note = earned ? "Behaald!" : `nog ${left} ${left === 1 ? "punt" : "punten"}`;
       row.innerHTML = `
         <span class="reward-row-icon">${RB.art.treat(r.art)}</span>
-        <span class="reward-row-text"><b>${r.name}</b><small>${r.points} punten</small></span>
+        <span class="reward-row-text"><b>${r.name}</b><small>${r.points} punten · ${note}</small></span>
         <span class="reward-row-state">${earned ? RB.art.icon("check") : ""}</span>`;
-      list.appendChild(row);
+      el.appendChild(row);
     });
   }
 
@@ -472,20 +489,6 @@
       startGame();
     });
 
-    $("open-rewards").addEventListener("click", () => {
-      RB.audio.unlock();
-      RB.audio.setEnabled(state.soundOn);
-      showRewards();
-    });
-    $("rewards-home").addEventListener("click", () => {
-      renderStart();
-      show("start");
-    });
-    $("rewards-play").addEventListener("click", () => {
-      RB.audio.unlock();
-      RB.audio.setEnabled(state.soundOn);
-      startGame();
-    });
     $("prize-ok").addEventListener("click", () => {
       $("prize-pop").classList.remove("show");
     });

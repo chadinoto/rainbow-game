@@ -256,6 +256,8 @@ html, body {
 .rb-arc.on { filter: drop-shadow(0 2px 3px oklch(0.5 0.06 320 / 0.14)); }
 .rb-arc.draw { transition: stroke-dashoffset 0.7s var(--ease), stroke 0.25s var(--ease); }
 .rb-cloud { animation: floaty 5s ease-in-out infinite; }
+.rainbow.lost { animation: rainbowLost 1.6s var(--ease) forwards; }
+@keyframes rainbowLost { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0.12; transform: scale(0.9); } }
 .celebrate-rainbow { width: min(320px, 72vw); margin: 2px auto 6px; }
 .celebrate-rainbow .rainbow-svg { width: 100%; }
 .gem-slot {
@@ -468,9 +470,21 @@ html, body {
 }
 .level-card.selected .level-pic { background: oklch(1 0 0); box-shadow: inset 0 0 0 2px var(--accent); }
 .lvl-pic { width: 100%; height: 100%; display: block; }
-.level-text { display: flex; flex-direction: column; }
+.level-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .level-text b { font-size: 17px; font-weight: 700; }
 .level-text small { color: var(--ink-soft); font-size: 13px; }
+
+/* het diamantje dat je met dit niveau verdient (grootte + punten 1..5) */
+.level-reward { display: flex; flex-direction: column; align-items: center; gap: 1px; flex: 0 0 auto; }
+.level-reward b { font-size: 13px; font-weight: 800; color: var(--ink-soft); }
+.lr-gem { display: inline-flex; }
+.lr-gem .gem-svg { width: 100%; height: 100%; display: block; }
+.lr1 { width: 16px; height: 18px; }
+.lr2 { width: 19px; height: 21px; }
+.lr3 { width: 22px; height: 24px; }
+.lr4 { width: 25px; height: 28px; }
+.lr5 { width: 29px; height: 32px; }
+.rewards-heading { font-size: 15px; font-weight: 700; color: var(--ink-soft); margin: 4px 0 10px; }
 
 .toggle-row { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 0; font-size: 16px; font-weight: 600; }
 .toggle-row input { width: 26px; height: 26px; accent-color: var(--accent); }
@@ -515,7 +529,7 @@ html, body {
 .chest-button:active { transform: scale(0.97); }
 .chest-mini { width: 48px; height: 42px; display: inline-flex; flex: 0 0 auto; }
 
-.treasure-card, .rewards-card {
+.treasure-card {
   position: relative;
   z-index: 1;
   background: var(--card);
@@ -523,9 +537,11 @@ html, body {
   border-radius: 32px;
   box-shadow: var(--shadow-2);
   padding: clamp(24px, 4vw, 40px);
-  max-width: 520px;
+  max-width: 480px;
   width: 100%;
   text-align: center;
+  max-height: 94vh;
+  overflow-y: auto;
 }
 #treasure-home, #rewards-home { position: absolute; top: clamp(12px, 3vw, 20px); left: clamp(12px, 3vw, 20px); z-index: 5; }
 

@@ -22,8 +22,12 @@ RB.config = {
     { name: "koraal",   color: "#F0554C" }, // 10 (rood)
   ],
 
-  // Aantal opties bij elke oefening (grote tik-knoppen)
-  N_OPTIONS: 3,
+  // Aantal opties bij elke oefening (grote tik-knoppen).
+  // 4 zodat "alles afgaan" ook echt 3 foute gokken betekent → regenboog verloren.
+  N_OPTIONS: 4,
+
+  // Na hoeveel foute gokken de regenboog opnieuw begint (tegen zomaar gokken)
+  MAX_WRONG: 3,
 
   // De niveaus. id komt overeen met wat in de instellingen gekozen wordt.
   LEVELS: [
@@ -80,9 +84,9 @@ RB.config = {
   // Elke diamant is punten waard = zijn niveau (niveau 1 = 1 punt ... niveau 5 = 5 punten).
   // Bij deze puntendrempels verdient ze een echt cadeautje. Pas gerust aan / voeg toe.
   REWARDS: [
-    { points: 30, name: "Frietjes gaan eten", art: "fries" },
-    { points: 60, name: "Een ijsje gaan eten", art: "icecream" },
-    { points: 100, name: "Een cadeautje krijgen", art: "gift" },
+    { points: 40, name: "Frietjes gaan eten", art: "fries" },
+    { points: 90, name: "Een ijsje gaan eten", art: "icecream" },
+    { points: 150, name: "Een cadeautje krijgen", art: "gift" },
   ],
 
   // Kleine, vrolijke complimentjes (nooit competitief, nooit "fout")
