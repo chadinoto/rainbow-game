@@ -67,10 +67,26 @@
     return g[1] * 1 + g[2] * 2 + g[3] * 3 + g[4] * 4 + g[5] * 5;
   }
 
-  // Is aan de eis van een cadeautje voldaan? (punten en/of diamanten per kleur)
+  // Hoeveel diamanten van kleur c al opgebruikt zijn door eerdere cadeautjes
+  function consumedBefore(index, c) {
+    let s = 0;
+    for (let j = 0; j < index; j++) {
+      const n = cfg.REWARDS[j].need;
+      if (n && n[c]) s += n[c];
+    }
+    return s;
+  }
+
+  // Beschikbare diamanten van kleur c voor het cadeautje op deze plek (na eerder verbruik)
+  function availFor(index, c, p) {
+    return Math.max(0, (p.gems[c] || 0) - consumedBefore(index, c));
+  }
+
+  // Is aan de eis van een cadeautje voldaan? (diamanten per kleur, in volgorde verbruikt)
   function rewardMet(r, p) {
+    const i = cfg.REWARDS.indexOf(r);
     if (r.points && points(p) < r.points) return false;
-    if (r.need) for (const l of Object.keys(r.need)) if ((p.gems[l] || 0) < r.need[l]) return false;
+    if (r.need) for (const c of Object.keys(r.need)) if (availFor(i, c, p) < r.need[c]) return false;
     return true;
   }
 
@@ -103,8 +119,9 @@
         </div>`;
     };
     if (r.need) {
+      const i = cfg.REWARDS.indexOf(r);
       return Object.keys(r.need)
-        .map((l) => line(cfg.LEVEL_GEM[l].color, player.gems[l] || 0, r.need[l], `${cfg.LEVEL_GEM[l].label} diamanten`))
+        .map((l) => line(cfg.LEVEL_GEM[l].color, availFor(i, l, player), r.need[l], `${cfg.LEVEL_GEM[l].label} diamanten`))
         .join("");
     }
     return line("#F3C233", points(player), r.points, "punten");
@@ -113,8 +130,9 @@
   // Compacte samenvatting voor de lijst (bv. "blauwe 6/10 · groene 3/10")
   function summaryText(r) {
     if (r.need) {
+      const i = cfg.REWARDS.indexOf(r);
       return Object.keys(r.need)
-        .map((l) => `${cfg.LEVEL_GEM[l].label} ${Math.min(player.gems[l] || 0, r.need[l])}/${r.need[l]}`)
+        .map((l) => `${cfg.LEVEL_GEM[l].label} ${Math.min(availFor(i, l, player), r.need[l])}/${r.need[l]}`)
         .join(" · ");
     }
     return `${Math.min(points(player), r.points)}/${r.points} punten`;

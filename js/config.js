@@ -82,14 +82,15 @@ RB.config = {
   PLAYERS: ["Lea", "Mama", "Papa"],
 
   // Elke diamant is punten waard = zijn niveau (niveau 1 = 1 punt ... niveau 5 = 5 punten).
-  // Een cadeautje kan een eis hebben op punten (points) en/of op diamanten per niveau (need).
-  //   need: { 1: 10, 2: 10 } = minstens 10 blauwe (niveau 1) én 10 groene (niveau 2).
-  // Ze worden in volgorde behaald (frietjes eerst). Pas gerust aan / voeg toe.
+  // need = wat DIT cadeautje extra kost aan diamanten per niveau.
+  //   Diamanten vullen de cadeautjes in volgorde: zit een kleur in twee cadeautjes,
+  //   dan gaat ze eerst naar het eerste in de rij, de rest telt voor het volgende.
+  //   Bv. ijsje kost 10 blauwe; frietjes kost daarna nóg 10 blauwe (dus 20 in totaal).
   REWARDS: [
-    { name: "Een ijsje gaan eten", art: "icecream", points: 12 },
-    { name: "Een lolly", art: "lolly", points: 28 },
-    { name: "Frietjes gaan eten", art: "fries", need: { 1: 10, 2: 10 } },
-    { name: "Een cadeautje krijgen", art: "gift", points: 150 },
+    { name: "Een ijsje gaan eten", art: "icecream", need: { 1: 10 } },        // makkelijkst: 10 blauwe
+    { name: "Een lolly", art: "lolly", need: { 2: 10 } },                      // + 10 groene
+    { name: "Frietjes gaan eten", art: "fries", need: { 1: 10, 2: 10 } },      // + 10 blauwe + 10 groene
+    { name: "Een cadeautje krijgen", art: "gift", need: { 3: 10 } },           // + 10 paarse
   ],
 
   // Kleine, vrolijke complimentjes (nooit competitief, nooit "fout")
