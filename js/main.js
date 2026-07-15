@@ -14,7 +14,8 @@
 
   // huidige oefening + hoe vaak er al mis-getikt is (niet zichtbaar voor het kind)
   let current = null;
-  let wrongTries = 0;
+  let wrongTries = 0;   // foute tikken op de huidige vraag (voor hulp/uitfaden)
+  let roundWrong = 0;   // totaal fouten in deze regenboog-ronde
   let locked = false; // even blokkeren tijdens de fonkel-animatie
   let focusedReward = null; // welk cadeautje in de tracker getoond wordt (null = volgende)
 
@@ -264,6 +265,7 @@
   function startGame() {
     // een nieuwe oefenreeks begint altijd met een lege regenboog
     player.collected = 0;
+    roundWrong = 0;
     save();
     show("game");
     RB.rainbow.render($("rainbow"), 0);
@@ -306,6 +308,7 @@
 
   function handleWrong(btn) {
     wrongTries++;
+    roundWrong++;
     RB.audio.soft();
 
     // knop wiebelt zachtjes en gaat dan rustig 'uit'
@@ -316,8 +319,8 @@
       btn.disabled = true;
     }, 400);
 
-    // te veel gokken → de regenboog begint opnieuw (maar de schatkist blijft)
-    if (wrongTries >= cfg.MAX_WRONG) {
+    // meer dan 2 fouten in de hele ronde → de regenboog begint opnieuw (schatkist blijft)
+    if (roundWrong >= cfg.MAX_WRONG) {
       loseRainbow();
       return;
     }
@@ -338,6 +341,7 @@
     setTimeout(() => RB.audio.speak("Oei! We beginnen deze regenboog opnieuw. Jij kan het!"), 250);
 
     player.collected = 0;
+    roundWrong = 0;
     save();
     $("rainbow").classList.add("lost");
     setTimeout(() => {

@@ -26,7 +26,8 @@ RB.config = {
   // 4 zodat "alles afgaan" ook echt 3 foute gokken betekent → regenboog verloren.
   N_OPTIONS: 4,
 
-  // Na hoeveel foute gokken de regenboog opnieuw begint (tegen zomaar gokken)
+  // Na hoeveel fouten over de HELE regenboog-ronde ze opnieuw moet beginnen
+  // (3 = ze mag er 2 maken; bij de 3e fout begint de regenboog opnieuw)
   MAX_WRONG: 3,
 
   // De niveaus. id komt overeen met wat in de instellingen gekozen wordt.
