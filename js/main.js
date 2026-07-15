@@ -88,67 +88,58 @@
     return cfg.REWARDS[rewardsReached(p)] || null;
   }
 
-  // Korte tekst met wat er nog nodig is voor een cadeautje
-  function rewardNote(r, p) {
+  // Voortgang als duidelijke regels: "6/10 blauwe diamanten" (voor score board + detail)
+  function rewardProgressHTML(r) {
+    const line = (color, have, target, labelText) => {
+      const pct = Math.max(0, Math.min(100, (have / target) * 100));
+      return `
+        <div class="need-line">
+          <span class="need-gem lr3">${RB.gems.svg(color, false)}</span>
+          <div class="need-info">
+            <div class="need-top"><b>${Math.min(have, target)}/${target}</b> ${labelText}</div>
+            <div class="tracker-bar"><span class="tracker-fill" style="width:${pct}%;background:${color}"></span></div>
+          </div>
+        </div>`;
+    };
     if (r.need) {
-      const parts = [];
-      for (const l of Object.keys(r.need)) {
-        const left = Math.max(0, r.need[l] - (p.gems[l] || 0));
-        if (left > 0) parts.push(`${left} ${cfg.LEVEL_GEM[l].label}`);
-      }
-      return parts.length ? "nog " + parts.join(" + ") : "Behaald!";
+      return Object.keys(r.need)
+        .map((l) => line(cfg.LEVEL_GEM[l].color, player.gems[l] || 0, r.need[l], `${cfg.LEVEL_GEM[l].label} diamanten`))
+        .join("");
     }
-    const left = (r.points || 0) - points(p);
-    return left > 0 ? `nog ${left} ${left === 1 ? "punt" : "punten"}` : "Behaald!";
+    return line("#F3C233", points(player), r.points, "punten");
   }
 
-  // De eis van een cadeautje als tekst (voor toekomstige cadeautjes)
-  function rewardReq(r) {
-    if (r.need) return Object.keys(r.need).map((l) => `${r.need[l]} ${cfg.LEVEL_GEM[l].label}`).join(" + ");
-    return `${r.points} punten`;
+  // Compacte samenvatting voor de lijst (bv. "blauwe 6/10 · groene 3/10")
+  function summaryText(r) {
+    if (r.need) {
+      return Object.keys(r.need)
+        .map((l) => `${cfg.LEVEL_GEM[l].label} ${Math.min(player.gems[l] || 0, r.need[l])}/${r.need[l]}`)
+        .join(" · ");
+    }
+    return `${Math.min(points(player), r.points)}/${r.points} punten`;
   }
 
-  // Voortgang naar het volgende cadeautje (mini = tijdens spel, big = score board)
-  function renderTracker(el, big) {
+  // Voortgang naar het volgende cadeautje (alleen in het score board)
+  function renderTracker(el) {
     const next = nextReward(player);
     if (!next) {
       el.innerHTML = `<div class="tracker-done">Alle cadeautjes gehaald! <span class="tracker-treat">${RB.art.treat("gift")}</span></div>`;
       return;
     }
-
-    // eis per kleur (bv. frietjes: blauwe + groene diamanten)
-    if (next.need) {
-      let bars = "";
-      for (const l of Object.keys(next.need)) {
-        const have = player.gems[l] || 0;
-        const target = next.need[l];
-        const pct = Math.max(0, Math.min(100, (have / target) * 100));
-        const color = cfg.LEVEL_GEM[l].color;
-        bars += `
-          <div class="tracker-need">
-            <span class="need-gem lr3">${RB.gems.svg(color, false)}</span>
-            <div class="tracker-bar"><span class="tracker-fill" style="width:${pct}%;background:${color}"></span></div>
-            <span class="need-count">${Math.min(have, target)}/${target}</span>
-          </div>`;
-      }
-      el.innerHTML = `
-        <div class="tracker-head"><span class="tracker-treat">${RB.art.treat(next.art)}</span><b>${next.name}</b></div>
-        ${bars}`;
-      return;
-    }
-
-    // eis op punten
-    const pts = points(player);
-    const prevPts = cfg.REWARDS.filter((r) => rewardMet(r, player) && r.points).reduce((m, r) => Math.max(m, r.points), 0);
-    const span = next.points - prevPts;
-    const pct = Math.max(0, Math.min(100, ((pts - prevPts) / span) * 100));
-    const left = next.points - pts;
     el.innerHTML = `
-      <div class="tracker-row">
-        <div class="tracker-bar"><span class="tracker-fill" style="width:${pct}%"></span></div>
-        <span class="tracker-treat">${RB.art.treat(next.art)}</span>
-      </div>
-      <p class="tracker-label">${big ? `Nog ${left} ${left === 1 ? "punt" : "punten"} tot: ${next.name}` : `Nog ${left} tot je cadeautje`}</p>`;
+      <div class="tracker-head"><span class="tracker-treat">${RB.art.treat(next.art)}</span><b>${next.name}</b></div>
+      ${rewardProgressHTML(next)}`;
+  }
+
+  // Detail-venster van een cadeautje (verschijnt als je op de lijst tikt)
+  function showRewardDetail(r) {
+    const met = rewardMet(r, player);
+    $("reward-detail-body").innerHTML = `
+      <div class="prize-art">${RB.art.treat(r.art)}</div>
+      <h2 class="prize-title">${r.name}</h2>
+      <p class="prize-status">${met ? "Dit heb je al behaald!" : "Zo ver ben je al:"}</p>
+      ${rewardProgressHTML(r)}`;
+    $("reward-detail").classList.add("show");
   }
 
   // Stapel diamanten in een kist; grootte/kleur/glans per niveau (gedeeld door schatkist + feest)
@@ -242,7 +233,6 @@
     player.collected = 0;
     save();
     show("game");
-    renderTracker($("game-tracker"), false);
     RB.rainbow.render($("rainbow"), 0);
     nextExercise();
   }
@@ -435,7 +425,7 @@
       t > 0
         ? `${t} ${t === 1 ? "diamant" : "diamanten"} &nbsp;·&nbsp; <b>${pts} ${pts === 1 ? "punt" : "punten"}</b>`
         : "Maak een regenboog af om je eerste diamant te verdienen.";
-    renderTracker($("treasure-tracker"), true);
+    renderTracker($("treasure-tracker"));
     renderRewardsList($("treasure-rewards"));
   }
 
@@ -448,11 +438,12 @@
       const isNext = i === earnedCount;
       const row = document.createElement("div");
       row.className = "reward-row" + (isEarned ? " earned" : isNext ? " next" : " locked");
-      const small = isEarned ? "Behaald!" : `${rewardReq(r)} · ${rewardNote(r, player)}`;
+      const small = isEarned ? "Behaald!" : summaryText(r);
       row.innerHTML = `
         <span class="reward-row-icon">${RB.art.treat(r.art)}</span>
         <span class="reward-row-text"><b>${r.name}</b><small>${small}</small></span>
-        <span class="reward-row-state">${isEarned ? RB.art.icon("check") : ""}</span>`;
+        <span class="reward-row-state">${isEarned ? RB.art.icon("check") : RB.art.icon("info")}</span>`;
+      row.addEventListener("click", () => showRewardDetail(r));
       el.appendChild(row);
     });
   }
@@ -543,6 +534,9 @@
 
     $("prize-ok").addEventListener("click", () => {
       $("prize-pop").classList.remove("show");
+    });
+    $("reward-detail-ok").addEventListener("click", () => {
+      $("reward-detail").classList.remove("show");
     });
 
     $("open-settings").addEventListener("click", () => {
