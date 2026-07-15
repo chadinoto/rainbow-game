@@ -546,13 +546,12 @@
     }
   }
 
-  // eenmalige beginscore toepassen (enkel op een leeg account)
+  // beginscore toepassen: waardeert op tot minstens de seed-waarden (nooit minder)
   function applySeed(s, seed) {
     for (const name of Object.keys(seed)) {
       if (!s.players[name]) continue;
       const sp = seed[name];
-      if (sp.gems) for (const k of [1, 2, 3, 4, 5]) s.players[name].gems[k] = sp.gems[k] || 0;
-      if (typeof sp.level === "number") s.players[name].level = sp.level;
+      if (sp.gems) for (const k of [1, 2, 3, 4, 5]) s.players[name].gems[k] = Math.max(s.players[name].gems[k] || 0, sp.gems[k] || 0);
     }
   }
 
@@ -564,7 +563,7 @@
     }
   }
 
-  // na het inloggen: laad uit de cloud (rijkste wint, tegen verlies) en start
+  // na het inloggen: laad uit de cloud (rijkste wint, tegen verlies), seed indien nodig, start
   async function enterApp() {
     let remote = null;
     try {
@@ -574,20 +573,21 @@
     if (remote) {
       const remoteState = RB.storage.normalize(remote);
       if (grandTotal(remoteState) >= grandTotal(state)) state = remoteState;
-      else {
-        try { await RB.cloud.save(state); } catch (e) {}
-      }
-    } else {
-      // eerste keer voor dit account: eventueel Lea's beginscore zetten, dan bewaren
-      if (cfg.SEED && grandTotal(state) === 0) applySeed(state, cfg.SEED);
-      try { await RB.cloud.save(state); } catch (e) {}
+    }
+
+    // eenmalige seed (per SEED_VERSION): waardeert Lea op tot minstens 10/10/10
+    if (cfg.SEED && (state.seedVersion || 0) < cfg.SEED_VERSION) {
+      applySeed(state, cfg.SEED);
+      state.seedVersion = cfg.SEED_VERSION;
     }
 
     if (!state.players[state.currentPlayer]) state.currentPlayer = "Lea";
     player = state.players[state.currentPlayer];
     reconcileSeen();
     RB.storage.save(state);
-    flushCloud();
+    try {
+      await RB.cloud.save(state); // de (ge-seede) stand meteen naar de cloud
+    } catch (e) {}
     renderStart();
     show("start");
   }

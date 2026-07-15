@@ -20,6 +20,7 @@ RB.storage = {
   _default() {
     return {
       version: 2,
+      seedVersion: 0,         // welke eenmalige seed al is toegepast
       soundOn: true,          // geluid + stem aan/uit (globaal)
       currentPlayer: "Lea",   // wie er nu speelt
       players: {              // aparte resultaten per speler
@@ -35,6 +36,7 @@ RB.storage = {
     const state = this._default();
     if (!data || typeof data !== "object") return state;
     if (typeof data.soundOn === "boolean") state.soundOn = data.soundOn;
+    if (typeof data.seedVersion === "number") state.seedVersion = data.seedVersion;
 
     const fold = (target, src) => {
       if (typeof src.level === "number") target.level = src.level;

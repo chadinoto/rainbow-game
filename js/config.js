@@ -81,8 +81,9 @@ RB.config = {
   // De spelers; elk houdt een eigen verzameling bij
   PLAYERS: ["Lea", "Mama", "Papa"],
 
-  // Beginscore die enkel wordt gezet als je cloud-account nog helemaal leeg is
-  // (dus bij de allereerste login). Daarna nooit meer.
+  // Beginscore die één keer wordt toegepast (per SEED_VERSION): Lea wordt opgewaardeerd
+  // tot minstens deze waarden (nooit minder). Verhoog SEED_VERSION om opnieuw te seeden.
+  SEED_VERSION: 1,
   SEED: { Lea: { gems: { 1: 10, 2: 10, 3: 10, 4: 0, 5: 0 } } },
 
   // Elke diamant is punten waard = zijn niveau (niveau 1 = 1 punt ... niveau 5 = 5 punten).
