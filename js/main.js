@@ -61,10 +61,9 @@
     return g[1] + g[2] + g[3] + g[4] + g[5];
   }
 
-  // Punten: elke diamant is zijn niveau waard (1..5)
+  // Punten: elke diamant telt als 1 (niet gewogen per niveau)
   function points(p) {
-    const g = p.gems;
-    return g[1] * 1 + g[2] * 2 + g[3] * 3 + g[4] * 4 + g[5] * 5;
+    return total(p);
   }
 
   // Hoeveel diamanten van kleur c al opgebruikt zijn door eerdere cadeautjes
@@ -187,11 +186,8 @@
     renderStartLevels();
     $("hello-line").textContent = "Kies je spel:";
     const t = total(player);
-    const pts = points(player);
-    $("chest-count-label").innerHTML =
-      t > 0
-        ? `${t} ${t === 1 ? "diamant" : "diamanten"} · ${pts} ${pts === 1 ? "punt" : "punten"}`
-        : "Nog geen diamanten";
+    $("chest-count-label").textContent =
+      t > 0 ? `${t} ${t === 1 ? "diamant" : "diamanten"}` : "Nog geen diamanten";
   }
 
   // Wie speelt er? (Lea / Mama / Papa) met eigen resultaten
@@ -223,9 +219,9 @@
       const lg = cfg.LEVEL_GEM[lv.id];
       b.innerHTML = `<span class="level-pic">${RB.art.levelPic(lv.id)}</span>
         <span class="level-text"><b>${lv.name}</b><small>${lv.desc}</small></span>
-        <span class="level-reward" title="Je verdient een diamant van ${lv.id} ${lv.id === 1 ? "punt" : "punten"}">
+        <span class="level-reward" title="Je verdient ${lg.label} diamanten (niveau ${lv.id})">
           <span class="lr-gem lr${lv.id}">${RB.gems.svg(lg.color, false)}</span>
-          <b>${lv.id}</b>
+          <small>niveau ${lv.id}</small>
         </span>`;
       b.addEventListener("click", () => chooseLevel(lv));
       list.appendChild(b);
@@ -436,10 +432,9 @@
     $("treasure-title").textContent = "Schatkist van " + state.currentPlayer;
     renderPile($("gem-pile"), player.gems);
     const t = total(player);
-    const pts = points(player);
-    $("treasure-count").innerHTML =
+    $("treasure-count").textContent =
       t > 0
-        ? `${t} ${t === 1 ? "diamant" : "diamanten"} &nbsp;·&nbsp; <b>${pts} ${pts === 1 ? "punt" : "punten"}</b>`
+        ? `${t} ${t === 1 ? "diamant" : "diamanten"}`
         : "Maak een regenboog af om je eerste diamant te verdienen.";
     renderTracker($("treasure-tracker"));
     renderRewardsList($("treasure-rewards"));

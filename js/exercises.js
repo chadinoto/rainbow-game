@@ -57,9 +57,16 @@ RB.exercises = {
     return this._addSub(20);
   },
 
+  // Kiest een getal, maar bij een bereik >10 vaker boven de 10 (moeilijker)
+  _pickBiasedHigh(min, max) {
+    if (max > 10 && Math.random() < 0.65) return this._rndInt(11, max);
+    return this._rndInt(min, Math.min(10, max));
+  },
+
   // --- Cijfer herkennen (of tellen) tot maxN ---
   _recognize(maxN) {
-    const useCount = Math.random() < 0.4; // soms tellen we voorwerpjes
+    // tot 20: minder tellen (kan maar tot 10), zodat de getallen 11-20 vaker komen
+    const useCount = Math.random() < (maxN > 10 ? 0.2 : 0.4);
 
     if (useCount) {
       // tellen houden we behapbaar (max 10 voorwerpjes)
@@ -79,7 +86,7 @@ RB.exercises = {
       };
     }
 
-    const target = this._rndInt(1, maxN);
+    const target = this._pickBiasedHigh(1, maxN);
     return {
       type: "recognize",
       instruction: "Welk getal hoor je?",
@@ -95,7 +102,8 @@ RB.exercises = {
 
   // --- Optellen ---
   _add(maxTotal) {
-    const answer = this._rndInt(2, maxTotal);
+    // tot 20: vaker een som die boven de 10 uitkomt
+    const answer = this._pickBiasedHigh(2, maxTotal);
     const a = this._rndInt(1, answer - 1);
     const b = answer - a;
     return {
@@ -115,8 +123,8 @@ RB.exercises = {
   _addSub(maxTotal) {
     if (Math.random() < 0.5) return this._add(maxTotal);
 
-    // aftrekken: begingetal - iets, antwoord >= 0
-    const a = this._rndInt(2, maxTotal);
+    // aftrekken: tot 20 vaker een begingetal boven de 10
+    const a = this._pickBiasedHigh(2, maxTotal);
     const b = this._rndInt(1, a);
     const answer = a - b;
     return {

@@ -89,9 +89,10 @@ RB.config = {
   REWARDS: [
     { name: "Een ijsje gaan eten", art: "icecream", need: { 1: 10 } },        // makkelijkst: 10 blauwe
     { name: "Een lolly", art: "lolly", need: { 2: 10 } },                      // + 10 groene
-    { name: "Frietjes gaan eten", art: "fries", need: { 1: 10, 2: 10 } },      // + 10 blauwe + 10 groene
-    { name: "Een cadeautje krijgen", art: "gift", need: { 3: 10 } },           // + 10 paarse
+    { name: "Frietjes gaan eten", art: "fries", need: { 1: 10, 2: 10, 3: 10 } },              // blauw + groen + paars
+    { name: "Een cadeautje krijgen", art: "gift", need: { 1: 10, 2: 10, 3: 10, 4: 10, 5: 10 } }, // alle vijf de kleuren
   ],
+  // (verbruik-in-volgorde blijft gelden: elke kleur telt eerst voor het eerste cadeautje in de rij)
 
   // Kleine, vrolijke complimentjes (nooit competitief, nooit "fout")
   PRAISE: [
