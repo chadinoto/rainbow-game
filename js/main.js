@@ -406,17 +406,18 @@
     const enc = $("encourage");
     enc.textContent = "Oei! Deze regenboog begint opnieuw. Jij kan het!";
     enc.className = "encourage nudge";
-    setTimeout(() => RB.audio.speak("Oei! We beginnen deze regenboog opnieuw. Jij kan het!"), 250);
+    setTimeout(() => RB.audio.speak("Oei! We beginnen deze regenboog opnieuw."), 250);
 
     player.collected = 0;
     roundWrong = 0;
     save();
     $("rainbow").classList.add("lost");
+    // langer wachten zodat "opnieuw" volledig klinkt vóór de volgende oefening
     setTimeout(() => {
       $("rainbow").classList.remove("lost");
       RB.rainbow.render($("rainbow"), 0);
       nextExercise();
-    }, 1900);
+    }, 2800);
   }
 
   function showHelp() {
