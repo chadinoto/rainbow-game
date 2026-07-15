@@ -352,6 +352,13 @@ RB.art = {
           <path d="M24 21 Q15 11 11 17 Q15 23 24 21 Z" fill="#F6C915"/>
           <path d="M24 21 Q33 11 37 17 Q33 23 24 21 Z" fill="#F6C915"/>
           <circle cx="24" cy="20" r="3" fill="#F0AE2E"/>`);
+      case "lolly":
+        return s(`
+          <rect x="22.5" y="22" width="3" height="23" rx="1.5" fill="#E4DCEC"/>
+          <circle cx="24" cy="17" r="13" fill="#FBD3E4"/>
+          <path d="M35 17 A11 11 0 1 1 14 13 A8 8 0 1 0 30 20 A5 5 0 1 1 20 17 A2.4 2.4 0 1 0 26 17"
+                fill="none" stroke="#F0568F" stroke-width="3.2" stroke-linecap="round"/>
+          <circle cx="19" cy="12" r="2.4" fill="#fff" opacity="0.6"/>`);
       case "cake":
         return s(`
           <path d="M10 26 L38 26 L38 42 Q38 44 36 44 L12 44 Q10 44 10 42 Z" fill="#F291B7"/>

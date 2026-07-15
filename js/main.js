@@ -16,6 +16,7 @@
   let current = null;
   let wrongTries = 0;
   let locked = false; // even blokkeren tijdens de fonkel-animatie
+  let focusedReward = null; // welk cadeautje in de tracker getoond wordt (null = volgende)
 
   const $ = (id) => document.getElementById(id);
   const save = () => RB.storage.save(state);
@@ -119,27 +120,23 @@
     return `${Math.min(points(player), r.points)}/${r.points} punten`;
   }
 
-  // Voortgang naar het volgende cadeautje (alleen in het score board)
+  // Voortgang van een cadeautje in het score board (klik op een cadeautje → wisselt hier)
   function renderTracker(el) {
-    const next = nextReward(player);
-    if (!next) {
+    const r = focusedReward || nextReward(player);
+    if (!r) {
       el.innerHTML = `<div class="tracker-done">Alle cadeautjes gehaald! <span class="tracker-treat">${RB.art.treat("gift")}</span></div>`;
       return;
     }
+    const met = rewardMet(r, player);
     el.innerHTML = `
-      <div class="tracker-head"><span class="tracker-treat">${RB.art.treat(next.art)}</span><b>${next.name}</b></div>
-      ${rewardProgressHTML(next)}`;
+      <div class="tracker-head"><span class="tracker-treat">${RB.art.treat(r.art)}</span><b>${r.name}</b></div>
+      ${met ? `<p class="tracker-met">Dit heb je al behaald!</p>` : ""}
+      ${rewardProgressHTML(r)}`;
   }
 
-  // Detail-venster van een cadeautje (verschijnt als je op de lijst tikt)
-  function showRewardDetail(r) {
-    const met = rewardMet(r, player);
-    $("reward-detail-body").innerHTML = `
-      <div class="prize-art">${RB.art.treat(r.art)}</div>
-      <h2 class="prize-title">${r.name}</h2>
-      <p class="prize-status">${met ? "Dit heb je al behaald!" : "Zo ver ben je al:"}</p>
-      ${rewardProgressHTML(r)}`;
-    $("reward-detail").classList.add("show");
+  function refreshRewards() {
+    renderTracker($("treasure-tracker"));
+    renderRewardsList($("treasure-rewards"));
   }
 
   // Stapel diamanten in een kist; grootte/kleur/glans per niveau (gedeeld door schatkist + feest)
@@ -417,6 +414,7 @@
   }
 
   function renderTreasure() {
+    focusedReward = null; // begin bij het eerstvolgende cadeautje
     $("treasure-title").textContent = "Schatkist van " + state.currentPlayer;
     renderPile($("gem-pile"), player.gems);
     const t = total(player);
@@ -432,18 +430,24 @@
   // De cadeautjes-ladder (wat je al hebt en nog kan verdienen)
   function renderRewardsList(el) {
     const earnedCount = rewardsReached(player);
+    const focusIdx = focusedReward ? cfg.REWARDS.indexOf(focusedReward) : earnedCount;
     el.innerHTML = "";
     cfg.REWARDS.forEach((r, i) => {
       const isEarned = i < earnedCount;
       const isNext = i === earnedCount;
       const row = document.createElement("div");
-      row.className = "reward-row" + (isEarned ? " earned" : isNext ? " next" : " locked");
+      row.className =
+        "reward-row" + (isEarned ? " earned" : isNext ? " next" : " locked") + (i === focusIdx ? " focused" : "");
       const small = isEarned ? "Behaald!" : summaryText(r);
       row.innerHTML = `
         <span class="reward-row-icon">${RB.art.treat(r.art)}</span>
         <span class="reward-row-text"><b>${r.name}</b><small>${small}</small></span>
-        <span class="reward-row-state">${isEarned ? RB.art.icon("check") : RB.art.icon("info")}</span>`;
-      row.addEventListener("click", () => showRewardDetail(r));
+        <span class="reward-row-state">${isEarned ? RB.art.icon("check") : ""}</span>`;
+      row.addEventListener("click", () => {
+        focusedReward = r;
+        refreshRewards();
+        $("treasure-tracker").scrollIntoView({ block: "nearest" });
+      });
       el.appendChild(row);
     });
   }
@@ -534,9 +538,6 @@
 
     $("prize-ok").addEventListener("click", () => {
       $("prize-pop").classList.remove("show");
-    });
-    $("reward-detail-ok").addEventListener("click", () => {
-      $("reward-detail").classList.remove("show");
     });
 
     $("open-settings").addEventListener("click", () => {

@@ -86,8 +86,9 @@ RB.config = {
   //   need: { 1: 10, 2: 10 } = minstens 10 blauwe (niveau 1) én 10 groene (niveau 2).
   // Ze worden in volgorde behaald (frietjes eerst). Pas gerust aan / voeg toe.
   REWARDS: [
+    { name: "Een ijsje gaan eten", art: "icecream", points: 12 },
+    { name: "Een lolly", art: "lolly", points: 28 },
     { name: "Frietjes gaan eten", art: "fries", need: { 1: 10, 2: 10 } },
-    { name: "Een ijsje gaan eten", art: "icecream", points: 90 },
     { name: "Een cadeautje krijgen", art: "gift", points: 150 },
   ],
 

@@ -583,17 +583,15 @@ html, body {
 .need-top { font-size: 14px; color: var(--ink-soft); margin-bottom: 5px; }
 .need-top b { color: var(--ink); font-weight: 800; font-size: 15px; }
 
-.reward-row { cursor: pointer; transition: transform 0.1s var(--ease), border-color 0.15s var(--ease); }
+.reward-row { cursor: pointer; transition: transform 0.1s var(--ease), border-color 0.15s var(--ease), box-shadow 0.15s var(--ease); }
 .reward-row:hover { border-color: var(--accent); }
 .reward-row:active { transform: scale(0.99); }
-.reward-row.next { border-color: var(--accent); }
 .reward-row.locked { opacity: 0.62; }
+.reward-row.focused { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-tint); }
 .reward-row-state .ic { width: 22px; height: 22px; }
-.reward-row.locked .reward-row-state, .reward-row.next .reward-row-state { color: var(--ink-faint); }
 
-.prize-status { font-size: 15px; font-weight: 700; color: var(--ink-soft); margin: 0 0 8px; }
-#reward-detail-body .prize-art { width: clamp(72px, 20vw, 96px); }
-#reward-detail-body .need-line { max-width: 300px; margin-left: auto; margin-right: auto; }
+.tracker-met { font-size: 14px; font-weight: 800; color: var(--yes-ink); margin: 0 0 6px; }
+.tracker-head .tracker-treat { width: 34px; height: 34px; }
 
 .points-total { font-size: clamp(28px, 7vw, 40px); font-weight: 800; color: var(--accent-deep); margin: 4px 0 12px; }
 .rewards-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
