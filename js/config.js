@@ -57,6 +57,11 @@ RB.config = {
       name: "Plus en min tot 20",
       desc: "Grotere sommen, optellen en aftrekken tot 20.",
     },
+    {
+      id: 6,
+      name: "Plus en min tot 100",
+      desc: "Grote sommen, optellen en aftrekken tot 100.",
+    },
   ],
 
   // De beloningsdiamant per niveau: hoe moeilijker, hoe groter, andere kleur en meer glans
@@ -65,7 +70,8 @@ RB.config = {
     2: { color: "#6FC15E", size: 0.94, label: "groene" },              // groen
     3: { color: "#A986DE", size: 1.08, label: "paarse" },              // paars
     4: { color: "#EF8FB0", size: 1.20, label: "roze" },                // roze, groter
-    5: { color: "#F3C233", size: 1.36, shiny: true, label: "gouden" }, // goud, grootst + extra glans
+    5: { color: "#F3C233", size: 1.36, shiny: true, label: "gouden" }, // goud
+    6: { color: "#E23D5A", size: 1.50, shiny: true, label: "rode" },   // rood, voor Raphael (tot 100)
   },
 
   // Nederlandse getalwoorden (voor de voorleesstem)
@@ -80,7 +86,14 @@ RB.config = {
   PASSCODE_HASH: "3626104624189726",
 
   // De spelers; elk houdt een eigen verzameling bij
-  PLAYERS: ["Lea", "Mama", "Papa"],
+  PLAYERS: ["Lea", "Raphael", "Mama", "Papa"],
+
+  // Welke niveaus elke speler ziet. Kinderen krijgen oefeningen op hun maat;
+  // ouders (niet in deze lijst) zien alle niveaus.
+  PLAYER_LEVELS: {
+    Lea: [1, 2, 3, 4, 5],
+    Raphael: [6],
+  },
 
   // Beginscore die één keer wordt toegepast (per SEED_VERSION): Lea wordt opgewaardeerd
   // tot minstens deze waarden (nooit minder). Verhoog SEED_VERSION om opnieuw te seeden.

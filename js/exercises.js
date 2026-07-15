@@ -54,7 +54,8 @@ RB.exercises = {
     if (level === 2) return this._add(10);
     if (level === 3) return this._addSub(10);
     if (level === 4) return this._recognize(20);
-    return this._addSub(20);
+    if (level === 5) return this._addSub(20);
+    return this._addSub(100); // niveau 6 (Raphael): plus en min tot 100
   },
 
   // Kiest een getal, maar bij een bereik >10 vaker boven de 10 (moeilijker)

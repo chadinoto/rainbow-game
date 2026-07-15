@@ -37,8 +37,9 @@
   function grandTotal(s) {
     let n = 0;
     for (const name of cfg.PLAYERS) {
+      if (!s.players[name]) continue;
       const g = s.players[name].gems;
-      n += g[1] + g[2] + g[3] + g[4] + g[5];
+      n += g[1] + g[2] + g[3] + g[4] + g[5] + (g[6] || 0);
     }
     return n;
   }
@@ -81,7 +82,7 @@
   // Totaal aantal diamanten van een speler (alle niveaus samen)
   function total(p) {
     const g = p.gems;
-    return g[1] + g[2] + g[3] + g[4] + g[5];
+    return g[1] + g[2] + g[3] + g[4] + g[5] + (g[6] || 0);
   }
 
   // Punten: elke diamant telt als 1 (niet gewogen per niveau)
@@ -182,7 +183,7 @@
   // Stapel diamanten in een kist; grootte/kleur/glans per niveau (gedeeld door schatkist + feest)
   function renderPile(el, gems) {
     let html = "", n = 0;
-    for (const lvl of [1, 2, 3, 4, 5]) {
+    for (const lvl of [1, 2, 3, 4, 5, 6]) {
       const lg = cfg.LEVEL_GEM[lvl];
       for (let i = 0; i < (gems[lvl] || 0) && n < 36; i++, n++) {
         html += `<span class="mini-gem g${lvl}${lg.shiny ? " shiny" : ""}">${RB.gems.svg(lg.color, false)}</span>`;
@@ -236,7 +237,13 @@
   function renderStartLevels() {
     const list = $("start-levels");
     list.innerHTML = "";
-    cfg.LEVELS.forEach((lv) => {
+    // kinderen zien enkel hun eigen niveaus; ouders (niet in de lijst) zien alles
+    const allowed = cfg.PLAYER_LEVELS[state.currentPlayer] || cfg.LEVELS.map((l) => l.id);
+    if (!allowed.includes(player.level)) {
+      player.level = allowed[0];
+      save();
+    }
+    cfg.LEVELS.filter((lv) => allowed.includes(lv.id)).forEach((lv) => {
       const b = document.createElement("button");
       b.className = "level-card" + (lv.id === player.level ? " selected" : "");
       const lg = cfg.LEVEL_GEM[lv.id];

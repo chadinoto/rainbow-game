@@ -256,6 +256,11 @@ RB.art = {
         `<path d="M6 48 Q5 7 32 7 Q59 7 58 48 L58 28 Q54 15 32 15 Q10 15 6 28 Z" fill="#2B2B33"/>`,
         { skin: "#DCA878" }
       );
+    if (name === "Raphael")
+      // bruin kort haar (jongen van 7)
+      return face(
+        `<path d="M9 27 Q12 8 32 8 Q52 8 55 27 Q47 16 32 16 Q17 16 9 27 Z" fill="#7A5230"/>`
+      );
     // Papa: donkerbruin kort haar + stoppelbaardje
     return face(
       `<path d="M10 27 Q13 9 32 9 Q51 9 54 27 Q47 17 32 17 Q17 17 10 27 Z" fill="#4A3320"/>`,
@@ -312,6 +317,16 @@ RB.art = {
                     font-size="18" font-weight="800" fill="${t[1]}">${t[0]}</text>`;
       });
       return wrap(g);
+    }
+    if (id === 6) {
+      // plus én min tot 100
+      return wrap(
+        this._plus(15, 22, 8, green) +
+          this._minus(31, 22, 8, coral) +
+          `<rect x="44" y="12" width="28" height="28" rx="6" fill="#FBD7DE" stroke="#E23D5A" stroke-width="2"/>
+           <text x="58" y="31" text-anchor="middle" font-family="ui-rounded, system-ui, sans-serif"
+                 font-size="13" font-weight="800" fill="#E23D5A">100</text>`
+      );
     }
     // niveau 5: plus én min + oplopende sterren (grotere getallen)
     let stars = "";
