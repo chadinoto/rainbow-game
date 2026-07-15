@@ -66,37 +66,89 @@
     return g[1] * 1 + g[2] * 2 + g[3] * 3 + g[4] * 4 + g[5] * 5;
   }
 
-  // Hoeveel cadeautje-drempels al gehaald zijn
-  function rewardsReached(pts) {
-    return cfg.REWARDS.filter((r) => pts >= r.points).length;
+  // Is aan de eis van een cadeautje voldaan? (punten en/of diamanten per kleur)
+  function rewardMet(r, p) {
+    if (r.points && points(p) < r.points) return false;
+    if (r.need) for (const l of Object.keys(r.need)) if ((p.gems[l] || 0) < r.need[l]) return false;
+    return true;
   }
 
-  // Het eerstvolgende cadeautje (of null als alles gehaald is)
-  function nextReward(pts) {
-    return cfg.REWARDS.find((r) => pts < r.points) || null;
+  // Hoeveel cadeautjes al behaald zijn (in volgorde: frietjes eerst)
+  function rewardsReached(p) {
+    let n = 0;
+    for (const r of cfg.REWARDS) {
+      if (rewardMet(r, p)) n++;
+      else break;
+    }
+    return n;
   }
 
-  // Voortgangsbalk naar het volgende cadeautje (mini = tijdens spel, big = cadeautjes-scherm)
+  // Het eerstvolgende (nog niet behaalde) cadeautje
+  function nextReward(p) {
+    return cfg.REWARDS[rewardsReached(p)] || null;
+  }
+
+  // Korte tekst met wat er nog nodig is voor een cadeautje
+  function rewardNote(r, p) {
+    if (r.need) {
+      const parts = [];
+      for (const l of Object.keys(r.need)) {
+        const left = Math.max(0, r.need[l] - (p.gems[l] || 0));
+        if (left > 0) parts.push(`${left} ${cfg.LEVEL_GEM[l].label}`);
+      }
+      return parts.length ? "nog " + parts.join(" + ") : "Behaald!";
+    }
+    const left = (r.points || 0) - points(p);
+    return left > 0 ? `nog ${left} ${left === 1 ? "punt" : "punten"}` : "Behaald!";
+  }
+
+  // De eis van een cadeautje als tekst (voor toekomstige cadeautjes)
+  function rewardReq(r) {
+    if (r.need) return Object.keys(r.need).map((l) => `${r.need[l]} ${cfg.LEVEL_GEM[l].label}`).join(" + ");
+    return `${r.points} punten`;
+  }
+
+  // Voortgang naar het volgende cadeautje (mini = tijdens spel, big = score board)
   function renderTracker(el, big) {
-    const pts = points(player);
-    const next = nextReward(pts);
+    const next = nextReward(player);
     if (!next) {
-      el.innerHTML = `<div class="tracker-done">Alle cadeautjes gehaald! ${RB.art.treat("gift")}</div>`;
+      el.innerHTML = `<div class="tracker-done">Alle cadeautjes gehaald! <span class="tracker-treat">${RB.art.treat("gift")}</span></div>`;
       return;
     }
-    const prevPts = cfg.REWARDS.filter((r) => r.points <= pts).reduce((m, r) => Math.max(m, r.points), 0);
+
+    // eis per kleur (bv. frietjes: blauwe + groene diamanten)
+    if (next.need) {
+      let bars = "";
+      for (const l of Object.keys(next.need)) {
+        const have = player.gems[l] || 0;
+        const target = next.need[l];
+        const pct = Math.max(0, Math.min(100, (have / target) * 100));
+        const color = cfg.LEVEL_GEM[l].color;
+        bars += `
+          <div class="tracker-need">
+            <span class="need-gem lr3">${RB.gems.svg(color, false)}</span>
+            <div class="tracker-bar"><span class="tracker-fill" style="width:${pct}%;background:${color}"></span></div>
+            <span class="need-count">${Math.min(have, target)}/${target}</span>
+          </div>`;
+      }
+      el.innerHTML = `
+        <div class="tracker-head"><span class="tracker-treat">${RB.art.treat(next.art)}</span><b>${next.name}</b></div>
+        ${bars}`;
+      return;
+    }
+
+    // eis op punten
+    const pts = points(player);
+    const prevPts = cfg.REWARDS.filter((r) => rewardMet(r, player) && r.points).reduce((m, r) => Math.max(m, r.points), 0);
     const span = next.points - prevPts;
     const pct = Math.max(0, Math.min(100, ((pts - prevPts) / span) * 100));
     const left = next.points - pts;
-    const label = big
-      ? `Nog ${left} ${left === 1 ? "punt" : "punten"} tot: ${next.name}`
-      : `Nog ${left} tot je cadeautje`;
     el.innerHTML = `
       <div class="tracker-row">
         <div class="tracker-bar"><span class="tracker-fill" style="width:${pct}%"></span></div>
         <span class="tracker-treat">${RB.art.treat(next.art)}</span>
       </div>
-      <p class="tracker-label">${label}</p>`;
+      <p class="tracker-label">${big ? `Nog ${left} ${left === 1 ? "punt" : "punten"} tot: ${next.name}` : `Nog ${left} tot je cadeautje`}</p>`;
   }
 
   // Stapel diamanten in een kist; grootte/kleur/glans per niveau (gedeeld door schatkist + feest)
@@ -355,7 +407,7 @@
 
   // Toont het cadeautje-feest als er een puntendrempel gehaald is
   function maybeShowPrize() {
-    const reached = rewardsReached(points(player));
+    const reached = rewardsReached(player);
     if (reached <= player.seenRewards) return;
     const prize = cfg.REWARDS[player.seenRewards];
     player.seenRewards++;
@@ -389,18 +441,18 @@
 
   // De cadeautjes-ladder (wat je al hebt en nog kan verdienen)
   function renderRewardsList(el) {
-    const pts = points(player);
+    const earnedCount = rewardsReached(player);
     el.innerHTML = "";
-    cfg.REWARDS.forEach((r) => {
-      const earned = pts >= r.points;
-      const left = r.points - pts;
+    cfg.REWARDS.forEach((r, i) => {
+      const isEarned = i < earnedCount;
+      const isNext = i === earnedCount;
       const row = document.createElement("div");
-      row.className = "reward-row" + (earned ? " earned" : "");
-      const note = earned ? "Behaald!" : `nog ${left} ${left === 1 ? "punt" : "punten"}`;
+      row.className = "reward-row" + (isEarned ? " earned" : isNext ? " next" : " locked");
+      const small = isEarned ? "Behaald!" : `${rewardReq(r)} · ${rewardNote(r, player)}`;
       row.innerHTML = `
         <span class="reward-row-icon">${RB.art.treat(r.art)}</span>
-        <span class="reward-row-text"><b>${r.name}</b><small>${r.points} punten · ${note}</small></span>
-        <span class="reward-row-state">${earned ? RB.art.icon("check") : ""}</span>`;
+        <span class="reward-row-text"><b>${r.name}</b><small>${small}</small></span>
+        <span class="reward-row-state">${isEarned ? RB.art.icon("check") : ""}</span>`;
       el.appendChild(row);
     });
   }
@@ -533,7 +585,7 @@
   // reeds behaalde cadeautjes markeren als "gezien" (geen oude pop-ups)
   for (const name of cfg.PLAYERS) {
     const p = state.players[name];
-    p.seenRewards = Math.max(p.seenRewards || 0, rewardsReached(points(p)));
+    p.seenRewards = Math.max(p.seenRewards || 0, rewardsReached(p));
   }
   save();
 

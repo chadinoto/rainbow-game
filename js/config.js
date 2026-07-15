@@ -60,11 +60,11 @@ RB.config = {
 
   // De beloningsdiamant per niveau: hoe moeilijker, hoe groter, andere kleur en meer glans
   LEVEL_GEM: {
-    1: { color: "#5FB6E6", size: 0.80 },              // licht blauw, klein
-    2: { color: "#6FC15E", size: 0.94 },              // groen
-    3: { color: "#A986DE", size: 1.08 },              // paars
-    4: { color: "#EF8FB0", size: 1.20 },              // roze, groter
-    5: { color: "#F3C233", size: 1.36, shiny: true }, // goud, grootst + extra glans
+    1: { color: "#5FB6E6", size: 0.80, label: "blauwe" },              // licht blauw, klein
+    2: { color: "#6FC15E", size: 0.94, label: "groene" },              // groen
+    3: { color: "#A986DE", size: 1.08, label: "paarse" },              // paars
+    4: { color: "#EF8FB0", size: 1.20, label: "roze" },                // roze, groter
+    5: { color: "#F3C233", size: 1.36, shiny: true, label: "gouden" }, // goud, grootst + extra glans
   },
 
   // Nederlandse getalwoorden (voor de voorleesstem)
@@ -82,11 +82,13 @@ RB.config = {
   PLAYERS: ["Lea", "Mama", "Papa"],
 
   // Elke diamant is punten waard = zijn niveau (niveau 1 = 1 punt ... niveau 5 = 5 punten).
-  // Bij deze puntendrempels verdient ze een echt cadeautje. Pas gerust aan / voeg toe.
+  // Een cadeautje kan een eis hebben op punten (points) en/of op diamanten per niveau (need).
+  //   need: { 1: 10, 2: 10 } = minstens 10 blauwe (niveau 1) én 10 groene (niveau 2).
+  // Ze worden in volgorde behaald (frietjes eerst). Pas gerust aan / voeg toe.
   REWARDS: [
-    { points: 40, name: "Frietjes gaan eten", art: "fries" },
-    { points: 90, name: "Een ijsje gaan eten", art: "icecream" },
-    { points: 150, name: "Een cadeautje krijgen", art: "gift" },
+    { name: "Frietjes gaan eten", art: "fries", need: { 1: 10, 2: 10 } },
+    { name: "Een ijsje gaan eten", art: "icecream", points: 90 },
+    { name: "Een cadeautje krijgen", art: "gift", points: 150 },
   ],
 
   // Kleine, vrolijke complimentjes (nooit competitief, nooit "fout")
