@@ -133,11 +133,9 @@ RB.config = {
   SEED_VERSION: 2,
   SEED: { Lea: { gems: { 1: 10, 2: 10, 3: 10, 4: 0, 5: 0, 6: 0 } } },
 
-  // Elke diamant is punten waard = zijn niveau (niveau 1 = 1 punt ... niveau 5 = 5 punten).
-  // need = wat DIT cadeautje extra kost aan diamanten per niveau.
-  //   Diamanten vullen de cadeautjes in volgorde: zit een kleur in twee cadeautjes,
-  //   dan gaat ze eerst naar het eerste in de rij, de rest telt voor het volgende.
-  //   Bv. ijsje kost 10 blauwe; frietjes kost daarna nóg 10 blauwe (dus 20 in totaal).
+  // need = hoeveel diamanten van elke kleur je nodig hebt voor dit cadeautje.
+  //   Absoluut: bv. frietjes { 1: 10, 2: 10, 3: 10 } = heb 10 blauwe én 10 groene én 10 paarse.
+  //   Dezelfde diamanten tellen voor meerdere cadeautjes (geen verbruik-in-volgorde).
   REWARDS: [
     { name: "Een ijsje gaan eten", art: "icecream", need: { 1: 10 } },        // makkelijkst: 10 blauwe
     { name: "Een lolly", art: "lolly", need: { 2: 10 } },                      // + 10 groene
@@ -155,7 +153,6 @@ RB.config = {
       { name: "Een cadeautje krijgen", art: "gift", need: { 6: 10, 8: 10, 9: 10, 10: 10, 11: 10 } }, // 10 van alles
     ],
   },
-  // (verbruik-in-volgorde blijft gelden: elke kleur telt eerst voor het eerste cadeautje in de rij)
 
   // Kleine, vrolijke complimentjes (nooit competitief, nooit "fout")
   PRAISE: [

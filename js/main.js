@@ -98,19 +98,10 @@
     return rewardsForName(state.currentPlayer);
   }
 
-  // Hoeveel diamanten van kleur c al opgebruikt zijn door eerdere cadeautjes
-  function consumedBefore(rewards, index, c) {
-    let s = 0;
-    for (let j = 0; j < index; j++) {
-      const n = rewards[j].need;
-      if (n && n[c]) s += n[c];
-    }
-    return s;
-  }
-
-  // Beschikbare diamanten van kleur c voor het cadeautje op deze plek (na eerder verbruik)
+  // Beschikbare diamanten van kleur c voor een cadeautje: gewoon het totaal dat je hebt
+  // (elk cadeautje vraagt absoluut 10 van elke opgesomde kleur, geen verbruik-in-volgorde)
   function availFor(rewards, index, c, p) {
-    return Math.max(0, (p.gems[c] || 0) - consumedBefore(rewards, index, c));
+    return p.gems[c] || 0;
   }
 
   // Is aan de eis van een cadeautje voldaan? (diamanten per kleur, in volgorde verbruikt)
