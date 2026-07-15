@@ -19,7 +19,29 @@
   let focusedReward = null; // welk cadeautje in de tracker getoond wordt (null = volgende)
 
   const $ = (id) => document.getElementById(id);
-  const save = () => RB.storage.save(state);
+
+  // opslaan: altijd lokaal (snel/offline) + na een korte pauze naar de cloud
+  let cloudTimer = null;
+  function save() {
+    RB.storage.save(state);
+    if (RB.cloud.user) {
+      clearTimeout(cloudTimer);
+      cloudTimer = setTimeout(() => RB.cloud.save(state).catch(() => {}), 1200);
+    }
+  }
+  function flushCloud() {
+    if (RB.cloud.user) RB.cloud.save(state).catch(() => {});
+  }
+  // totaal aantal diamanten over alle spelers (voor de "rijkste wint"-samenvoeging)
+  function grandTotal(s) {
+    let n = 0;
+    for (const name of cfg.PLAYERS) {
+      const g = s.players[name].gems;
+      n += g[1] + g[2] + g[3] + g[4] + g[5];
+    }
+    return n;
+  }
+
   const screens = {
     login: $("login-screen"),
     start: $("start-screen"),
@@ -372,6 +394,7 @@
     player.gems[lvl]++;
     player.collected = 0;
     save();
+    flushCloud(); // een verdiende diamant meteen naar de cloud
 
     const fly = $("reward-fly");
     fly.innerHTML = RB.gems.svg(lg.color, false);
@@ -491,24 +514,82 @@
     $("reset-player-name").textContent = state.currentPlayer;
   }
 
-  // ---------- LOGIN ----------
-  function tryLogin() {
-    const input = $("login-input");
-    if (RB.auth.check(input.value)) {
-      RB.auth.unlock();
-      input.value = "";
+  // ---------- LOGIN / CLOUD ----------
+  function showLogin() {
+    show("login");
+    setTimeout(() => $("login-email").focus(), 100);
+  }
+
+  function showLoginError(msg) {
+    $("login-error").textContent = msg;
+    const card = document.querySelector(".login-card");
+    card.classList.remove("shake");
+    void card.offsetWidth;
+    card.classList.add("shake");
+  }
+
+  async function tryLogin() {
+    const email = $("login-email").value.trim();
+    const password = $("login-password").value;
+    if (!email || !password) return showLoginError("Vul je e-mail en wachtwoord in.");
+    const btn = $("login-btn");
+    btn.disabled = true;
+    $("login-error").textContent = "Bezig met inloggen…";
+    const res = await RB.cloud.signIn(email, password);
+    btn.disabled = false;
+    if (res.ok) {
+      $("login-password").value = "";
       $("login-error").textContent = "";
-      renderStart();
-      show("start");
+      await enterApp();
     } else {
-      $("login-error").textContent = "Oeps, dat klopt niet. Probeer opnieuw.";
-      input.value = "";
-      input.focus();
-      const card = document.querySelector(".login-card");
-      card.classList.remove("shake");
-      void card.offsetWidth;
-      card.classList.add("shake");
+      showLoginError("Inloggen niet gelukt. Controleer je e-mail en wachtwoord.");
     }
+  }
+
+  // eenmalige beginscore toepassen (enkel op een leeg account)
+  function applySeed(s, seed) {
+    for (const name of Object.keys(seed)) {
+      if (!s.players[name]) continue;
+      const sp = seed[name];
+      if (sp.gems) for (const k of [1, 2, 3, 4, 5]) s.players[name].gems[k] = sp.gems[k] || 0;
+      if (typeof sp.level === "number") s.players[name].level = sp.level;
+    }
+  }
+
+  // markeer reeds behaalde cadeautjes als "gezien" (geen oude pop-ups)
+  function reconcileSeen() {
+    for (const name of cfg.PLAYERS) {
+      const p = state.players[name];
+      p.seenRewards = Math.max(p.seenRewards || 0, rewardsReached(p));
+    }
+  }
+
+  // na het inloggen: laad uit de cloud (rijkste wint, tegen verlies) en start
+  async function enterApp() {
+    let remote = null;
+    try {
+      remote = await RB.cloud.load();
+    } catch (e) {}
+
+    if (remote) {
+      const remoteState = RB.storage.normalize(remote);
+      if (grandTotal(remoteState) >= grandTotal(state)) state = remoteState;
+      else {
+        try { await RB.cloud.save(state); } catch (e) {}
+      }
+    } else {
+      // eerste keer voor dit account: eventueel Lea's beginscore zetten, dan bewaren
+      if (cfg.SEED && grandTotal(state) === 0) applySeed(state, cfg.SEED);
+      try { await RB.cloud.save(state); } catch (e) {}
+    }
+
+    if (!state.players[state.currentPlayer]) state.currentPlayer = "Lea";
+    player = state.players[state.currentPlayer];
+    reconcileSeen();
+    RB.storage.save(state);
+    flushCloud();
+    renderStart();
+    show("start");
   }
 
   // ---------- KNOPPEN AAN ELKAAR KOPPELEN ----------
@@ -586,23 +667,30 @@
         renderSettings();
       }
     });
+
+    $("logout-btn").addEventListener("click", async () => {
+      if (confirm("Uitloggen?")) {
+        flushCloud();
+        await RB.cloud.signOut();
+        showLogin();
+      }
+    });
+
+    // bij het sluiten/wegklikken: laatste stand nog naar de cloud
+    window.addEventListener("pagehide", flushCloud);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flushCloud();
+    });
   }
 
   // ---------- START ----------
-  // reeds behaalde cadeautjes markeren als "gezien" (geen oude pop-ups)
-  for (const name of cfg.PLAYERS) {
-    const p = state.players[name];
-    p.seenRewards = Math.max(p.seenRewards || 0, rewardsReached(p));
+  async function boot() {
+    RB.cloud.init();
+    initArt();
+    wire();
+    const user = RB.cloud.available() ? await RB.cloud.currentUser() : null;
+    if (user) await enterApp();
+    else showLogin();
   }
-  save();
-
-  initArt();
-  wire();
-  if (RB.auth.isUnlocked()) {
-    renderStart();
-    show("start");
-  } else {
-    show("login");
-    setTimeout(() => $("login-input").focus(), 100);
-  }
+  boot();
 })();

@@ -25,12 +25,14 @@
       <div class="blobs" aria-hidden="true"></div>
       <div class="login-card">
         <div id="login-mascot" class="login-mascot"></div>
-        <h1 class="title">Even inloggen</h1>
-        <p class="subtitle">Typ het wachtwoord om te spelen.</p>
-        <form id="login-form" autocomplete="off">
-          <input id="login-input" class="login-input" type="password" inputmode="text"
+        <h1 class="title">Inloggen</h1>
+        <p class="subtitle">Log in om te spelen.</p>
+        <form id="login-form" autocomplete="on">
+          <input id="login-email" class="login-input" type="email" inputmode="email"
+                 placeholder="E-mailadres" autocomplete="username" />
+          <input id="login-password" class="login-input" type="password"
                  placeholder="Wachtwoord" autocomplete="current-password" />
-          <button id="login-btn" class="btn-primary" type="submit">Verder</button>
+          <button id="login-btn" class="btn-primary" type="submit">Inloggen</button>
         </form>
         <p id="login-error" class="login-error"></p>
       </div>
@@ -158,6 +160,7 @@
         <div class="reset-block">
           <button id="reset-player" class="reset-btn">Verzameling van <span id="reset-player-name">Lea</span> wissen</button>
           <button id="reset-all" class="reset-btn">Alles van iedereen wissen</button>
+          <button id="logout-btn" class="reset-btn">Uitloggen</button>
         </div>
 
         <div class="settings-actions end">
@@ -170,7 +173,9 @@
 
   <!-- Geen ES-modules: gewone scripts, zodat het werkt door dubbelklikken (file://) -->
   <script src="js/config.js"></script>
-  <script src="js/auth.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase.min.js"></script>
+  <script src="js/cloud.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/art.js"></script>
   <script src="js/audio.js"></script>

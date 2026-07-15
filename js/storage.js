@@ -30,37 +30,41 @@ RB.storage = {
     };
   },
 
+  // Zet ruwe (lokale of cloud-)gegevens om naar een geldige, volledige toestand
+  normalize(data) {
+    const state = this._default();
+    if (!data || typeof data !== "object") return state;
+    if (typeof data.soundOn === "boolean") state.soundOn = data.soundOn;
+
+    const fold = (target, src) => {
+      if (typeof src.level === "number") target.level = src.level;
+      if (typeof src.collected === "number") target.collected = src.collected;
+      if (src.gems && typeof src.gems === "object") {
+        for (const k of [1, 2, 3, 4, 5]) target.gems[k] = src.gems[k] || 0;
+      }
+      if (typeof src.seenRewards === "number") target.seenRewards = src.seenRewards;
+      // oude telling (treasure/necklaces) → tel bij niveau 1
+      const legacy = (src.treasure || 0) + (src.necklaces || 0);
+      if (legacy) target.gems[1] += legacy;
+    };
+
+    if (data.players) {
+      for (const name of Object.keys(state.players)) {
+        if (data.players[name]) fold(state.players[name], data.players[name]);
+      }
+      if (data.currentPlayer && state.players[data.currentPlayer]) {
+        state.currentPlayer = data.currentPlayer;
+      }
+    } else if (typeof data.level === "number" || typeof data.treasure === "number" || data.necklaces) {
+      fold(state.players.Lea, data); // oude platte structuur → onder Lea
+    }
+    return state;
+  },
+
   load() {
     try {
       const raw = localStorage.getItem(this.KEY);
-      if (!raw) return this._default();
-      const data = JSON.parse(raw);
-      const state = this._default();
-      if (typeof data.soundOn === "boolean") state.soundOn = data.soundOn;
-
-      const fold = (target, src) => {
-        if (typeof src.level === "number") target.level = src.level;
-        if (typeof src.collected === "number") target.collected = src.collected;
-        if (src.gems && typeof src.gems === "object") {
-          for (const k of [1, 2, 3, 4, 5]) target.gems[k] = src.gems[k] || 0;
-        }
-        if (typeof src.seenRewards === "number") target.seenRewards = src.seenRewards;
-        // oude telling (treasure/necklaces) → tel bij niveau 1
-        const legacy = (src.treasure || 0) + (src.necklaces || 0);
-        if (legacy) target.gems[1] += legacy;
-      };
-
-      if (data.players) {
-        for (const name of Object.keys(state.players)) {
-          if (data.players[name]) fold(state.players[name], data.players[name]);
-        }
-        if (data.currentPlayer && state.players[data.currentPlayer]) {
-          state.currentPlayer = data.currentPlayer;
-        }
-      } else if (typeof data.level === "number" || typeof data.treasure === "number" || data.necklaces) {
-        fold(state.players.Lea, data); // oude platte structuur → onder Lea
-      }
-      return state;
+      return this.normalize(raw ? JSON.parse(raw) : null);
     } catch (e) {
       return this._default();
     }

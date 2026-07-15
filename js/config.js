@@ -81,6 +81,10 @@ RB.config = {
   // De spelers; elk houdt een eigen verzameling bij
   PLAYERS: ["Lea", "Mama", "Papa"],
 
+  // Beginscore die enkel wordt gezet als je cloud-account nog helemaal leeg is
+  // (dus bij de allereerste login). Daarna nooit meer.
+  SEED: { Lea: { gems: { 1: 10, 2: 10, 3: 10, 4: 0, 5: 0 } } },
+
   // Elke diamant is punten waard = zijn niveau (niveau 1 = 1 punt ... niveau 5 = 5 punten).
   // need = wat DIT cadeautje extra kost aan diamanten per niveau.
   //   Diamanten vullen de cadeautjes in volgorde: zit een kleur in twee cadeautjes,
