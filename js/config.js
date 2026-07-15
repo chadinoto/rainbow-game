@@ -59,8 +59,8 @@ RB.config = {
     },
     {
       id: 6,
-      name: "Plus en min tot 100",
-      desc: "Grote sommen, optellen en aftrekken tot 100. Zelf intypen.",
+      name: "Plus tot 100",
+      desc: "Optellen tot 100. Zelf intypen.",
     },
     {
       id: 7,
@@ -69,13 +69,28 @@ RB.config = {
     },
     {
       id: 8,
-      name: "Tellen tot 200",
-      desc: "Getallen tot 200 horen en zelf intypen.",
+      name: "Min tot 100",
+      desc: "Aftrekken tot 100. Zelf intypen.",
+    },
+    {
+      id: 9,
+      name: "Plus tot 200",
+      desc: "Optellen tot 200. Zelf intypen.",
+    },
+    {
+      id: 10,
+      name: "Min tot 200",
+      desc: "Aftrekken tot 200. Zelf intypen.",
+    },
+    {
+      id: 11,
+      name: "Plus en min tot 200",
+      desc: "Optellen en aftrekken tot 200. Zelf intypen.",
     },
   ],
 
   // Niveaus waar je het antwoord zelf typt (numpad) i.p.v. keuzeknoppen
-  NUMPAD_LEVELS: [6, 7, 8],
+  NUMPAD_LEVELS: [6, 7, 8, 9, 10, 11],
 
   // De beloningsdiamant per niveau: hoe moeilijker, hoe groter, andere kleur en meer glans
   LEVEL_GEM: {
@@ -84,9 +99,12 @@ RB.config = {
     3: { color: "#A986DE", size: 1.08, label: "paarse" },              // paars
     4: { color: "#EF8FB0", size: 1.20, label: "roze" },                // roze, groter
     5: { color: "#F3C233", size: 1.36, shiny: true, label: "gouden" }, // goud
-    6: { color: "#E23D5A", size: 1.50, shiny: true, label: "rode" },      // rood, Raphael (tot 100)
-    7: { color: "#22B2C9", size: 1.44, shiny: true, label: "turkooizen" }, // turkoois, Lea (zelf typen)
-    8: { color: "#F0812E", size: 1.52, shiny: true, label: "oranje" },     // oranje, Raphael (tellen tot 200)
+    6: { color: "#E23D5A", size: 1.50, shiny: true, label: "rode" },       // Raphael: plus tot 100
+    7: { color: "#22B2C9", size: 1.44, shiny: true, label: "turkooizen" }, // Lea: zelf typen tot 20
+    8: { color: "#F0812E", size: 1.52, shiny: true, label: "oranje" },     // Raphael: min tot 100
+    9: { color: "#7A5BD8", size: 1.54, shiny: true, label: "paarse" },     // Raphael: plus tot 200
+    10: { color: "#E0559E", size: 1.56, shiny: true, label: "roze" },      // Raphael: min tot 200
+    11: { color: "#2FA88E", size: 1.60, shiny: true, label: "groene" },    // Raphael: plus en min tot 200
   },
 
   // Nederlandse getalwoorden (voor de voorleesstem)
@@ -107,7 +125,7 @@ RB.config = {
   // ouders (niet in deze lijst) zien alle niveaus.
   PLAYER_LEVELS: {
     Lea: [1, 2, 3, 4, 5, 7],
-    Raphael: [6, 8],
+    Raphael: [6, 8, 9, 10, 11], // plus100, min100, plus200, min200, plus+min200
   },
 
   // Beginscore die één keer wordt toegepast (per SEED_VERSION): Lea's diamanten
@@ -131,10 +149,10 @@ RB.config = {
   // dus zijn cadeautjes tellen die. Wie niet in de lijst staat, gebruikt REWARDS.
   PLAYER_REWARDS: {
     Raphael: [
-      { name: "Een ijsje gaan eten", art: "icecream", need: { 6: 10 } },        // 10 rode (tot 100)
-      { name: "Een lolly", art: "lolly", need: { 8: 10 } },                      // 10 oranje (tellen tot 200)
-      { name: "Frietjes gaan eten", art: "fries", need: { 6: 10, 8: 10 } },      // + rode + oranje
-      { name: "Een cadeautje krijgen", art: "gift", need: { 6: 10, 8: 10 } },    // + rode + oranje
+      { name: "Een ijsje gaan eten", art: "icecream", need: { 6: 10 } },         // plus tot 100
+      { name: "Een lolly", art: "lolly", need: { 8: 10 } },                       // min tot 100
+      { name: "Frietjes gaan eten", art: "fries", need: { 9: 10, 10: 10 } },      // plus + min tot 200
+      { name: "Een cadeautje krijgen", art: "gift", need: { 11: 10 } },           // plus en min tot 200
     ],
   },
   // (verbruik-in-volgorde blijft gelden: elke kleur telt eerst voor het eerste cadeautje in de rij)

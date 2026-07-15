@@ -320,28 +320,16 @@ RB.art = {
       });
       return wrap(g);
     }
-    if (id === 8) {
-      // tellen tot 200: twee brede getal-tegels
-      const tiles = [["100", "#F0812E", "#FCE4CE"], ["200", "#E23D5A", "#FBD7DE"]];
-      let g = "";
-      tiles.forEach((t, i) => {
-        const x = 7 + i * 36;
-        g += `<rect x="${x}" y="12" width="33" height="28" rx="6" fill="${t[2]}" stroke="${t[1]}" stroke-width="2"/>
-              <text x="${x + 16.5}" y="31" text-anchor="middle" font-family="ui-rounded, system-ui, sans-serif"
-                    font-size="12.5" font-weight="800" fill="${t[1]}">${t[0]}</text>`;
-      });
-      return wrap(g);
-    }
-    if (id === 6) {
-      // plus én min tot 100
-      return wrap(
-        this._plus(15, 22, 8, green) +
-          this._minus(31, 22, 8, coral) +
-          `<rect x="44" y="12" width="28" height="28" rx="6" fill="#FBD7DE" stroke="#E23D5A" stroke-width="2"/>
-           <text x="58" y="31" text-anchor="middle" font-family="ui-rounded, system-ui, sans-serif"
-                 font-size="13" font-weight="800" fill="#E23D5A">100</text>`
-      );
-    }
+    // getal-tegel (voor de tot-100/200 niveaus)
+    const numTile = (x, num) =>
+      `<rect x="${x}" y="12" width="32" height="28" rx="6" fill="#EAF0F5" stroke="#5B6B7A" stroke-width="2"/>
+       <text x="${x + 16}" y="31" text-anchor="middle" font-family="ui-rounded, system-ui, sans-serif"
+             font-size="12.5" font-weight="800" fill="#3E4A57">${num}</text>`;
+    if (id === 6) return wrap(this._plus(16, 26, 9, green) + numTile(40, "100"));   // plus tot 100
+    if (id === 8) return wrap(this._minus(16, 26, 9, coral) + numTile(40, "100"));  // min tot 100
+    if (id === 9) return wrap(this._plus(16, 26, 9, green) + numTile(40, "200"));   // plus tot 200
+    if (id === 10) return wrap(this._minus(16, 26, 9, coral) + numTile(40, "200")); // min tot 200
+    if (id === 11) return wrap(this._plus(12, 26, 7, green) + this._minus(27, 26, 7, coral) + numTile(40, "200")); // plus+min tot 200
     // niveau 5: plus én min + oplopende sterren (grotere getallen)
     let stars = "";
     for (let i = 0; i < 3; i++) {

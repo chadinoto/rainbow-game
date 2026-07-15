@@ -52,8 +52,10 @@ html, body {
   position: absolute;
   inset: 0;
   display: none;
-  align-items: center;
-  justify-content: center;
+  align-items: safe center;
+  justify-content: safe center;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: clamp(16px, 4vw, 40px);
 }
 .screen.active { display: flex; animation: fadeIn 0.45s var(--ease); }
@@ -252,11 +254,11 @@ html, body {
 .icon-btn.ghost { background: var(--card-2); }
 
 /* ---------- SPEL SCHERM ---------- */
-#game-screen { flex-direction: column; align-items: center; justify-content: center; }
+#game-screen { flex-direction: column; align-items: center; justify-content: safe center; }
 .home-btn { position: absolute; top: clamp(12px, 3vw, 20px); left: clamp(12px, 3vw, 20px); z-index: 6; }
 
 /* de echte regenboog */
-.rainbow { position: relative; width: min(430px, 88vw); }
+.rainbow { position: relative; width: min(250px, 54vw); }
 .rainbow-svg { width: 100%; height: auto; display: block; overflow: visible; }
 .rb-arc { transition: stroke 0.25s var(--ease); }
 .rb-arc.on { filter: drop-shadow(0 2px 3px oklch(0.5 0.06 320 / 0.14)); }
@@ -293,13 +295,13 @@ html, body {
 }
 
 .play-area {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: clamp(18px, 4vw, 28px);
-  padding: 20px 12px;
+  justify-content: flex-start;
+  gap: clamp(12px, 2.5vw, 20px);
+  padding: 14px 12px;
+  margin: auto 0; /* centreren als er plaats is, scrollen als het te hoog is */
   min-width: 0;
 }
 
@@ -309,23 +311,23 @@ html, body {
   border: 1px solid var(--border);
   border-radius: 28px;
   box-shadow: var(--shadow-2);
-  padding: clamp(24px, 4vw, 34px);
+  padding: clamp(18px, 3vw, 26px);
   text-align: center;
-  min-width: min(440px, 84vw);
-  max-width: 560px;
+  min-width: min(400px, 82vw);
+  max-width: 520px;
 }
-#repeat-sound { position: absolute; top: 14px; right: 14px; width: 46px; height: 46px; }
+#repeat-sound { position: absolute; top: 12px; right: 12px; width: 42px; height: 42px; }
 
-.instruction { font-size: clamp(17px, 4vw, 22px); font-weight: 600; margin: 0 0 16px; color: var(--ink-soft); }
+.instruction { font-size: clamp(16px, 3.6vw, 20px); font-weight: 600; margin: 0 0 12px; color: var(--ink-soft); }
 .question-main {
-  font-size: clamp(42px, 12vw, 72px);
+  font-size: clamp(38px, 10vw, 60px);
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
-  min-height: 96px;
+  min-height: 72px;
   color: var(--ink);
 }
 .question-main .op { color: var(--accent); font-weight: 700; }
@@ -493,6 +495,9 @@ html, body {
 .lr6 { width: 31px; height: 34px; }
 .lr7 { width: 30px; height: 33px; }
 .lr8 { width: 31px; height: 34px; }
+.lr9 { width: 31px; height: 34px; }
+.lr10 { width: 32px; height: 35px; }
+.lr11 { width: 32px; height: 35px; }
 .rewards-heading { font-size: 15px; font-weight: 700; color: var(--ink-soft); margin: 4px 0 10px; }
 
 .toggle-row { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 0; font-size: 16px; font-weight: 600; }
@@ -690,6 +695,9 @@ html, body {
 .chest-pile .mini-gem.g6 { width: 29px; height: 32px; }
 .chest-pile .mini-gem.g7 { width: 28px; height: 31px; }
 .chest-pile .mini-gem.g8 { width: 29px; height: 32px; }
+.chest-pile .mini-gem.g9 { width: 29px; height: 32px; }
+.chest-pile .mini-gem.g10 { width: 30px; height: 33px; }
+.chest-pile .mini-gem.g11 { width: 30px; height: 33px; }
 /* extra glans voor de moeilijkste diamant */
 .mini-gem.shiny .gem-svg { filter: drop-shadow(0 0 3px #FFE9A8) drop-shadow(0 0 5px #F4C534); }
 .mini-gem.shiny { animation: gemTwinkle 2.2s ease-in-out infinite; }
@@ -726,26 +734,26 @@ html, body {
 
 /* ---------- numpad (zelf typen) ---------- */
 .hidden { display: none !important; }
-.numpad { width: min(320px, 84vw); display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.numpad { width: min(248px, 74vw); display: flex; flex-direction: column; gap: 8px; align-items: center; }
 .numpad-display {
   width: 100%;
-  min-height: 60px;
-  border-radius: 20px;
+  min-height: 46px;
+  border-radius: 16px;
   background: var(--card);
   border: 2px solid var(--border);
   box-shadow: inset 0 2px 5px oklch(0.5 0.05 320 / 0.09);
   display: flex; align-items: center; justify-content: center;
-  font-size: clamp(30px, 8vw, 42px); font-weight: 800; color: var(--ink);
-  letter-spacing: 5px;
+  font-size: clamp(24px, 6vw, 32px); font-weight: 800; color: var(--ink);
+  letter-spacing: 4px;
 }
 .numpad-display.right { background: var(--yes); border-color: var(--yes-line); color: var(--yes-ink); animation: rightPop 0.5s var(--ease); }
 .numpad-display.wrong { animation: wiggleWrong 0.4s var(--ease); }
-.numpad-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+.numpad-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; width: 100%; }
 .np-key {
   font-family: var(--font);
-  font-size: clamp(24px, 6vw, 30px); font-weight: 800; color: var(--ink);
-  min-height: 60px;
-  border: none; border-radius: 18px;
+  font-size: clamp(19px, 4.5vw, 23px); font-weight: 800; color: var(--ink);
+  min-height: 46px;
+  border: none; border-radius: 14px;
   background: linear-gradient(180deg, oklch(1 0 0), oklch(0.965 0.012 320));
   box-shadow: 0 5px 12px oklch(0.5 0.05 320 / 0.12), inset 0 2px 0 oklch(1 0 0 / 0.8);
   cursor: pointer;
@@ -753,20 +761,23 @@ html, body {
   transition: transform 0.1s var(--ease), box-shadow 0.1s var(--ease);
 }
 .np-key:active { transform: translateY(2px) scale(0.97); box-shadow: 0 2px 6px oklch(0.5 0.05 320 / 0.12); }
-.np-key .ic { width: 28px; height: 28px; color: var(--ink-soft); }
+.np-key .ic { width: 24px; height: 24px; color: var(--ink-soft); }
 .np-ok { background: linear-gradient(180deg, oklch(0.79 0.115 6), oklch(0.69 0.14 8)); color: oklch(0.99 0.012 80); }
 .np-del { background: var(--card-2); }
 
 /* ---------- smalle schermen ---------- */
 @media (max-width: 560px) {
-  .rainbow { width: min(360px, 92vw); }
+  .rainbow { width: min(300px, 82vw); }
   .icon-btn { width: 46px; height: 46px; }
   .opt { min-width: 80px; min-height: 80px; }
   .start-levels { grid-template-columns: 1fr; }
 }
-/* korte, brede schermen: regenboog compacter zodat alles past */
-@media (max-height: 680px) {
-  .rainbow { width: min(340px, 62vh); }
+/* lage schermen (laptop): regenboog + som compacter zodat de numpad past */
+@media (max-height: 720px) {
+  .rainbow { width: min(200px, 34vh); }
+  .question-main { font-size: clamp(32px, 8vw, 46px); min-height: 56px; }
+  .question-card { padding: clamp(14px, 2.5vw, 20px); }
+  .play-area { gap: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001s !important; }

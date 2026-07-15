@@ -55,9 +55,12 @@ RB.exercises = {
     if (level === 3) return this._addSub(10);
     if (level === 4) return this._recognize(20);
     if (level === 5) return this._addSub(20);
-    if (level === 6) return this._numpad(this._addSub(100)); // Raphael: plus/min tot 100, zelf typen
+    if (level === 6) return this._numpad(this._add(100));    // Raphael: plus tot 100
     if (level === 7) return this._numpad(this._addSub(20));  // Lea: plus/min tot 20, zelf typen
-    if (level === 8) return this._recognizeType(200);        // Raphael: tellen tot 200 (horen + typen)
+    if (level === 8) return this._numpad(this._sub(100));    // Raphael: min tot 100
+    if (level === 9) return this._numpad(this._add(200));    // Raphael: plus tot 200
+    if (level === 10) return this._numpad(this._sub(200));   // Raphael: min tot 200
+    if (level === 11) return this._numpad(this._addSub(200)); // Raphael: plus en min tot 200
     return this._addSub(20);
   },
 
@@ -133,6 +136,7 @@ RB.exercises = {
     const answer = this._pickBiasedHigh(2, maxTotal);
     const a = this._rndInt(1, answer - 1);
     const b = answer - a;
+    const smallEnough = maxTotal <= 20; // stipjes-hulp enkel bij kleine getallen
     return {
       type: "add",
       instruction: "Hoeveel is het samen?",
@@ -140,20 +144,19 @@ RB.exercises = {
       mainHTML: `<span class="num">${a}</span><span class="op">+</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
       options: this._options(answer, 0, maxTotal),
       answer: answer,
-      help: { a, b, op: "+" },
-      helpText: "Tel de stipjes allemaal samen.",
+      help: smallEnough ? { a, b, op: "+" } : null,
+      helpText: smallEnough ? "Tel de stipjes allemaal samen." : "Reken maar rustig uit.",
       repeatText: `${this._word(a)} plus ${this._word(b)}`,
     };
   },
 
-  // --- Optellen én aftrekken ---
-  _addSub(maxTotal) {
-    if (Math.random() < 0.5) return this._add(maxTotal);
-
-    // aftrekken: tot 20 vaker een begingetal boven de 10
+  // --- Aftrekken ---
+  _sub(maxTotal) {
+    // tot 20: vaker een begingetal boven de 10
     const a = this._pickBiasedHigh(2, maxTotal);
     const b = this._rndInt(1, a);
     const answer = a - b;
+    const smallEnough = maxTotal <= 20;
     return {
       type: "sub",
       instruction: "Hoeveel blijven er over?",
@@ -161,10 +164,15 @@ RB.exercises = {
       mainHTML: `<span class="num">${a}</span><span class="op">−</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
       options: this._options(answer, 0, maxTotal),
       answer: answer,
-      help: { a, b, op: "-" },
-      helpText: "Er gaan er een paar weg. Tel wat er overblijft.",
-      repeatText: `${this._word(a)} minus ${this._word(b)}`,
+      help: smallEnough ? { a, b, op: "-" } : null,
+      helpText: smallEnough ? "Er gaan er een paar weg. Tel wat er overblijft." : "Reken maar rustig uit.",
+      repeatText: `${this._word(a)}, min ${this._word(b)}`,
     };
+  },
+
+  // --- Optellen én aftrekken ---
+  _addSub(maxTotal) {
+    return Math.random() < 0.5 ? this._add(maxTotal) : this._sub(maxTotal);
   },
 
   // Bouwt de visuele hulp (stipjes) voor plus/min
