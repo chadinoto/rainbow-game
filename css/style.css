@@ -539,16 +539,17 @@ html, body {
 .chest-lid.open { transform: rotateX(-120deg); }
 .chest-pile {
   position: absolute;
-  left: 22%;
-  right: 22%;
-  top: 22%;
-  height: 32%;
+  left: 20%;
+  right: 20%;
+  top: 33%;   /* lager, zodat de onderkant achter de voorwand verdwijnt */
+  height: 29%; /* onderkant ~62%, voorwand begint ~54% → diamanten liggen erin */
   display: flex;
   flex-wrap: wrap-reverse;
   align-content: flex-end;
   justify-content: center;
   z-index: 1;
   pointer-events: none;
+  overflow: hidden; /* niets steekt onderaan de kist uit */
 }
 .chest-pile .mini-gem { margin: -6px -1px 0; }
 /* grootte per niveau: moeilijker = groter */
