@@ -87,10 +87,15 @@ RB.config = {
       name: "Plus en min tot 200",
       desc: "Optellen en aftrekken tot 200. Zelf intypen.",
     },
+    {
+      id: 12,
+      name: "Maaltafels tot 12",
+      desc: "Vermenigvuldigen, tafels van 1 tot 12. Zelf intypen.",
+    },
   ],
 
   // Niveaus waar je het antwoord zelf typt (numpad) i.p.v. keuzeknoppen
-  NUMPAD_LEVELS: [6, 7, 8, 9, 10, 11],
+  NUMPAD_LEVELS: [6, 7, 8, 9, 10, 11, 12],
 
   // De beloningsdiamant per niveau: hoger niveau = groter (leuk), maar dat verandert
   // NIETS aan de cadeautjes — die tellen het AANTAL diamanten per kleur (10 stuks), geen punten.
@@ -106,6 +111,7 @@ RB.config = {
     9: { color: "#7A5BD8", size: 1.54, shiny: true, label: "indigo" },     // Raphael: plus tot 200
     10: { color: "#E0559E", size: 1.56, shiny: true, label: "magenta" },   // Raphael: min tot 200
     11: { color: "#2FA88E", size: 1.60, shiny: true, label: "petrol" },    // Raphael: plus en min tot 200
+    12: { color: "#2F4C9E", size: 1.64, shiny: true, label: "donkerblauwe" }, // Raphael: maaltafels tot 12
   },
 
   // Nederlandse getalwoorden (voor de voorleesstem)
@@ -126,7 +132,7 @@ RB.config = {
   // ouders (niet in deze lijst) zien alle niveaus.
   PLAYER_LEVELS: {
     Lea: [1, 2, 3, 4, 5, 7],
-    Raphael: [6, 8, 9, 10, 11], // plus100, min100, plus200, min200, plus+min200
+    Raphael: [6, 8, 9, 10, 11, 12], // plus100, min100, plus200, min200, plus+min200, maaltafels
   },
 
   // Beginscore die één keer wordt toegepast (per SEED_VERSION): Lea's diamanten
@@ -151,8 +157,9 @@ RB.config = {
     Raphael: [
       { name: "Een ijsje gaan eten", art: "icecream", need: { 6: 10 } },         // plus tot 100
       { name: "Een lolly", art: "lolly", need: { 8: 10 } },                       // min tot 100
-      { name: "Frietjes gaan eten", art: "fries", need: { 6: 10, 8: 10, 9: 10 } }, // rood + oranje + paars
-      { name: "Een cadeautje krijgen", art: "gift", need: { 6: 10, 8: 10, 9: 10, 10: 10, 11: 10 } }, // 10 van alles
+      { name: "Frietjes gaan eten", art: "fries", need: { 6: 10, 8: 10, 9: 10 } },   // rood + oranje + paars
+      { name: "Bij Zuma gaan eten", art: "sushi", need: { 6: 10, 8: 10, 12: 10 } },  // plus100 + min100 + maaltafels
+      { name: "Een cadeautje krijgen", art: "gift", need: { 6: 10, 8: 10, 9: 10, 10: 10, 11: 10, 12: 10 } }, // 10 van alles
     ],
   },
 

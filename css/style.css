@@ -498,6 +498,7 @@ html, body {
 .lr9 { width: 31px; height: 34px; }
 .lr10 { width: 32px; height: 35px; }
 .lr11 { width: 32px; height: 35px; }
+.lr12 { width: 33px; height: 36px; }
 .rewards-heading { font-size: 15px; font-weight: 700; color: var(--ink-soft); margin: 4px 0 10px; }
 
 .toggle-row { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 0; font-size: 16px; font-weight: 600; }
@@ -698,6 +699,7 @@ html, body {
 .chest-pile .mini-gem.g9 { width: 29px; height: 32px; }
 .chest-pile .mini-gem.g10 { width: 30px; height: 33px; }
 .chest-pile .mini-gem.g11 { width: 30px; height: 33px; }
+.chest-pile .mini-gem.g12 { width: 31px; height: 34px; }
 /* extra glans voor de moeilijkste diamant */
 .mini-gem.shiny .gem-svg { filter: drop-shadow(0 0 3px #FFE9A8) drop-shadow(0 0 5px #F4C534); }
 .mini-gem.shiny { animation: gemTwinkle 2.2s ease-in-out infinite; }

@@ -61,7 +61,26 @@ RB.exercises = {
     if (level === 9) return this._numpad(this._add(200));    // Raphael: plus tot 200
     if (level === 10) return this._numpad(this._sub(200));   // Raphael: min tot 200
     if (level === 11) return this._numpad(this._addSub(200)); // Raphael: plus en min tot 200
+    if (level === 12) return this._numpad(this._multiply(12)); // Raphael: maaltafels tot 12
     return this._addSub(20);
+  },
+
+  // --- Maaltafels (vermenigvuldigen) ---
+  _multiply(maxFactor) {
+    const a = this._rndInt(1, maxFactor);
+    const b = this._rndInt(1, maxFactor);
+    const answer = a * b;
+    return {
+      type: "mul",
+      instruction: "Hoeveel is het?",
+      speakText: `${this._word(a)} maal ${this._word(b)}`,
+      mainHTML: `<span class="num">${a}</span><span class="op">×</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
+      options: this._options(answer, 0, maxFactor * maxFactor),
+      answer: answer,
+      help: null,
+      helpText: "Denk rustig aan de maaltafel.",
+      repeatText: `${this._word(a)} maal ${this._word(b)}`,
+    };
   },
 
   // markeert een oefening als "zelf typen" (numpad i.p.v. keuzeknoppen)

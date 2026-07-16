@@ -278,6 +278,10 @@ RB.art = {
   _minus(x, y, s, color) {
     return `<rect x="${x - s}" y="${y - 3.6}" width="${2 * s}" height="7.2" rx="3.6" fill="${color}"/>`;
   },
+  // maal-teken: een plus, 45° gedraaid
+  _times(x, y, s, color) {
+    return `<g transform="rotate(45 ${x} ${y})">${this._plus(x, y, s, color)}</g>`;
+  },
 
   /* ---------- tekeningetje per niveau (voor wie nog niet leest) ---------- */
   levelPic(id) {
@@ -330,6 +334,7 @@ RB.art = {
     if (id === 9) return wrap(this._plus(16, 26, 9, green) + numTile(40, "200"));   // plus tot 200
     if (id === 10) return wrap(this._minus(16, 26, 9, coral) + numTile(40, "200")); // min tot 200
     if (id === 11) return wrap(this._plus(12, 26, 7, green) + this._minus(27, 26, 7, coral) + numTile(40, "200")); // plus+min tot 200
+    if (id === 12) return wrap(this._times(18, 26, 11, "#2F4C9E") + numTile(40, "12")); // maaltafels tot 12
     // niveau 5: plus én min + oplopende sterren (grotere getallen)
     let stars = "";
     for (let i = 0; i < 3; i++) {
@@ -378,6 +383,12 @@ RB.art = {
           <path d="M35 17 A11 11 0 1 1 14 13 A8 8 0 1 0 30 20 A5 5 0 1 1 20 17 A2.4 2.4 0 1 0 26 17"
                 fill="none" stroke="#F0568F" stroke-width="3.2" stroke-linecap="round"/>
           <circle cx="19" cy="12" r="2.4" fill="#fff" opacity="0.6"/>`);
+      case "sushi":
+        return s(`
+          <rect x="9" y="25" width="30" height="15" rx="7.5" fill="#FFF8EC" stroke="#E3D5BE" stroke-width="1.6"/>
+          <path d="M9 26 Q24 12 39 26 Q39 29 34 28 Q24 19 14 28 Q9 29 9 26 Z" fill="#F5854F"/>
+          <path d="M14 24 Q24 16 34 24" stroke="#FFCBAA" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <rect x="21" y="21" width="6" height="20" rx="2" fill="#41505E"/>`);
       case "cake":
         return s(`
           <path d="M10 26 L38 26 L38 42 Q38 44 36 44 L12 44 Q10 44 10 42 Z" fill="#F291B7"/>

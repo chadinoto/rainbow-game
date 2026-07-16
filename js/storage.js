@@ -12,7 +12,7 @@ RB.storage = {
     return {
       level: 1,        // huidig niveau (1..4)
       collected: 0,    // gekleurde edelstenen in de huidige regenboog (0..10)
-      gems: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0 }, // verdiende diamanten per niveau (schatkist)
+      gems: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 }, // verdiende diamanten per niveau (schatkist)
       seenRewards: 0, // hoeveel cadeautje-drempels al gevierd zijn
     };
   },
@@ -43,7 +43,7 @@ RB.storage = {
       if (typeof src.level === "number") target.level = src.level;
       if (typeof src.collected === "number") target.collected = src.collected;
       if (src.gems && typeof src.gems === "object") {
-        for (const k of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) target.gems[k] = src.gems[k] || 0;
+        for (const k of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) target.gems[k] = src.gems[k] || 0;
       }
       if (typeof src.seenRewards === "number") target.seenRewards = src.seenRewards;
       // oude telling (treasure/necklaces) → tel bij niveau 1
