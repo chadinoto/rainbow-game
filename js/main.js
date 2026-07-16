@@ -156,10 +156,11 @@
 
   // Voortgang als duidelijke regels: "6/10 blauwe diamanten [Plus tot 10]"
   function rewardProgressHTML(rewards, r) {
-    const line = (color, have, target, labelText, tag) => {
+    const line = (color, have, target, labelText, tag, levelId) => {
       const pct = Math.max(0, Math.min(100, (have / target) * 100));
       const chip = tag
-        ? `<span class="need-tag" style="background:${color}22;color:${RB.gems._shade(color, -0.4)}">${tag}</span>`
+        ? `<button class="need-tag" data-level="${levelId}" title="Start deze oefening"
+             style="background:${color}22;color:${RB.gems._shade(color, -0.4)}">${tag}</button>`
         : "";
       return `
         <div class="need-line">
@@ -179,7 +180,8 @@
             availFor(rewards, i, l, player),
             r.need[l],
             `${cfg.LEVEL_GEM[l].label} diamanten`,
-            levelName(l)
+            levelName(l),
+            l
           )
         )
         .join("");
@@ -211,6 +213,25 @@
       <div class="tracker-head"><span class="tracker-treat">${RB.art.treat(r.art)}</span><b>${r.name}</b></div>
       ${met ? `<p class="tracker-met">Dit heb je al behaald!</p>` : ""}
       ${rewardProgressHTML(rewards, r)}`;
+
+    // tik op een labeltje ("Plus tot 100") → start meteen die oefening
+    el.querySelectorAll(".need-tag[data-level]").forEach((tag) =>
+      tag.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startLevel(Number(tag.getAttribute("data-level")));
+      })
+    );
+  }
+
+  // Start een oefening van een bepaald niveau (als die speler dat niveau heeft)
+  function startLevel(id) {
+    const allowed = cfg.PLAYER_LEVELS[state.currentPlayer] || LEVEL_ORDER;
+    if (!allowed.includes(id)) return;
+    player.level = id;
+    save();
+    RB.audio.unlock();
+    RB.audio.setEnabled(state.soundOn);
+    startGame();
   }
 
   function refreshRewards() {

@@ -115,7 +115,8 @@ RB.config = {
     { name: "Een lolly", art: "lolly", need: { 2: 10 } },                                  // plus tot 10
     { name: "Frietjes gaan eten", art: "fries", need: { 3: 10, 14: 10, 15: 10 } },         // plus/min 10 + plus/min 12
     { name: "Een taartje eten", art: "cake", need: { 16: 10, 17: 10, 4: 10 } },            // plus/min 15 + cijfers tot 20
-    { name: "Een cadeautje krijgen", art: "gift", need: { 1: 10, 2: 10, 3: 10, 14: 10, 15: 10, 16: 10, 17: 10, 4: 10, 5: 10, 7: 10 } }, // 10 van alles
+    // blauw + groen + paars + roze + lila + amber + smaragd + zalm (niet de gouden/turkooizen)
+    { name: "Een cadeautje krijgen", art: "gift", need: { 1: 10, 2: 10, 3: 10, 4: 10, 14: 10, 15: 10, 16: 10, 17: 10 } },
   ],
 
   // Aparte cadeautjes per speler. Raphael verdient rode diamanten (niveau 6),

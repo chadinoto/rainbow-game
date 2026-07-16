@@ -612,17 +612,23 @@ html, body {
 .need-info { flex: 1; min-width: 0; }
 .need-top { font-size: 14px; color: var(--ink-soft); margin-bottom: 5px; }
 .need-top b { color: var(--ink); font-weight: 800; font-size: 15px; }
-/* labeltje met de oefening, in de kleur van de diamant */
+/* labeltje met de oefening (klikbaar: start die oefening) */
 .need-tag {
   display: inline-block;
   margin-left: 8px;
-  padding: 2px 9px;
+  padding: 3px 10px;
+  border: none;
   border-radius: 999px;
+  font-family: var(--font);
   font-size: 11px;
   font-weight: 800;
   vertical-align: 1px;
   white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.12s var(--ease), filter 0.12s var(--ease);
 }
+.need-tag:hover { transform: translateY(-1px); filter: brightness(0.94); }
+.need-tag:active { transform: scale(0.95); }
 
 .reward-row { cursor: pointer; transition: transform 0.1s var(--ease), border-color 0.15s var(--ease), box-shadow 0.15s var(--ease); }
 .reward-row:hover { border-color: var(--accent); }
