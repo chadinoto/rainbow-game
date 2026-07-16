@@ -78,7 +78,7 @@
   }
 
   // Totaal aantal diamanten van een speler (alle niveaus samen)
-  const LEVELS_ALL = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const LEVELS_ALL = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17];
   function total(p) {
     let n = 0;
     for (const k of LEVELS_ALL) n += p.gems[k] || 0;
@@ -135,6 +135,18 @@
   function nextReward(rewards, p) {
     return rewards[rewardsReached(rewards, p)] || null;
   }
+
+  // Getoonde volgorde/nummering: eerst Lea's niveaus, dan Raphael's → doorlopend 1..17
+  const LEVEL_ORDER = (() => {
+    const order = [];
+    for (const name of cfg.PLAYERS) {
+      for (const id of cfg.PLAYER_LEVELS[name] || []) if (!order.includes(id)) order.push(id);
+    }
+    for (const lv of cfg.LEVELS) if (!order.includes(lv.id)) order.push(lv.id);
+    return order;
+  })();
+  const displayNo = (id) => LEVEL_ORDER.indexOf(Number(id)) + 1;
+  const isNumpad = (id) => (cfg.NUMPAD_LEVELS || []).includes(Number(id));
 
   // Naam van de oefening bij een niveau (voor het labeltje in het score board)
   function levelName(id) {
@@ -259,25 +271,30 @@
     });
   }
 
-  // De 4 niveaus als tekeningetjes; tikken = voorlezen + starten
+  // De niveaus als tekeningetjes; tikken = voorlezen + starten
   function renderStartLevels() {
     const list = $("start-levels");
     list.innerHTML = "";
     // kinderen zien enkel hun eigen niveaus; ouders (niet in de lijst) zien alles
-    const allowed = cfg.PLAYER_LEVELS[state.currentPlayer] || cfg.LEVELS.map((l) => l.id);
+    const allowed = cfg.PLAYER_LEVELS[state.currentPlayer] || LEVEL_ORDER;
     if (!allowed.includes(player.level)) {
       player.level = allowed[0];
       save();
     }
-    cfg.LEVELS.filter((lv) => allowed.includes(lv.id)).forEach((lv) => {
+    // in de vaste volgorde (Lea 1..10, Raphael 11..17)
+    LEVEL_ORDER.filter((id) => allowed.includes(id)).forEach((id) => {
+      const lv = cfg.LEVELS.find((l) => l.id === id);
+      if (!lv) return;
       const b = document.createElement("button");
       b.className = "level-card" + (lv.id === player.level ? " selected" : "");
       const lg = cfg.LEVEL_GEM[lv.id];
+      const mode = isNumpad(lv.id) ? "zelf typen" : "multiple choice";
       b.innerHTML = `<span class="level-pic">${RB.art.levelPic(lv.id)}</span>
-        <span class="level-text"><b>${lv.name}</b><small>${lv.desc}</small></span>
-        <span class="level-reward" title="Je verdient ${lg.label} diamanten (niveau ${lv.id})">
+        <span class="level-text"><b>${lv.name}</b><small>${lv.desc}</small>
+          <span class="level-mode">${mode}</span></span>
+        <span class="level-reward" title="Je verdient ${lg.label} diamanten">
           <span class="lr-gem lr${lv.id}">${RB.gems.svg(lg.color, false)}</span>
-          <small>niveau ${lv.id}</small>
+          <small>niveau ${displayNo(lv.id)}</small>
         </span>`;
       b.addEventListener("click", () => chooseLevel(lv));
       list.appendChild(b);

@@ -335,6 +335,16 @@ RB.art = {
     if (id === 10) return wrap(this._minus(16, 26, 9, coral) + numTile(40, "200")); // min tot 200
     if (id === 11) return wrap(this._plus(12, 26, 7, green) + this._minus(27, 26, 7, coral) + numTile(40, "200")); // plus+min tot 200
     if (id === 12) return wrap(this._times(18, 26, 11, "#2F4C9E") + numTile(40, "12")); // maaltafels tot 12
+    if (id === 13)
+      // deeltafels: deelteken (:) + 12
+      return wrap(
+        `<circle cx="18" cy="19" r="4" fill="#79B33C"/><circle cx="18" cy="33" r="4" fill="#79B33C"/>` +
+          numTile(40, "12")
+      );
+    if (id === 14) return wrap(this._plus(16, 26, 9, green) + numTile(40, "12"));   // plus tot 12
+    if (id === 15) return wrap(this._minus(16, 26, 9, coral) + numTile(40, "12"));  // min tot 12
+    if (id === 16) return wrap(this._plus(16, 26, 9, green) + numTile(40, "15"));   // plus tot 15
+    if (id === 17) return wrap(this._minus(16, 26, 9, coral) + numTile(40, "15"));  // min tot 15
     // niveau 5: plus én min + oplopende sterren (grotere getallen)
     let stars = "";
     for (let i = 0; i < 3; i++) {

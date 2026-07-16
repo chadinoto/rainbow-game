@@ -62,7 +62,30 @@ RB.exercises = {
     if (level === 10) return this._numpad(this._sub(200));   // Raphael: min tot 200
     if (level === 11) return this._numpad(this._addSub(200)); // Raphael: plus en min tot 200
     if (level === 12) return this._numpad(this._multiply(12)); // Raphael: maaltafels tot 12
+    if (level === 13) return this._numpad(this._divide(12));   // Raphael: deeltafels tot 12
+    if (level === 14) return this._add(12);                    // Lea: plus tot 12
+    if (level === 15) return this._sub(12);                    // Lea: min tot 12
+    if (level === 16) return this._add(15);                    // Lea: plus tot 15
+    if (level === 17) return this._sub(15);                    // Lea: min tot 15
     return this._addSub(20);
+  },
+
+  // --- Deeltafels (delen, altijd een gehele uitkomst) ---
+  _divide(maxFactor) {
+    const b = this._rndInt(1, maxFactor);      // deler
+    const answer = this._rndInt(1, maxFactor); // uitkomst
+    const a = b * answer;                      // deeltal
+    return {
+      type: "div",
+      instruction: "Hoeveel is het?",
+      speakText: `${this._word(a)} gedeeld door ${this._word(b)}`,
+      mainHTML: `<span class="num">${a}</span><span class="op">:</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
+      options: this._options(answer, 0, maxFactor),
+      answer: answer,
+      help: null,
+      helpText: "Denk rustig aan de maaltafel.",
+      repeatText: `${this._word(a)} gedeeld door ${this._word(b)}`,
+    };
   },
 
   // --- Maaltafels (vermenigvuldigen) ---

@@ -30,72 +30,32 @@ RB.config = {
   // (3 = ze mag er 2 maken; bij de 3e fout begint de regenboog opnieuw)
   MAX_WRONG: 3,
 
-  // De niveaus. id komt overeen met wat in de instellingen gekozen wordt.
+  // De niveaus (id blijft vast — de opgeslagen diamanten hangen eraan).
+  // "multiple choice" of "zelf typen" staat NIET in de titel, maar als label (zie NUMPAD_LEVELS).
   LEVELS: [
-    {
-      id: 1,
-      name: "Cijfers zoeken tot 10",
-      desc: "Ze hoort een getal en tikt het juiste cijfer aan (1 tot 10).",
-    },
-    {
-      id: 2,
-      name: "Plus tot 10",
-      desc: "Optellen met sommen tot 10, met stipjes om te tellen.",
-    },
-    {
-      id: 3,
-      name: "Plus en min tot 10",
-      desc: "Optellen én aftrekken tot 10.",
-    },
-    {
-      id: 4,
-      name: "Cijfers zoeken tot 20",
-      desc: "Ze hoort een getal en tikt het juiste cijfer aan (tot 20).",
-    },
-    {
-      id: 5,
-      name: "Plus en min tot 20",
-      desc: "Grotere sommen, optellen en aftrekken tot 20.",
-    },
-    {
-      id: 6,
-      name: "Plus tot 100",
-      desc: "Optellen tot 100. Zelf intypen.",
-    },
-    {
-      id: 7,
-      name: "Zelf typen tot 20",
-      desc: "Plus en min tot 20, maar zelf het antwoord intypen.",
-    },
-    {
-      id: 8,
-      name: "Min tot 100",
-      desc: "Aftrekken tot 100. Zelf intypen.",
-    },
-    {
-      id: 9,
-      name: "Plus tot 200",
-      desc: "Optellen tot 200. Zelf intypen.",
-    },
-    {
-      id: 10,
-      name: "Min tot 200",
-      desc: "Aftrekken tot 200. Zelf intypen.",
-    },
-    {
-      id: 11,
-      name: "Plus en min tot 200",
-      desc: "Optellen en aftrekken tot 200. Zelf intypen.",
-    },
-    {
-      id: 12,
-      name: "Maaltafels tot 12",
-      desc: "Vermenigvuldigen, tafels van 1 tot 12. Zelf intypen.",
-    },
+    // --- Lea ---
+    { id: 1, name: "Cijfers zoeken tot 10", desc: "Ze hoort een getal en tikt het juiste cijfer aan (1 tot 10)." },
+    { id: 2, name: "Plus tot 10", desc: "Optellen met sommen tot 10, met stipjes om te tellen." },
+    { id: 3, name: "Plus en min tot 10", desc: "Optellen én aftrekken tot 10." },
+    { id: 14, name: "Plus tot 12", desc: "Optellen met sommen tot 12, met stipjes om te tellen." },
+    { id: 15, name: "Min tot 12", desc: "Aftrekken tot 12, met stipjes om te tellen." },
+    { id: 16, name: "Plus tot 15", desc: "Optellen met sommen tot 15, met stipjes om te tellen." },
+    { id: 17, name: "Min tot 15", desc: "Aftrekken tot 15, met stipjes om te tellen." },
+    { id: 4, name: "Cijfers zoeken tot 20", desc: "Ze hoort een getal en tikt het juiste cijfer aan (tot 20)." },
+    { id: 5, name: "Plus en min tot 20", desc: "Optellen en aftrekken tot 20." },
+    { id: 7, name: "Plus en min tot 20", desc: "Optellen en aftrekken tot 20." },
+    // --- Raphael ---
+    { id: 6, name: "Plus tot 100", desc: "Optellen tot 100." },
+    { id: 8, name: "Min tot 100", desc: "Aftrekken tot 100." },
+    { id: 9, name: "Plus tot 200", desc: "Optellen tot 200." },
+    { id: 10, name: "Min tot 200", desc: "Aftrekken tot 200." },
+    { id: 11, name: "Plus en min tot 200", desc: "Optellen en aftrekken tot 200." },
+    { id: 12, name: "Maaltafels tot 12", desc: "Vermenigvuldigen, tafels van 1 tot 12." },
+    { id: 13, name: "Deeltafels tot 12", desc: "Delen, tafels van 1 tot 12." },
   ],
 
   // Niveaus waar je het antwoord zelf typt (numpad) i.p.v. keuzeknoppen
-  NUMPAD_LEVELS: [6, 7, 8, 9, 10, 11, 12],
+  NUMPAD_LEVELS: [6, 7, 8, 9, 10, 11, 12, 13],
 
   // De beloningsdiamant per niveau: hoger niveau = groter (leuk), maar dat verandert
   // NIETS aan de cadeautjes — die tellen het AANTAL diamanten per kleur (10 stuks), geen punten.
@@ -112,6 +72,11 @@ RB.config = {
     10: { color: "#E0559E", size: 1.56, shiny: true, label: "magenta" },   // Raphael: min tot 200
     11: { color: "#2FA88E", size: 1.60, shiny: true, label: "petrol" },    // Raphael: plus en min tot 200
     12: { color: "#2F4C9E", size: 1.64, shiny: true, label: "donkerblauwe" }, // Raphael: maaltafels tot 12
+    13: { color: "#79B33C", size: 1.68, shiny: true, label: "limoen" },        // Raphael: deeltafels tot 12
+    14: { color: "#C77DFF", size: 1.10, label: "lila" },    // Lea: plus tot 12
+    15: { color: "#FFB703", size: 1.12, label: "amber" },   // Lea: min tot 12
+    16: { color: "#3DBE8B", size: 1.14, label: "smaragd" }, // Lea: plus tot 15
+    17: { color: "#F2775A", size: 1.16, label: "zalm" },    // Lea: min tot 15
   },
 
   // Nederlandse getalwoorden (voor de voorleesstem)
@@ -130,9 +95,10 @@ RB.config = {
 
   // Welke niveaus elke speler ziet. Kinderen krijgen oefeningen op hun maat;
   // ouders (niet in deze lijst) zien alle niveaus.
+  // De volgorde hier bepaalt ook de getoonde nummering: Lea = niveau 1..10, Raphael = 11..17.
   PLAYER_LEVELS: {
-    Lea: [1, 2, 3, 4, 5, 7],
-    Raphael: [6, 8, 9, 10, 11, 12], // plus100, min100, plus200, min200, plus+min200, maaltafels
+    Lea: [1, 2, 3, 14, 15, 16, 17, 4, 5, 7],
+    Raphael: [6, 8, 9, 10, 11, 12, 13],
   },
 
   // Beginscore die één keer wordt toegepast (per SEED_VERSION): Lea's diamanten
@@ -145,10 +111,11 @@ RB.config = {
   //   opnieuw mee. Bv. ijsje kost 10 blauwe; daarna moet ze voor frietjes wéér 10 blauwe
   //   verzamelen (dus 20 in totaal). De cadeautjes gaan in volgorde.
   REWARDS: [
-    { name: "Een ijsje gaan eten", art: "icecream", need: { 1: 10 } },        // makkelijkst: 10 blauwe
-    { name: "Een lolly", art: "lolly", need: { 2: 10 } },                      // + 10 groene
-    { name: "Frietjes gaan eten", art: "fries", need: { 1: 10, 2: 10, 3: 10, 4: 10 } },        // blauw + groen + paars + roze
-    { name: "Een cadeautje krijgen", art: "gift", need: { 1: 10, 2: 10, 3: 10, 4: 10, 5: 10 } }, // alle vijf de kleuren
+    { name: "Een ijsje gaan eten", art: "icecream", need: { 1: 10 } },                    // cijfers tot 10
+    { name: "Een lolly", art: "lolly", need: { 2: 10 } },                                  // plus tot 10
+    { name: "Frietjes gaan eten", art: "fries", need: { 3: 10, 14: 10, 15: 10 } },         // plus/min 10 + plus/min 12
+    { name: "Een taartje eten", art: "cake", need: { 16: 10, 17: 10, 4: 10 } },            // plus/min 15 + cijfers tot 20
+    { name: "Een cadeautje krijgen", art: "gift", need: { 1: 10, 2: 10, 3: 10, 14: 10, 15: 10, 16: 10, 17: 10, 4: 10, 5: 10, 7: 10 } }, // 10 van alles
   ],
 
   // Aparte cadeautjes per speler. Raphael verdient rode diamanten (niveau 6),
@@ -159,7 +126,7 @@ RB.config = {
       { name: "Een lolly", art: "lolly", need: { 8: 10 } },                       // min tot 100
       { name: "Frietjes gaan eten", art: "fries", need: { 6: 10, 8: 10, 9: 10 } },   // rood + oranje + paars
       { name: "Bij Zuma gaan eten", art: "shrimp", need: { 6: 10, 8: 10, 12: 10 } },  // plus100 + min100 + maaltafels
-      { name: "Een cadeautje krijgen", art: "gift", need: { 6: 10, 8: 10, 9: 10, 10: 10, 11: 10, 12: 10 } }, // 10 van alles
+      { name: "Een cadeautje krijgen", art: "gift", need: { 6: 10, 8: 10, 9: 10, 10: 10, 11: 10, 12: 10, 13: 10 } }, // 10 van alles
     ],
   },
 
