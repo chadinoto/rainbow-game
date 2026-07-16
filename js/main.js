@@ -98,10 +98,19 @@
     return rewardsForName(state.currentPlayer);
   }
 
-  // Beschikbare diamanten van kleur c voor een cadeautje: gewoon het totaal dat je hebt
-  // (elk cadeautje vraagt absoluut 10 van elke opgesomde kleur, geen verbruik-in-volgorde)
+  // Diamanten van kleur c die eerdere cadeautjes al hebben opgebruikt (geen dubbeltellingen)
+  function consumedBefore(rewards, index, c) {
+    let s = 0;
+    for (let j = 0; j < index; j++) {
+      const n = rewards[j].need;
+      if (n && n[c]) s += n[c];
+    }
+    return s;
+  }
+
+  // Wat er nog beschikbaar is voor dit cadeautje: je diamanten min wat eerdere cadeautjes opgebruikten
   function availFor(rewards, index, c, p) {
-    return p.gems[c] || 0;
+    return Math.max(0, (p.gems[c] || 0) - consumedBefore(rewards, index, c));
   }
 
   // Is aan de eis van een cadeautje voldaan? (diamanten per kleur, in volgorde verbruikt)
@@ -631,17 +640,32 @@
     }
   }
 
-  // na het inloggen: laad uit de cloud (rijkste wint, tegen verlies), seed indien nodig, start
+  // Voegt lokaal + cloud samen PER SPELER en PER KLEUR (maximum), zodat de diamanten
+  // van het ene toestel die van het andere nooit overschrijven.
+  function mergeStates(localS, remoteS) {
+    const out = RB.storage.normalize(remoteS);
+    out.soundOn = localS.soundOn;
+    out.seedVersion = Math.max(localS.seedVersion || 0, remoteS.seedVersion || 0);
+    if (localS.currentPlayer && out.players[localS.currentPlayer]) out.currentPlayer = localS.currentPlayer;
+    for (const name of cfg.PLAYERS) {
+      const a = localS.players[name], b = remoteS.players[name], p = out.players[name];
+      if (!p) continue;
+      for (const l of LEVELS_ALL) p.gems[l] = Math.max((a && a.gems[l]) || 0, (b && b.gems[l]) || 0);
+      p.seenRewards = Math.max((a && a.seenRewards) || 0, (b && b.seenRewards) || 0);
+      if (a && a.level) p.level = a.level;      // niveau-keuze van dit toestel
+      p.collected = (a && a.collected) || 0;    // lopende regenboog is toestel-eigen
+    }
+    return out;
+  }
+
+  // na het inloggen: samenvoegen met de cloud (niets kwijt), seed indien nodig, start
   async function enterApp() {
     let remote = null;
     try {
       remote = await RB.cloud.load();
     } catch (e) {}
 
-    if (remote) {
-      const remoteState = RB.storage.normalize(remote);
-      if (grandTotal(remoteState) >= grandTotal(state)) state = remoteState;
-    }
+    if (remote) state = mergeStates(state, RB.storage.normalize(remote));
 
     // eenmalige seed (per SEED_VERSION): waardeert Lea op tot minstens 10/10/10
     if (cfg.SEED && (state.seedVersion || 0) < cfg.SEED_VERSION) {

@@ -134,9 +134,10 @@ RB.config = {
   SEED_VERSION: 2,
   SEED: { Lea: { gems: { 1: 10, 2: 10, 3: 10, 4: 0, 5: 0, 6: 0 } } },
 
-  // need = hoeveel diamanten van elke kleur je nodig hebt voor dit cadeautje.
-  //   Absoluut: bv. frietjes { 1: 10, 2: 10, 3: 10 } = heb 10 blauwe én 10 groene én 10 paarse.
-  //   Dezelfde diamanten tellen voor meerdere cadeautjes (geen verbruik-in-volgorde).
+  // need = hoeveel diamanten van elke kleur DIT cadeautje kost.
+  //   Geen dubbeltellingen: diamanten die een eerder cadeautje al opgebruikte tellen niet
+  //   opnieuw mee. Bv. ijsje kost 10 blauwe; daarna moet ze voor frietjes wéér 10 blauwe
+  //   verzamelen (dus 20 in totaal). De cadeautjes gaan in volgorde.
   REWARDS: [
     { name: "Een ijsje gaan eten", art: "icecream", need: { 1: 10 } },        // makkelijkst: 10 blauwe
     { name: "Een lolly", art: "lolly", need: { 2: 10 } },                      // + 10 groene
