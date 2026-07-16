@@ -18,6 +18,7 @@
   let roundWrong = 0;   // totaal fouten in deze regenboog-ronde
   let locked = false; // even blokkeren tijdens de fonkel-animatie
   let focusedReward = null; // welk cadeautje in de tracker getoond wordt (null = volgende)
+  let exerciseStart = 0; // wanneer de huidige oefening verscheen (voor de statistieken)
 
   const $ = (id) => document.getElementById(id);
 
@@ -365,7 +366,26 @@
       $("options").classList.remove("hidden");
       renderOptions(current.options);
     }
+    exerciseStart = Date.now(); // start de tijdmeting voor de statistieken
     setTimeout(() => RB.audio.speak(current.speakText), 250);
+  }
+
+  // Logt elk antwoord (juist én fout) voor de statistieken-tabel
+  function logAnswer(given, isCorrect) {
+    if (!current || !RB.cloud.user) return;
+    RB.cloud
+      .logAnswer({
+        player: state.currentPlayer,
+        level: player.level,
+        level_name: levelName(player.level),
+        exercise: current.text || current.type,
+        given_answer: given,
+        correct_answer: current.answer,
+        is_correct: isCorrect,
+        duration_ms: Math.max(0, Date.now() - exerciseStart),
+        input_mode: current.input === "numpad" ? "numpad" : "multiple choice",
+      })
+      .catch(() => {}); // statistieken mogen het spel nooit blokkeren
   }
 
   function renderOptions(options) {
@@ -399,6 +419,7 @@
     const raw = $("numpad-display").textContent;
     if (raw === "") return;
     const val = parseInt(raw, 10);
+    logAnswer(val, val === current.answer);
     if (val === current.answer) onCorrect(null);
     else onWrongNumpad();
   }
@@ -425,6 +446,7 @@
 
   function onAnswer(val, btn) {
     if (locked) return;
+    logAnswer(val, val === current.answer);
     if (val === current.answer) onCorrect(btn);
     else handleWrong(btn);
   }

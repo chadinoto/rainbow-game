@@ -68,6 +68,13 @@ RB.cloud = {
     return data ? data.data : null;
   },
 
+  // Logt één antwoord (ook een fout) voor de statistieken
+  async logAnswer(row) {
+    if (!this.client || !this.user) return;
+    const { error } = await this.client.from("rainbow_answers").insert({ user_id: this.user.id, ...row });
+    if (error) throw error;
+  },
+
   // bewaart de hele toestand (upsert op user_id)
   async save(state) {
     if (!this.client || !this.user) return;

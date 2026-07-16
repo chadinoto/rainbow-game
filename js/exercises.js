@@ -77,6 +77,7 @@ RB.exercises = {
     const a = b * answer;                      // deeltal
     return {
       type: "div",
+      text: `${a} : ${b}`,
       instruction: "Hoeveel is het?",
       speakText: `${this._word(a)} gedeeld door ${this._word(b)}`,
       mainHTML: `<span class="num">${a}</span><span class="op">:</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
@@ -95,6 +96,7 @@ RB.exercises = {
     const answer = a * b;
     return {
       type: "mul",
+      text: `${a} x ${b}`,
       instruction: "Hoeveel is het?",
       speakText: `${this._word(a)} maal ${this._word(b)}`,
       mainHTML: `<span class="num">${a}</span><span class="op">×</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
@@ -131,6 +133,7 @@ RB.exercises = {
       const objs = Array.from({ length: target }, () => RB.art.object(name)).join("");
       return {
         type: "count",
+        text: `tel ${target}`,
         instruction: "Hoeveel zie je?",
         speakText: "Hoeveel zie je?",
         mainHTML: `<div class="count-objects">${objs}</div>`,
@@ -144,6 +147,7 @@ RB.exercises = {
     const target = this._pickBiasedHigh(1, maxN);
     return {
       type: "recognize",
+      text: `getal ${target}`,
       instruction: "Welk getal hoor je?",
       speakText: "Zoek het getal " + this._word(target) + ".",
       mainHTML: RB.art.listenBadge(),
@@ -160,6 +164,7 @@ RB.exercises = {
     const target = this._rndInt(1, maxN);
     return {
       type: "recognize-type",
+      text: `getal ${target}`,
       instruction: "Welk getal hoor je? Typ het in.",
       speakText: "Welk getal is dit? " + this._word(target) + ".",
       mainHTML: RB.art.listenBadge(),
@@ -181,6 +186,7 @@ RB.exercises = {
     const smallEnough = maxTotal <= 20; // stipjes-hulp enkel bij kleine getallen
     return {
       type: "add",
+      text: `${a} + ${b}`,
       instruction: "Hoeveel is het samen?",
       speakText: `${this._word(a)} plus ${this._word(b)}`,
       mainHTML: `<span class="num">${a}</span><span class="op">+</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
@@ -201,6 +207,7 @@ RB.exercises = {
     const smallEnough = maxTotal <= 20;
     return {
       type: "sub",
+      text: `${a} - ${b}`,
       instruction: "Hoeveel blijven er over?",
       speakText: `${this._word(a)}, min ${this._word(b)}`,
       mainHTML: `<span class="num">${a}</span><span class="op">−</span><span class="num">${b}</span><span class="op">=</span><span class="qmark">?</span>`,
