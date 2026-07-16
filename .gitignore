@@ -14,3 +14,4 @@ wheels/
 
 # Referentiespel van mijn zoon — NIET publiceren (bevat secrets.toml)
 maaltafels/
+__sync-test.html

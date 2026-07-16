@@ -22,17 +22,57 @@
 
   const $ = (id) => document.getElementById(id);
 
-  // opslaan: altijd lokaal (snel/offline) + na een korte pauze naar de cloud
+  // opslaan: altijd lokaal (snel/offline) + na een korte pauze naar de cloud.
+  // BELANGRIJK: naar de cloud schrijven we nooit blind. We halen eerst op wat er staat
+  // en voegen samen (max per speler/kleur). Anders wist een toestel met een oude stand
+  // de diamanten die intussen op een ánder toestel verzameld werden.
   let cloudTimer = null;
+  async function pushCloud(overwrite) {
+    if (!RB.cloud.user) return;
+    try {
+      if (!overwrite) {
+        const remote = await RB.cloud.load();
+        if (remote) {
+          state = mergeStates(state, RB.storage.normalize(remote));
+          player = state.players[state.currentPlayer];
+          RB.storage.save(state);
+        }
+      }
+      await RB.cloud.save(state);
+    } catch (e) {}
+  }
   function save() {
     RB.storage.save(state);
     if (RB.cloud.user) {
       clearTimeout(cloudTimer);
-      cloudTimer = setTimeout(() => RB.cloud.save(state).catch(() => {}), 1200);
+      cloudTimer = setTimeout(() => pushCloud(false), 1200);
     }
   }
+  // wissen moet écht wissen: enkel hier mag de cloud-stand overschreven worden
+  function saveOverwrite() {
+    RB.storage.save(state);
+    clearTimeout(cloudTimer);
+    pushCloud(true);
+  }
   function flushCloud() {
-    if (RB.cloud.user) RB.cloud.save(state).catch(() => {});
+    clearTimeout(cloudTimer);
+    pushCloud(false);
+  }
+
+  // haalt de cloud-stand op en voegt samen (bv. als de kids intussen op hun iPad speelden)
+  async function pullCloud() {
+    if (!RB.cloud.user) return false;
+    try {
+      const remote = await RB.cloud.load();
+      if (!remote) return false;
+      state = mergeStates(state, RB.storage.normalize(remote));
+      if (!state.players[state.currentPlayer]) state.currentPlayer = cfg.PLAYERS[0];
+      player = state.players[state.currentPlayer];
+      RB.storage.save(state);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
   // totaal aantal diamanten over alle spelers (voor de "rijkste wint"-samenvoeging)
   function grandTotal(s) {
@@ -826,7 +866,7 @@
       if (confirm(`De verzameling van ${state.currentPlayer} wissen?`)) {
         state.players[state.currentPlayer] = RB.storage._player();
         player = state.players[state.currentPlayer];
-        save();
+        saveOverwrite();
         renderSettings();
       }
     });
@@ -836,8 +876,9 @@
         const keepSound = state.soundOn;
         state = RB.storage._default();
         state.soundOn = keepSound;
-        setPlayer(state.currentPlayer);
-        save();
+        state.currentPlayer = cfg.PLAYERS[0];
+        player = state.players[state.currentPlayer];
+        saveOverwrite();
         renderSettings();
       }
     });
@@ -850,10 +891,20 @@
       }
     });
 
-    // bij het sluiten/wegklikken: laatste stand nog naar de cloud
+    // bij het sluiten/wegklikken: laatste stand nog naar de cloud.
+    // bij het terugkeren: opnieuw ophalen, zodat je ziet wat de kids intussen op hun
+    // iPad verzamelden (een iPad-app blijft anders dagen op dezelfde pagina staan).
     window.addEventListener("pagehide", flushCloud);
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "hidden") flushCloud();
+    document.addEventListener("visibilitychange", async () => {
+      if (document.visibilityState === "hidden") {
+        flushCloud();
+        return;
+      }
+      if (screens.game.classList.contains("active")) return; // niet storen tijdens een oefening
+      if (!(await pullCloud())) return;
+      if (screens.start.classList.contains("active")) renderStart();
+      if (screens.treasure.classList.contains("active")) renderTreasure();
+      if (screens.settings.classList.contains("active")) renderSettings();
     });
   }
 
