@@ -383,12 +383,19 @@ RB.art = {
           <path d="M35 17 A11 11 0 1 1 14 13 A8 8 0 1 0 30 20 A5 5 0 1 1 20 17 A2.4 2.4 0 1 0 26 17"
                 fill="none" stroke="#F0568F" stroke-width="3.2" stroke-linecap="round"/>
           <circle cx="19" cy="12" r="2.4" fill="#fff" opacity="0.6"/>`);
-      case "sushi":
+      case "shrimp":
+        // stokjes + torpedogarnaal (tempura)
         return s(`
-          <rect x="9" y="25" width="30" height="15" rx="7.5" fill="#FFF8EC" stroke="#E3D5BE" stroke-width="1.6"/>
-          <path d="M9 26 Q24 12 39 26 Q39 29 34 28 Q24 19 14 28 Q9 29 9 26 Z" fill="#F5854F"/>
-          <path d="M14 24 Q24 16 34 24" stroke="#FFCBAA" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-          <rect x="21" y="21" width="6" height="20" rx="2" fill="#41505E"/>`);
+          <g transform="rotate(-30 24 24)">
+            <rect x="1" y="13" width="46" height="3.4" rx="1.7" fill="#CFA470"/>
+            <rect x="1" y="20" width="46" height="3.4" rx="1.7" fill="#B98A52"/>
+          </g>
+          <path d="M13 33 Q15 20 28 20 Q40 20 41 27 Q42 35 30 36 Q19 37 13 33 Z"
+                fill="#E9A54D" stroke="#C57F2E" stroke-width="1.6" stroke-linejoin="round"/>
+          <circle cx="22" cy="26" r="2" fill="#F8CC85"/>
+          <circle cx="29" cy="24" r="1.8" fill="#F8CC85"/>
+          <circle cx="35" cy="29" r="1.7" fill="#F8CC85"/>
+          <path d="M13 33 L5 27 L8 33 L4 39 L12 37 Z" fill="#F0554C" stroke="#C93B34" stroke-width="1.2" stroke-linejoin="round"/>`);
       case "cake":
         return s(`
           <path d="M10 26 L38 26 L38 42 Q38 44 36 44 L12 44 Q10 44 10 42 Z" fill="#F291B7"/>

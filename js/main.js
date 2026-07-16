@@ -136,15 +136,24 @@
     return rewards[rewardsReached(rewards, p)] || null;
   }
 
-  // Voortgang als duidelijke regels: "6/10 blauwe diamanten" (voor score board)
+  // Naam van de oefening bij een niveau (voor het labeltje in het score board)
+  function levelName(id) {
+    const lv = cfg.LEVELS.find((l) => l.id === Number(id));
+    return lv ? lv.name : "";
+  }
+
+  // Voortgang als duidelijke regels: "6/10 blauwe diamanten [Plus tot 10]"
   function rewardProgressHTML(rewards, r) {
-    const line = (color, have, target, labelText) => {
+    const line = (color, have, target, labelText, tag) => {
       const pct = Math.max(0, Math.min(100, (have / target) * 100));
+      const chip = tag
+        ? `<span class="need-tag" style="background:${color}22;color:${RB.gems._shade(color, -0.4)}">${tag}</span>`
+        : "";
       return `
         <div class="need-line">
           <span class="need-gem lr3">${RB.gems.svg(color, false)}</span>
           <div class="need-info">
-            <div class="need-top"><b>${Math.min(have, target)}/${target}</b> ${labelText}</div>
+            <div class="need-top"><b>${Math.min(have, target)}/${target}</b> ${labelText}${chip}</div>
             <div class="tracker-bar"><span class="tracker-fill" style="width:${pct}%;background:${color}"></span></div>
           </div>
         </div>`;
@@ -152,7 +161,15 @@
     if (r.need) {
       const i = rewards.indexOf(r);
       return Object.keys(r.need)
-        .map((l) => line(cfg.LEVEL_GEM[l].color, availFor(rewards, i, l, player), r.need[l], `${cfg.LEVEL_GEM[l].label} diamanten`))
+        .map((l) =>
+          line(
+            cfg.LEVEL_GEM[l].color,
+            availFor(rewards, i, l, player),
+            r.need[l],
+            `${cfg.LEVEL_GEM[l].label} diamanten`,
+            levelName(l)
+          )
+        )
         .join("");
     }
     return line("#F3C233", points(player), r.points, "punten");
