@@ -19,6 +19,7 @@
   let locked = false; // even blokkeren tijdens de fonkel-animatie
   let focusedReward = null; // welk cadeautje in de tracker getoond wordt (null = volgende)
   let exerciseStart = 0; // wanneer de huidige oefening verscheen (voor de statistieken)
+  let session = null; // lopende oefensessie (start/eind/duur/goed/fout) → rainbow_sessions
 
   const $ = (id) => document.getElementById(id);
 
@@ -375,10 +376,12 @@
 
   // ---------- SPEL ----------
   function startGame() {
+    finalizeSession(false, null); // sluit een eventueel openstaande sessie af
     // een nieuwe oefenreeks begint altijd met een lege regenboog
     player.collected = 0;
     roundWrong = 0;
     save();
+    beginSession(); // start de tijdmeting van deze regenboog-poging
     show("game");
     RB.rainbow.render($("rainbow"), 0);
     nextExercise();
@@ -410,9 +413,53 @@
     setTimeout(() => RB.audio.speak(current.speakText), 250);
   }
 
+  // ---------- OEFENSESSIE (start/eind exact registreren → rainbow_sessions) ----------
+  // Een sessie = één regenboog-poging: van startGame() tot ze de regenboog afmaakt
+  // (diamant) of het spel verlaat. Een verloren-en-opnieuw hoort bij dezelfde sessie.
+  function beginSession() {
+    if (!RB.cloud.user) { session = null; return; }
+    session = {
+      startedAt: Date.now(),
+      level: player.level,
+      levelName: levelName(player.level),
+      correct: 0,
+      wrong: 0,
+      activeMs: 0,
+      answers: 0,
+    };
+  }
+
+  // Sluit de lopende sessie af en schrijft ze weg (alleen als er echt geoefend is)
+  function finalizeSession(completed, gift) {
+    const s = session;
+    session = null;
+    if (!s || s.answers === 0 || !RB.cloud.user) return;
+    RB.cloud
+      .logSession({
+        player: state.currentPlayer,
+        level: s.level,
+        level_name: s.levelName,
+        started_at: new Date(s.startedAt).toISOString(),
+        ended_at: new Date().toISOString(),
+        duration_ms: s.activeMs,
+        correct: s.correct,
+        wrong: s.wrong,
+        completed: !!completed,
+        gift_name: gift ? gift.name : null,
+        gift_art: gift ? gift.art : null,
+      })
+      .catch(() => {}); // statistieken mogen het spel nooit blokkeren
+  }
+
   // Logt elk antwoord (juist én fout) voor de statistieken-tabel
   function logAnswer(given, isCorrect) {
     if (!current || !RB.cloud.user) return;
+    if (session) {
+      session.answers++;
+      if (isCorrect) session.correct++;
+      else session.wrong++;
+      session.activeMs += Math.min(120000, Math.max(0, Date.now() - exerciseStart));
+    }
     RB.cloud
       .logAnswer({
         player: state.currentPlayer,
@@ -587,6 +634,12 @@
     save();
     flushCloud(); // een verdiende diamant meteen naar de cloud
 
+    // sessie afsluiten als voltooid: registreer de diamant + een eventueel behaald cadeautje
+    const rewardsAtWin = curRewards();
+    const reachedAtWin = rewardsReached(rewardsAtWin, player);
+    const newGift = reachedAtWin > player.seenRewards ? rewardsAtWin[player.seenRewards] : null;
+    finalizeSession(true, newGift);
+
     const fly = $("reward-fly");
     fly.innerHTML = RB.gems.svg(lg.color, false);
     fly.style.width = Math.round(40 * lg.size) + "px";
@@ -642,8 +695,21 @@
     openLid("treasure-lid", 400); // dicht → gaat vanzelf open → diamanten zichtbaar
   }
 
+  // Wissel tussen de tabbladen "Schatkist" en "Kalender"
+  function showTreasureTab(name) {
+    document.querySelectorAll("#treasure-tabs .ttab").forEach((b) =>
+      b.classList.toggle("active", b.getAttribute("data-tab") === name)
+    );
+    $("tab-chest").classList.toggle("active", name === "chest");
+    $("tab-calendar").classList.toggle("active", name === "calendar");
+    if (name === "calendar") {
+      RB.calendar.render($("calendar-view"), state.currentPlayer);
+    }
+  }
+
   function renderTreasure() {
     focusedReward = null; // begin bij het eerstvolgende cadeautje
+    showTreasureTab("chest"); // open altijd op de schatkist zelf
     $("treasure-title").textContent = "Schatkist van " + state.currentPlayer;
     renderPile($("gem-pile"), player.gems);
     const t = total(player);
@@ -803,6 +869,7 @@
 
   // ---------- KNOPPEN AAN ELKAAR KOPPELEN ----------
   function goHome() {
+    finalizeSession(false, null); // verlaat het spel → sessie afsluiten (niet voltooid)
     window.speechSynthesis && window.speechSynthesis.cancel();
     renderStart();
     show("start");
@@ -846,6 +913,11 @@
     $("prize-ok").addEventListener("click", () => {
       $("prize-pop").classList.remove("show");
     });
+
+    // tabbladen in de schatkist (Schatkist / Kalender)
+    document.querySelectorAll("#treasure-tabs .ttab").forEach((b) =>
+      b.addEventListener("click", () => showTreasureTab(b.getAttribute("data-tab")))
+    );
 
     $("open-settings").addEventListener("click", () => {
       renderSettings();
@@ -894,9 +966,13 @@
     // bij het sluiten/wegklikken: laatste stand nog naar de cloud.
     // bij het terugkeren: opnieuw ophalen, zodat je ziet wat de kids intussen op hun
     // iPad verzamelden (een iPad-app blijft anders dagen op dezelfde pagina staan).
-    window.addEventListener("pagehide", flushCloud);
+    window.addEventListener("pagehide", () => {
+      finalizeSession(false, null);
+      flushCloud();
+    });
     document.addEventListener("visibilitychange", async () => {
       if (document.visibilityState === "hidden") {
+        finalizeSession(false, null); // app naar achtergrond → sessie afsluiten
         flushCloud();
         return;
       }

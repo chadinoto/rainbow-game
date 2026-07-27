@@ -75,6 +75,41 @@ RB.cloud = {
     if (error) throw error;
   },
 
+  // Haalt alle gelogde antwoorden van één speler op (voor de kalender)
+  async fetchAnswers(player) {
+    if (!this.client || !this.user) return [];
+    const { data, error } = await this.client
+      .from("rainbow_answers")
+      .select("player, level, is_correct, duration_ms, created_at")
+      .eq("user_id", this.user.id)
+      .eq("player", player)
+      .order("created_at", { ascending: true })
+      .limit(5000);
+    if (error) throw error;
+    return data || [];
+  },
+
+  // Registreert één oefensessie (start/eind/duur, goed/fout, diamant, cadeautje)
+  async logSession(row) {
+    if (!this.client || !this.user) return;
+    const { error } = await this.client.from("rainbow_sessions").insert({ user_id: this.user.id, ...row });
+    if (error) throw error;
+  },
+
+  // Haalt de sessies van één speler op (nauwkeurige bron voor de kalender)
+  async fetchSessions(player) {
+    if (!this.client || !this.user) return [];
+    const { data, error } = await this.client
+      .from("rainbow_sessions")
+      .select("player, level, started_at, ended_at, duration_ms, correct, wrong, completed, gift_name, gift_art")
+      .eq("user_id", this.user.id)
+      .eq("player", player)
+      .order("started_at", { ascending: true })
+      .limit(5000);
+    if (error) throw error;
+    return data || [];
+  },
+
   // bewaart de hele toestand (upsert op user_id)
   async save(state) {
     if (!this.client || !this.user) return;

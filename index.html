@@ -147,19 +147,33 @@
       <button class="icon-btn home-btn" title="Naar huis" data-icon="home"></button>
       <div class="treasure-card">
         <h2 class="treasure-title" id="treasure-title">Mijn schatkist</h2>
-        <div class="chest-scene">
-          <div class="chest3d">
-            <div class="chest-layer chest-back"></div>
-            <div id="gem-pile" class="chest-pile"></div>
-            <div class="chest-layer chest-front"></div>
-            <div class="chest-layer chest-lid" id="treasure-lid"></div>
-          </div>
-        </div>
-        <p id="treasure-count" class="treasure-count"></p>
 
-        <div id="treasure-tracker" class="reward-tracker big"></div>
-        <h3 class="rewards-heading">Wat je kan verdienen</h3>
-        <div id="treasure-rewards" class="rewards-list"></div>
+        <div class="treasure-tabs" id="treasure-tabs">
+          <button class="ttab active" data-tab="chest">Schatkist</button>
+          <button class="ttab" data-tab="calendar">Kalender</button>
+        </div>
+
+        <!-- tab: de schatkist zelf -->
+        <div id="tab-chest" class="tab-panel active">
+          <div class="chest-scene">
+            <div class="chest3d">
+              <div class="chest-layer chest-back"></div>
+              <div id="gem-pile" class="chest-pile"></div>
+              <div class="chest-layer chest-front"></div>
+              <div class="chest-layer chest-lid" id="treasure-lid"></div>
+            </div>
+          </div>
+          <p id="treasure-count" class="treasure-count"></p>
+
+          <div id="treasure-tracker" class="reward-tracker big"></div>
+          <h3 class="rewards-heading">Wat je kan verdienen</h3>
+          <div id="treasure-rewards" class="rewards-list"></div>
+        </div>
+
+        <!-- tab: de kalender (wat deed je wanneer) -->
+        <div id="tab-calendar" class="tab-panel">
+          <div id="calendar-view" class="calendar-view"></div>
+        </div>
 
         <button id="treasure-play" class="btn-primary"><span class="btn-ic" data-icon="play"></span>Verder spelen</button>
       </div>
@@ -201,6 +215,7 @@
   <script src="js/gems.js"></script>
   <script src="js/rainbow.js"></script>
   <script src="js/exercises.js"></script>
+  <script src="js/calendar.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
