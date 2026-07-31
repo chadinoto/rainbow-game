@@ -124,27 +124,6 @@ RB.calendar = {
     return byDate;
   },
 
-  // Nauwkeurige sessies (start/eind, diamant, cadeautje) overschrijven de reconstructie.
-  // Per dag waarvoor er sessies zijn, geldt de sessie-data als de waarheid.
-  _applySessions(byDate, sessions) {
-    const cfg = RB.config;
-    const days = {};
-    for (const s of sessions) {
-      if (!s || !s.started_at) continue;
-      const key = this._dayKey(s.started_at);
-      const d = days[key] || (days[key] = { diamonds: [], minutesMs: 0, gifts: [], answers: 0, correct: 0 });
-      d.minutesMs += Math.max(0, s.duration_ms || 0);
-      d.correct += s.correct || 0;
-      d.answers += (s.correct || 0) + (s.wrong || 0);
-      if (s.completed) {
-        const lg = cfg.LEVEL_GEM[s.level] || { color: "#F3C233" };
-        d.diamonds.push({ level: s.level, color: lg.color, shiny: !!lg.shiny });
-      }
-      if (s.gift_name) d.gifts.push({ name: s.gift_name, art: s.gift_art });
-    }
-    for (const key of Object.keys(days)) byDate[key] = days[key]; // sessie is leidend voor die dag
-  },
-
   // Opent de kalender in een container voor een speler (haalt data op indien nodig).
   async render(container, player) {
     const today = new Date();
@@ -164,13 +143,10 @@ RB.calendar = {
     }
     try {
       this._rows = await RB.cloud.fetchAnswers(player);
+      // Elk antwoord wordt in rainbow_answers gelogd, dus dit is de VOLLEDIGE bron.
+      // (De rainbow_sessions-tabel is maar een deelverzameling en werd hier bewust
+      //  niet meer overheen gelegd: dat wiste juist echte dagen.)
       this._byDate = this._reconstruct(this._rows, player);
-      // Nauwkeurige sessies (rainbow_sessions) overschrijven de reconstructie per dag.
-      // Bestaat die tabel nog niet, dan blijft alleen de (benaderende) reconstructie over.
-      try {
-        const sessions = await RB.cloud.fetchSessions(player);
-        if (sessions && sessions.length) this._applySessions(this._byDate, sessions);
-      } catch (e2) { /* tabel nog niet aangemaakt → reconstructie volstaat */ }
       this._player = player;
     } catch (e) {
       if (!this._byDate) {
