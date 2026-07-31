@@ -471,6 +471,7 @@
         is_correct: isCorrect,
         duration_ms: Math.max(0, Date.now() - exerciseStart),
         input_mode: current.input === "numpad" ? "numpad" : "multiple choice",
+        created_at: new Date().toISOString(), // zelf zetten: nooit afhankelijk van een DB-default
       })
       .catch(() => {}); // statistieken mogen het spel nooit blokkeren
   }
@@ -814,12 +815,16 @@
     }
   }
 
-  // markeer reeds behaalde cadeautjes als "gezien" (geen oude pop-ups)
+  // Zet de "gezien"-teller bij het inloggen gelijk aan wat er nu écht behaald is.
+  // - Bij normaal spelen is dat gelijk aan Math.max(...) (je hebt nooit meer gezien dan behaald),
+  //   dus geen oude pop-ups voor al verdiende cadeautjes.
+  // - Wordt er een cadeautje uit de lijst gehaald (bv. Frietjes bij Raphael), dan zakt de teller
+  //   mee, zodat het eerstvolgende cadeautje (Zuma) straks netjes zijn feestje krijgt.
   function reconcileSeen() {
     for (const name of cfg.PLAYERS) {
       const p = state.players[name];
       if (!p) continue;
-      p.seenRewards = Math.max(p.seenRewards || 0, rewardsReached(rewardsForName(name), p));
+      p.seenRewards = rewardsReached(rewardsForName(name), p);
     }
   }
 

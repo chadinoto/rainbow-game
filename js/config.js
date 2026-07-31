@@ -125,7 +125,9 @@ RB.config = {
     Raphael: [
       { name: "Een ijsje gaan eten", art: "icecream", need: { 6: 10 } },         // plus tot 100
       { name: "Een lolly", art: "lolly", need: { 8: 10 } },                       // min tot 100
-      { name: "Frietjes gaan eten", art: "fries", need: { 6: 10, 8: 10, 9: 10 } },   // rood + oranje + paars
+      // "Frietjes" bewust weggehaald zodat Raphael sneller Zuma haalt. Zijn diamanten
+      // blijven (die zitten in player.gems, los van de cadeautjes); Zuma verbruikt nu
+      // niet meer eerst de frietjes-diamanten, dus met dezelfde diamanten staat hij dichterbij.
       { name: "Bij Zuma gaan eten", art: "shrimp", need: { 6: 10, 8: 10, 12: 10 } },  // plus100 + min100 + maaltafels
       { name: "Een cadeautje krijgen", art: "gift", need: { 6: 10, 8: 10, 9: 10, 10: 10, 11: 10, 12: 10, 13: 10 } }, // 10 van alles
     ],
