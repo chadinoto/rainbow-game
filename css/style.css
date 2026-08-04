@@ -333,6 +333,13 @@ html, body {
 .question-main .op { color: var(--accent); font-weight: 700; }
 .question-main .qmark { color: var(--ink-faint); }
 
+/* groot plaatje voor de beginletter-oefening (woord horen → letter kiezen) */
+.begin-pic { display: flex; align-items: center; justify-content: center; }
+.begin-pic .obj, .begin-pic .treat {
+  width: clamp(96px, 26vw, 132px); height: clamp(96px, 26vw, 132px);
+  filter: drop-shadow(0 6px 8px oklch(0.5 0.05 320 / 0.2));
+}
+
 /* luister-badge */
 .listen-badge {
   position: relative;
@@ -515,6 +522,7 @@ html, body {
 .lr15 { width: 23px; height: 26px; }
 .lr16 { width: 24px; height: 26px; }
 .lr17 { width: 24px; height: 27px; }
+.lr19 { width: 24px; height: 27px; }
 .rewards-heading { font-size: 15px; font-weight: 700; color: var(--ink-soft); margin: 4px 0 10px; }
 
 .toggle-row { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 0; font-size: 16px; font-weight: 600; }
@@ -738,6 +746,7 @@ html, body {
 .chest-pile .mini-gem.g15 { width: 21px; height: 24px; }
 .chest-pile .mini-gem.g16 { width: 22px; height: 24px; }
 .chest-pile .mini-gem.g17 { width: 22px; height: 25px; }
+.chest-pile .mini-gem.g19 { width: 22px; height: 25px; }
 /* extra glans voor de moeilijkste diamant */
 .mini-gem.shiny .gem-svg { filter: drop-shadow(0 0 3px #FFE9A8) drop-shadow(0 0 5px #F4C534); }
 .mini-gem.shiny { animation: gemTwinkle 2.2s ease-in-out infinite; }
@@ -953,7 +962,102 @@ html, body {
 }
 .cal-detail.show { display: block; animation: fadeIn 0.3s var(--ease); }
 .cal-detail-head { font-size: 16px; font-weight: 800; color: var(--ink); text-transform: capitalize; margin-bottom: 8px; }
-.cal-detail-gems { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-bottom: 8px; }
+.cal-detail-gems { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 10px; }
+/* per niveau: klikbaar pilletje (diamant + telling); naam-tag verschijnt bij hover */
+.cal-gem-hover {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: transform 0.12s var(--ease), box-shadow 0.14s var(--ease), border-color 0.14s var(--ease);
+}
+.cal-gem-hover:hover { border-color: var(--accent); box-shadow: var(--shadow-1); transform: translateY(-1px); }
+.cal-gem-hover:active { transform: scale(0.97); }
+.cal-gem-hover .cal-gem.big { width: 24px; height: 26px; }
+/* naam-tag: standaard verborgen, zweeft boven de diamant bij hover */
+.cal-level-tag {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-2px);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: var(--shadow-1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.14s var(--ease), transform 0.14s var(--ease);
+  z-index: 6;
+}
+.cal-gem-hover:hover .cal-level-tag { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+
+/* ---------- popup-tabel met de losse oefeningen ---------- */
+.cal-modal {
+  position: fixed;
+  inset: 0;
+  background: oklch(0.4 0.05 320 / 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+  animation: fadeIn 0.2s var(--ease);
+}
+.cal-modal-card {
+  position: relative;
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: var(--shadow-2);
+  padding: 22px;
+  width: min(460px, 94vw);
+  max-height: 84vh;
+  overflow-y: auto;
+  text-align: center;
+}
+.cal-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: var(--card-2);
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.cal-modal-close:hover { color: var(--ink); }
+.cal-modal-title { margin: 0 0 2px; font-size: 20px; font-weight: 800; color: var(--ink); }
+.cal-modal-sub { margin: 0 0 16px; font-size: 14px; color: var(--ink-soft); font-weight: 600; }
+.cal-table-wrap { overflow-x: auto; }
+.cal-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.cal-table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 6px 10px;
+  border-bottom: 2px solid var(--border);
+}
+.cal-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+.cal-table .tbl-ex { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.cal-table .tbl-sec { color: var(--ink-soft); white-space: nowrap; text-align: right; }
+.cal-table .row-wrong td { background: oklch(0.95 0.03 20 / 0.5); }
+.tbl-ok { color: var(--yes-ink); font-weight: 800; }
+.tbl-no { color: var(--accent-deep); font-weight: 800; }
+.tbl-correct { color: var(--ink-faint); font-size: 13px; }
 .cal-detail-line { font-size: 14px; color: var(--ink-soft); margin: 0; }
 .cal-detail-line b { color: var(--ink); font-weight: 800; }
 .cal-detail-gifts { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }

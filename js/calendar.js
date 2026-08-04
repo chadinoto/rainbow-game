@@ -38,6 +38,23 @@ RB.calendar = {
     return d.getFullYear() + "-" + this._pad(d.getMonth() + 1) + "-" + this._pad(d.getDate());
   },
 
+  // Naam van de oefening bij een niveau (bv. "Plus tot 100")
+  _levelName(level) {
+    const lv = RB.config.LEVELS.find((l) => l.id === Number(level));
+    return lv ? lv.name : "";
+  },
+
+  // Groepeert de diamanten van een dag per niveau (in volgorde van eerste voorkomen)
+  _groupByLevel(diamonds) {
+    const groups = [];
+    for (const g of diamonds) {
+      let grp = groups.find((x) => x.level === g.level);
+      if (!grp) { grp = { level: g.level, color: g.color, count: 0 }; groups.push(grp); }
+      grp.count++;
+    }
+    return groups;
+  },
+
   // --- cadeautjes-logica (zelfde regels als in main.js, maar op een gems-map) ---
   _rewardsFor(name) {
     return (RB.config.PLAYER_REWARDS && RB.config.PLAYER_REWARDS[name]) || RB.config.REWARDS;
@@ -203,7 +220,11 @@ RB.calendar = {
         const n = info.diamonds.length;
         if (n) {
           const g = info.diamonds[n - 1]; // laatst verdiende kleur als voorbeeld
-          inner += `<span class="cal-gems"><span class="cal-gem">${RB.gems.svg(g.color, false)}</span>${
+          // hover-tooltip met de oefeningen van die dag (bv. "2× Cijfers zoeken tot 10")
+          const tip = this._groupByLevel(info.diamonds)
+            .map((grp) => `${grp.count}× ${this._levelName(grp.level)}`)
+            .join(", ");
+          inner += `<span class="cal-gems" title="${tip}"><span class="cal-gem">${RB.gems.svg(g.color, false)}</span>${
             n > 1 ? `<span class="cal-x">×${n}</span>` : ""
           }</span>`;
         }
@@ -266,9 +287,18 @@ RB.calendar = {
     const dateText = `${d} ${this.MONTHS[m - 1]}`;
     const mins = Math.round(info.minutesMs / 60000);
 
+    // per niveau gegroepeerd; naam-tag verschijnt bij hover, klik → detailtabel
     const gemsHTML = info.diamonds.length
-      ? `<div class="cal-detail-gems">${info.diamonds
-          .map((g) => `<span class="cal-gem big">${RB.gems.svg(g.color, false)}</span>`).join("")}</div>`
+      ? `<div class="cal-detail-gems">${this._groupByLevel(info.diamonds)
+          .map((grp) => {
+            const nm = this._levelName(grp.level);
+            return `<button class="cal-gem-hover" data-level="${grp.level}" title="Bekijk de oefeningen">
+                <span class="cal-gem big">${RB.gems.svg(grp.color, false)}</span>
+                ${grp.count > 1 ? `<span class="cal-x">×${grp.count}</span>` : ""}
+                <span class="cal-level-tag" style="background:${RB.gems._shade(grp.color, 0.84)};color:${RB.gems._shade(grp.color, -0.42)}">${nm}</span>
+              </button>`;
+          })
+          .join("")}</div>`
       : "";
     const parts = [];
     if (info.diamonds.length) parts.push(`<b>${info.diamonds.length}</b> ${info.diamonds.length === 1 ? "diamant" : "diamanten"}`);
@@ -287,5 +317,57 @@ RB.calendar = {
       <p class="cal-detail-line">${parts.join(" · ")}</p>
       ${giftsHTML}`;
     box.classList.add("show");
+
+    // klik op een diamant → tabel met de losse oefeningen van dat niveau die dag
+    box.querySelectorAll(".cal-gem-hover").forEach((b) =>
+      b.addEventListener("click", () => this._showTable(key, Number(b.getAttribute("data-level"))))
+    );
+  },
+
+  // Popup-tabel: alle antwoorden van één niveau op één dag (oefening | antwoord ✓/✗ | tijd)
+  _showTable(key, level) {
+    const rows = (this._rows || [])
+      .filter((r) => r && r.created_at && Number(r.level) === level && this._dayKey(r.created_at) === key)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    const [y, m, d] = key.split("-").map(Number);
+    const dateText = `${d} ${this.MONTHS[m - 1]}`;
+    const nm = this._levelName(level);
+    const goed = rows.filter((r) => r.is_correct).length;
+
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    const bodyRows = rows
+      .map((r) => {
+        const secs = Math.round((r.duration_ms || 0) / 1000);
+        const given = r.given_answer == null ? "—" : esc(r.given_answer);
+        const mark = r.is_correct
+          ? `<span class="tbl-ok">✓</span>`
+          : `<span class="tbl-no">✗</span><span class="tbl-correct"> (juist: ${esc(r.correct_answer)})</span>`;
+        return `<tr class="${r.is_correct ? "" : "row-wrong"}">
+          <td class="tbl-ex">${esc(r.exercise)}</td>
+          <td class="tbl-ans">${given} ${mark}</td>
+          <td class="tbl-sec">${secs}s</td>
+        </tr>`;
+      })
+      .join("");
+
+    const overlay = document.createElement("div");
+    overlay.className = "cal-modal";
+    overlay.innerHTML = `
+      <div class="cal-modal-card" role="dialog" aria-modal="true">
+        <button class="cal-modal-close" aria-label="Sluiten">&times;</button>
+        <h3 class="cal-modal-title">${nm}</h3>
+        <p class="cal-modal-sub">${dateText} · ${goed}/${rows.length} goed</p>
+        <div class="cal-table-wrap">
+          <table class="cal-table">
+            <thead><tr><th>Oefening</th><th>Antwoord</th><th>Tijd</th></tr></thead>
+            <tbody>${bodyRows || `<tr><td colspan="3">Geen oefeningen gevonden.</td></tr>`}</tbody>
+          </table>
+        </div>
+      </div>`;
+    const close = () => overlay.remove();
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+    overlay.querySelector(".cal-modal-close").addEventListener("click", close);
+    document.body.appendChild(overlay);
   },
 };

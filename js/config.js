@@ -44,6 +44,7 @@ RB.config = {
     { id: 4, name: "Cijfers zoeken tot 20", desc: "Ze hoort een getal en tikt het juiste cijfer aan (tot 20)." },
     { id: 5, name: "Plus en min tot 20", desc: "Optellen en aftrekken tot 20." },
     { id: 7, name: "Plus en min tot 20", desc: "Optellen en aftrekken tot 20." },
+    { id: 19, name: "Beginletter", desc: "Ze hoort een woordje en tikt de letter aan waarmee het begint." },
     // --- Raphael ---
     { id: 6, name: "Plus tot 100", desc: "Optellen tot 100." },
     { id: 8, name: "Min tot 100", desc: "Aftrekken tot 100." },
@@ -77,6 +78,7 @@ RB.config = {
     15: { color: "#FFB703", size: 1.12, label: "amber" },   // Lea: min tot 12
     16: { color: "#3DBE8B", size: 1.14, label: "smaragd" }, // Lea: plus tot 15
     17: { color: "#F2775A", size: 1.16, label: "zalm" },    // Lea: min tot 15
+    19: { color: "#FF8A5B", size: 1.10, label: "abrikoos" }, // Lea: beginletter
   },
 
   // Nederlandse getalwoorden (voor de voorleesstem)
@@ -97,7 +99,7 @@ RB.config = {
   // ouders (niet in deze lijst) zien alle niveaus.
   // De volgorde hier bepaalt ook de getoonde nummering: Lea = niveau 1..10, Raphael = 11..17.
   PLAYER_LEVELS: {
-    Lea: [1, 2, 3, 14, 15, 16, 17, 4, 5, 7],
+    Lea: [1, 2, 3, 14, 15, 16, 17, 4, 5, 7, 19],
     Raphael: [6, 8, 9, 10, 11, 12, 13],
   },
 

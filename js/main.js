@@ -120,7 +120,7 @@
   }
 
   // Totaal aantal diamanten van een speler (alle niveaus samen)
-  const LEVELS_ALL = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17];
+  const LEVELS_ALL = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19];
   function total(p) {
     let n = 0;
     for (const k of LEVELS_ALL) n += p.gems[k] || 0;

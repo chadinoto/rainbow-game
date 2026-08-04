@@ -67,7 +67,61 @@ RB.exercises = {
     if (level === 15) return this._sub(12);                    // Lea: min tot 12
     if (level === 16) return this._add(15);                    // Lea: plus tot 15
     if (level === 17) return this._sub(15);                    // Lea: min tot 15
+    if (level === 19) return this._beginLetter();              // Lea: beginletter (woord → letter)
     return this._addSub(20);
+  },
+
+  // --- Beginletter: hoort een woordje + ziet het plaatje, kiest de beginletter ---
+  // Enkel woorden waarvan de BEGINLETTER zuiver bij de klank past. Bewust NIET:
+  //   ijsje (begint met de "ij"-klank, niet "i"), cadeau (klinkt als "k", niet "c").
+  // Alle plaatjes bestaan al in art.js (object/treat) → geen nieuwe tekeningen.
+  PICTURE_WORDS: [
+    { word: "appel",  letter: "A", kind: "object", art: "apple" },
+    { word: "bloem",  letter: "B", kind: "object", art: "flower" },
+    { word: "ballon", letter: "B", kind: "object", art: "balloon" },
+    { word: "blad",   letter: "B", kind: "object", art: "leaf" },
+    { word: "ster",   letter: "S", kind: "object", art: "star" },
+    { word: "vis",    letter: "V", kind: "object", art: "fish" },
+    { word: "hart",   letter: "H", kind: "object", art: "heart" },
+    { word: "kers",   letter: "K", kind: "object", art: "cherry" },
+    { word: "friet",  letter: "F", kind: "treat",  art: "fries" },
+    { word: "lolly",  letter: "L", kind: "treat",  art: "lolly" },
+    { word: "taart",  letter: "T", kind: "treat",  art: "cake" },
+  ],
+
+  _pictureHTML(w) {
+    return w.kind === "treat" ? RB.art.treat(w.art) : RB.art.object(w.art);
+  },
+
+  _beginLetter() {
+    const target = this.PICTURE_WORDS[this._rndInt(0, this.PICTURE_WORDS.length - 1)];
+    const letter = target.letter;
+
+    // keuzeknoppen = letters: de juiste + willekeurige andere hoofdletters
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    const set = new Set([letter]);
+    let guard = 0;
+    while (set.size < RB.config.N_OPTIONS && guard < 200) {
+      guard++;
+      set.add(alphabet[this._rndInt(0, 25)]);
+    }
+    const options = this._shuffle(Array.from(set));
+
+    // Gewoon het woordje laten horen (dat spreekt de stem netjes uit);
+    // de komma geeft een korte pauze zodat het woord duidelijk los staat.
+    const spoken = "Met welke letter begint het woordje, " + target.word + "?";
+    return {
+      type: "beginletter",
+      text: `beginletter ${target.word}`,
+      instruction: "Met welke letter begint dit woordje?",
+      speakText: spoken,
+      mainHTML: `<div class="begin-pic">${this._pictureHTML(target)}</div>`,
+      options: options,
+      answer: letter,
+      help: null,
+      helpText: "Zeg het woord nog eens. Welke letter hoor je vooraan?",
+      repeatText: spoken,
+    };
   },
 
   // --- Deeltafels (delen, altijd een gehele uitkomst) ---

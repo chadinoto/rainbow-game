@@ -345,6 +345,18 @@ RB.art = {
     if (id === 15) return wrap(this._minus(16, 26, 9, coral) + numTile(40, "12"));  // min tot 12
     if (id === 16) return wrap(this._plus(16, 26, 9, green) + numTile(40, "15"));   // plus tot 15
     if (id === 17) return wrap(this._minus(16, 26, 9, coral) + numTile(40, "15"));  // min tot 15
+    if (id === 19) {
+      // een lettertegel + een plaatje (appel): beginletter herkennen
+      const g =
+        `<rect x="8" y="10" width="26" height="32" rx="7" fill="#FFE1D2" stroke="#FF8A5B" stroke-width="2.2"/>
+         <text x="21" y="35" text-anchor="middle" font-family="ui-rounded, system-ui, sans-serif"
+               font-size="22" font-weight="800" fill="#EF6A2E">A</text>
+         <circle cx="57" cy="31" r="12" fill="#F45B69"/>
+         <ellipse cx="52" cy="28" rx="2.6" ry="3.6" fill="#fff" opacity="0.4"/>
+         <path d="M57 19 C57 14 60 12 63 12" stroke="#6E4B2A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+         <path d="M63 13 C67 11 69 14 68 17 C64 18 63 15 63 13 Z" fill="#7FB77E"/>`;
+      return wrap(g);
+    }
     // niveau 5: plus én min + oplopende sterren (grotere getallen)
     let stars = "";
     for (let i = 0; i < 3; i++) {

@@ -80,7 +80,7 @@ RB.cloud = {
     if (!this.client || !this.user) return [];
     const { data, error } = await this.client
       .from("rainbow_answers")
-      .select("player, level, is_correct, duration_ms, created_at")
+      .select("player, level, is_correct, duration_ms, created_at, exercise, given_answer, correct_answer")
       .eq("user_id", this.user.id)
       .eq("player", player)
       .order("created_at", { ascending: true })
