@@ -100,6 +100,268 @@ RB.art = {
           <circle cx="15" cy="33" r="8" fill="#E15566"/><circle cx="33" cy="30" r="8" fill="#E15566"/>
           <ellipse cx="12" cy="31" rx="2.4" ry="3.4" fill="#fff" opacity="0.35"/>
           <ellipse cx="30" cy="28" rx="2.4" ry="3.4" fill="#fff" opacity="0.35"/>`);
+
+      /* ===== extra plaatjes voor het beginletter-spel (woord → letter) ===== */
+      case "aardbei":
+        return s(`
+          <path d="M24 44 C13 40 8 30 10 22 C12 16 20 15 24 18 C28 15 36 16 38 22 C40 30 35 40 24 44 Z" fill="#F0554C"/>
+          <path d="M24 18 C21 13 17 12 14 13 C17 15 19 16 24 18 Z" fill="#7FB77E"/>
+          <path d="M24 18 C27 13 31 12 34 13 C31 15 29 16 24 18 Z" fill="#7FB77E"/>
+          <g fill="#F6C915"><circle cx="18" cy="26" r="1.2"/><circle cx="26" cy="27" r="1.2"/><circle cx="22" cy="33" r="1.2"/><circle cx="30" cy="31" r="1.2"/><circle cx="15" cy="31" r="1.2"/></g>`);
+      case "boom":
+        return s(`
+          <rect x="21" y="28" width="6" height="14" rx="2" fill="#9A6B3F"/>
+          <circle cx="24" cy="19" r="13" fill="#7FB77E"/><circle cx="15" cy="24" r="8" fill="#86C07A"/><circle cx="33" cy="24" r="8" fill="#86C07A"/>`);
+      case "brood":
+        return s(`
+          <path d="M8 25 Q8 16 17 16 L31 16 Q40 16 40 25 L40 36 Q40 38 38 38 L10 38 Q8 38 8 36 Z" fill="#E0A860" stroke="#B9834A" stroke-width="1.2"/>
+          <path d="M13 16 Q13 12 17 12 Q17 16 13 16 M21 16 Q21 12 25 12 Q25 16 21 16 M29 16 Q29 12 33 12 Q33 16 29 16" fill="#EAB877"/>
+          <path d="M15 26 H33 M15 31 H33" stroke="#C88E4E" stroke-width="1" opacity="0.6"/>`);
+      case "boot":
+        return s(`
+          <rect x="23" y="10" width="2.4" height="20" fill="#8A6234"/>
+          <path d="M25.4 12 L36 28 L25.4 28 Z" fill="#F0554C" stroke="#C93B34" stroke-width="1"/>
+          <path d="M22.6 12 L14 28 L22.6 28 Z" fill="#EAF0F5" stroke="#C6D2DC" stroke-width="1"/>
+          <path d="M8 30 L40 30 L35 40 Q34 42 32 42 L16 42 Q14 42 13 40 Z" fill="#4FA6E0" stroke="#3B84BE" stroke-width="1"/>`);
+      case "bed":
+        return s(`
+          <rect x="5" y="17" width="4" height="21" rx="1" fill="#9A6B3F"/>
+          <rect x="39" y="26" width="4" height="12" rx="1" fill="#9A6B3F"/>
+          <rect x="6" y="26" width="36" height="10" rx="2" fill="#7FB2F0"/>
+          <rect x="9" y="21" width="11" height="9" rx="2" fill="#fff" stroke="#D6DCE2" stroke-width="1"/>
+          <path d="M6 30 H42" stroke="#5E90CE" stroke-width="1" opacity="0.5"/>`);
+      case "deur":
+        return s(`
+          <rect x="14" y="7" width="20" height="35" rx="2" fill="#B9834A" stroke="#8A6234" stroke-width="1.6"/>
+          <rect x="17" y="11" width="14" height="11" rx="1.5" fill="#A9743E"/><rect x="17" y="25" width="14" height="13" rx="1.5" fill="#A9743E"/>
+          <circle cx="30" cy="26" r="1.8" fill="#F6C915"/>`);
+      case "das":
+        return s(`
+          <path d="M22 8 L26 8 L28 12 L24 16 L20 12 Z" fill="#4FA6E0"/>
+          <path d="M21 16 L27 16 L30 36 L24 42 L18 36 Z" fill="#4FA6E0" stroke="#3B84BE" stroke-width="0.8"/>
+          <path d="M22 20 L26 20 M22 26 L26 26" stroke="#3B84BE" stroke-width="1" opacity="0.6"/>`);
+      case "eend":
+        return s(`
+          <ellipse cx="26" cy="31" rx="14" ry="9" fill="#F8D64A"/>
+          <circle cx="15" cy="21" r="8" fill="#F8D64A"/>
+          <path d="M7 21 L14 19 L14 24 Z" fill="#F0812E"/>
+          <circle cx="13" cy="19" r="1.5" fill="#3E2A18"/>
+          <path d="M33 27 Q41 23 39 31 Q35 31 33 29 Z" fill="#EFC63A"/>`);
+      case "emmer":
+        return s(`
+          <path d="M13 17 L35 17 L32 40 Q32 42 30 42 L18 42 Q16 42 16 40 Z" fill="#4FA6E0"/>
+          <rect x="11" y="14" width="26" height="4" rx="2" fill="#3B84BE"/>
+          <path d="M15 16 Q24 5 33 16" stroke="#3B84BE" stroke-width="2.4" fill="none"/>`);
+      case "fles":
+        return s(`
+          <path d="M20 8 L28 8 L28 15 Q34 18 34 26 L34 40 Q34 42 32 42 L16 42 Q14 42 14 40 L14 26 Q14 18 20 15 Z" fill="#66C7C0" stroke="#3AA79F" stroke-width="1.2"/>
+          <rect x="20" y="5" width="8" height="4" rx="1.5" fill="#3AA79F"/>
+          <rect x="16" y="30" width="16" height="9" rx="2" fill="#fff" opacity="0.5"/>`);
+      case "fiets":
+        return s(`
+          <circle cx="13" cy="32" r="8" fill="none" stroke="#3E4A57" stroke-width="2.4"/>
+          <circle cx="35" cy="32" r="8" fill="none" stroke="#3E4A57" stroke-width="2.4"/>
+          <path d="M13 32 L22 32 L28 20 L35 32 M22 32 L28 20" stroke="#F0554C" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M25 20 L31 20 M20 20 L18 18" stroke="#3E4A57" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="13" cy="32" r="1.6" fill="#3E4A57"/><circle cx="35" cy="32" r="1.6" fill="#3E4A57"/>`);
+      case "gras":
+        return s(`
+          <g fill="#6BBB57">
+            <path d="M8 42 C8 30 6 24 5 20 C11 24 12 34 12 42 Z"/>
+            <path d="M16 42 C16 28 15 22 14 18 C20 24 21 34 20 42 Z"/>
+            <path d="M24 42 C24 30 24 22 24 17 C28 24 28 34 28 42 Z"/>
+            <path d="M32 42 C32 28 33 22 34 18 C38 26 37 34 36 42 Z"/>
+            <path d="M40 42 C40 30 41 24 42 21 C44 28 44 35 43 42 Z"/>
+          </g>`);
+      case "giraf":
+        return s(`
+          <path d="M19 42 L19 22 Q19 14 26 12 L31 12 Q26 16 27 22 L27 42 Z" fill="#F3C34E"/>
+          <circle cx="29" cy="11" r="5" fill="#F3C34E"/>
+          <path d="M26 6 L27 10 M32 6 L31 10" stroke="#F3C34E" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="26.5" cy="5" r="1.6" fill="#8A6234"/><circle cx="31.5" cy="5" r="1.6" fill="#8A6234"/>
+          <circle cx="29" cy="11" r="1" fill="#3E2A18"/>
+          <g fill="#D89A3A"><circle cx="22" cy="26" r="2.3"/><circle cx="24" cy="34" r="2.3"/><circle cx="22" cy="40" r="1.8"/></g>`);
+      case "glas":
+        return s(`
+          <path d="M15 12 L33 12 L30 40 Q30 42 28 42 L20 42 Q18 42 18 40 Z" fill="#DDF1FB" stroke="#8FCBE6" stroke-width="1.2"/>
+          <path d="M16.5 25 L31.5 25 L30 40 Q30 42 28 42 L20 42 Q18 42 18 40 Z" fill="#7FC7EC" opacity="0.85"/>`);
+      case "huis":
+        return s(`
+          <rect x="12" y="24" width="24" height="18" fill="#F8D64A"/>
+          <path d="M9 25 L24 12 L39 25 Z" fill="#F0554C"/>
+          <rect x="21" y="32" width="7" height="10" fill="#9A6B3F"/>
+          <rect x="15" y="28" width="5" height="5" fill="#7FB2F0"/>`);
+      case "hond":
+        return s(`
+          <circle cx="24" cy="26" r="12" fill="#C79A6B"/>
+          <ellipse cx="11" cy="24" rx="5" ry="9" fill="#A97C4E"/><ellipse cx="37" cy="24" rx="5" ry="9" fill="#A97C4E"/>
+          <circle cx="19" cy="24" r="2" fill="#3E2A18"/><circle cx="29" cy="24" r="2" fill="#3E2A18"/>
+          <ellipse cx="24" cy="31" rx="4" ry="3" fill="#7A5433"/><ellipse cx="24" cy="30" rx="2" ry="1.3" fill="#2A1B10"/>
+          <path d="M24 33 L24 36" stroke="#7A5433" stroke-width="1.4"/>`);
+      case "iglo":
+        return s(`
+          <path d="M8 34 A16 12 0 0 1 40 34 Z" fill="#EAF4FA" stroke="#B9D6E6" stroke-width="1.4"/>
+          <path d="M8 34 H40" stroke="#B9D6E6" stroke-width="1.4"/>
+          <path d="M20 34 L20 27 A6 5 0 0 1 28 27 L28 34 Z" fill="#CFE6F2" stroke="#B9D6E6" stroke-width="1.2"/>
+          <path d="M16 22 V30 M24 18 V24 M32 22 V30" stroke="#CADFEC" stroke-width="1.2"/>`);
+      case "jas":
+        return s(`
+          <path d="M18 10 L30 10 L38 16 L34 22 L32 20 L32 42 L16 42 L16 20 L14 22 L10 16 Z" fill="#4FA6E0" stroke="#3B84BE" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M24 10 L24 42" stroke="#3B84BE" stroke-width="1.2"/>
+          <circle cx="24" cy="26" r="1.3" fill="#fff"/><circle cx="24" cy="32" r="1.3" fill="#fff"/>`);
+      case "kat":
+        return s(`
+          <path d="M12 15 L17 24 L12 24 Z" fill="#F6B27A"/><path d="M36 15 L31 24 L36 24 Z" fill="#F6B27A"/>
+          <circle cx="24" cy="28" r="12" fill="#F6B27A"/>
+          <circle cx="19" cy="26" r="2" fill="#3E2A18"/><circle cx="29" cy="26" r="2" fill="#3E2A18"/>
+          <path d="M24 30 L22 33 L26 33 Z" fill="#E07A5F"/>
+          <path d="M10 29 L18 30 M10 32 L18 32 M38 29 L30 30 M38 32 L30 32" stroke="#D6A374" stroke-width="0.8"/>`);
+      case "koe":
+        return s(`
+          <circle cx="24" cy="26" r="12" fill="#F2ECE4"/>
+          <path d="M12 18 Q6 12 8 20 Q12 22 14 20 Z" fill="#C9B79E"/><path d="M36 18 Q42 12 40 20 Q36 22 34 20 Z" fill="#C9B79E"/>
+          <path d="M15 20 Q19 16 23 19 Q20 23 15 20 Z" fill="#C6B49B"/>
+          <circle cx="19" cy="23" r="2" fill="#3E2A18"/><circle cx="29" cy="23" r="2" fill="#3E2A18"/>
+          <ellipse cx="24" cy="32" rx="8" ry="6" fill="#F4B8C4"/>
+          <ellipse cx="21" cy="32" rx="1.5" ry="2" fill="#D98298"/><ellipse cx="27" cy="32" rx="1.5" ry="2" fill="#D98298"/>`);
+      case "lamp":
+        return s(`
+          <circle cx="24" cy="20" r="12" fill="#FFE08A"/>
+          <path d="M18 30 Q24 34 30 30 L30 34 Q24 37 18 34 Z" fill="#C9CDD4"/>
+          <rect x="20" y="34" width="8" height="4" rx="1" fill="#9AA0A8"/>
+          <path d="M20 18 Q24 14 28 18" stroke="#E0A93B" stroke-width="1.6" fill="none"/>`);
+      case "maan":
+        return s(`<path d="M31 6 A18 18 0 1 0 31 42 A14 14 0 1 1 31 6 Z" fill="#FBD34E"/>`);
+      case "muis":
+        return s(`
+          <circle cx="22" cy="28" r="12" fill="#B7BEC8"/>
+          <circle cx="14" cy="18" r="6" fill="#B7BEC8"/><circle cx="30" cy="18" r="6" fill="#B7BEC8"/>
+          <circle cx="14" cy="18" r="3" fill="#F1C6D2"/><circle cx="30" cy="18" r="3" fill="#F1C6D2"/>
+          <circle cx="19" cy="27" r="1.6" fill="#3E4A57"/><circle cx="26" cy="27" r="1.6" fill="#3E4A57"/>
+          <circle cx="22.5" cy="31" r="1.5" fill="#F1889E"/>
+          <path d="M34 32 Q42 34 40 40" stroke="#B7BEC8" stroke-width="2.4" fill="none" stroke-linecap="round"/>`);
+      case "neus":
+        return s(`
+          <path d="M24 8 C20 8 18 18 16 28 C15 34 18 38 24 38 C30 38 33 34 32 28 C30 18 28 8 24 8 Z" fill="#F6B79E"/>
+          <ellipse cx="20" cy="32" rx="2" ry="1.6" fill="#C97F63"/><ellipse cx="28" cy="32" rx="2" ry="1.6" fill="#C97F63"/>`);
+      case "oog":
+        return s(`
+          <path d="M8 24 Q24 10 40 24 Q24 38 8 24 Z" fill="#fff" stroke="#3E4A57" stroke-width="1.6"/>
+          <circle cx="24" cy="24" r="7" fill="#5B8AC4"/><circle cx="24" cy="24" r="3" fill="#2A2A2A"/>
+          <circle cx="26" cy="22" r="1.4" fill="#fff"/>`);
+      case "paraplu":
+        return s(`
+          <path d="M7 26 Q24 6 41 26 Z" fill="#F0554C" stroke="#C93B34" stroke-width="1"/>
+          <path d="M7 26 Q11 22 15 26 Q19 22 24 26 Q29 22 33 26 Q37 22 41 26" fill="none" stroke="#C93B34" stroke-width="1"/>
+          <path d="M24 26 L24 40 Q24 44 20 42" stroke="#8A6234" stroke-width="2.2" fill="none" stroke-linecap="round"/>`);
+      case "peer":
+        return s(`
+          <path d="M24 14 C21 14 19 17 20 21 C15 24 13 30 15 35 C17 41 31 41 33 35 C35 30 33 24 28 21 C29 17 27 14 24 14 Z" fill="#A7C957"/>
+          <path d="M24 14 C24 10 26 8 29 8" stroke="#6E4B2A" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="20" cy="30" rx="2.4" ry="3.4" fill="#fff" opacity="0.3"/>`);
+      case "pen":
+        return s(`
+          <g transform="rotate(45 24 24)">
+            <rect x="21" y="9" width="6" height="25" rx="2" fill="#4FA6E0"/>
+            <rect x="21" y="13" width="6" height="3" fill="#3B84BE"/>
+            <path d="M21 34 L27 34 L24 40 Z" fill="#F6C915"/>
+            <path d="M23 38 L25 38 L24 41 Z" fill="#3E4A57"/>
+          </g>`);
+      case "regenboog":
+        return s(`
+          <path d="M5 40 A19 19 0 0 1 43 40" fill="none" stroke="#E23D82" stroke-width="4"/>
+          <path d="M9 40 A15 15 0 0 1 39 40" fill="none" stroke="#F6C915" stroke-width="4"/>
+          <path d="M13 40 A11 11 0 0 1 35 40" fill="none" stroke="#57B24A" stroke-width="4"/>
+          <path d="M17 40 A7 7 0 0 1 31 40" fill="none" stroke="#4FA6E0" stroke-width="4"/>`);
+      case "raket":
+        return s(`
+          <path d="M24 6 C30 12 32 22 32 30 L16 30 C16 22 18 12 24 6 Z" fill="#E8EDF2" stroke="#B4BCC6" stroke-width="1.2"/>
+          <circle cx="24" cy="18" r="3.5" fill="#7FB2F0"/>
+          <path d="M16 30 L10 38 L16 34 Z" fill="#F0554C"/><path d="M32 30 L38 38 L32 34 Z" fill="#F0554C"/>
+          <path d="M20 34 L24 44 L28 34 Z" fill="#F0812E"/>`);
+      case "ring":
+        return s(`
+          <circle cx="24" cy="29" r="11" fill="none" stroke="#F6C915" stroke-width="4"/>
+          <path d="M18 19 L24 8 L30 19 Z" fill="#7FD0F0" stroke="#4FA6E0" stroke-width="1"/>`);
+      case "slang":
+        return s(`
+          <path d="M9 34 Q18 22 24 30 Q30 38 38 26 Q42 20 37 15" fill="none" stroke="#6BBB57" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="37" cy="14" r="4.5" fill="#6BBB57"/>
+          <circle cx="38.5" cy="13" r="1" fill="#2A2A2A"/>
+          <path d="M40 15 L44 15" stroke="#F0554C" stroke-width="1.4"/>`);
+      case "sok":
+        return s(`
+          <path d="M18 8 L26 8 L26 28 L36 34 Q40 37 37 41 L30 41 Q26 41 24 38 L18 32 Z" fill="#F291B7" stroke="#D96FA0" stroke-width="1"/>
+          <rect x="18" y="8" width="8" height="6" fill="#4FA6E0"/>`);
+      case "tent":
+        return s(`
+          <path d="M24 8 L42 40 L6 40 Z" fill="#F0812E" stroke="#C96A20" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M24 8 L24 40" stroke="#C96A20" stroke-width="1.2"/>
+          <path d="M20 40 L24 26 L28 40 Z" fill="#8A4A16"/>`);
+      case "tijger":
+        return s(`
+          <path d="M13 16 L17 22 L12 22 Z" fill="#F0912E"/><path d="M35 16 L31 22 L36 22 Z" fill="#F0912E"/>
+          <circle cx="24" cy="26" r="12" fill="#F0912E"/>
+          <ellipse cx="24" cy="30" rx="9" ry="7" fill="#FBE3C4"/>
+          <circle cx="19" cy="24" r="2" fill="#3E2A18"/><circle cx="29" cy="24" r="2" fill="#3E2A18"/>
+          <path d="M24 28 L22 31 L26 31 Z" fill="#7A4A2A"/>
+          <path d="M16 15 L18 21 M24 14 L24 19 M32 15 L30 21 M12 26 L16 27 M36 26 L32 27" stroke="#3E2A18" stroke-width="1.6" stroke-linecap="round"/>`);
+      case "tomaat":
+        return s(`
+          <circle cx="24" cy="28" r="14" fill="#F0554C"/>
+          <path d="M24 14 L20 10 M24 14 L28 10 M24 14 L24 8 M24 14 L18 12 M24 14 L30 12" stroke="#6BBB57" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="18" cy="24" rx="3" ry="4" fill="#fff" opacity="0.3"/>`);
+      case "uil":
+        return s(`
+          <ellipse cx="24" cy="27" rx="13" ry="15" fill="#B9834A"/>
+          <path d="M12 15 L18 21 M36 15 L30 21" stroke="#B9834A" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="18" cy="23" r="6" fill="#fff"/><circle cx="30" cy="23" r="6" fill="#fff"/>
+          <circle cx="18" cy="23" r="2.6" fill="#2A2A2A"/><circle cx="30" cy="23" r="2.6" fill="#2A2A2A"/>
+          <path d="M24 27 L21 31 L27 31 Z" fill="#F0812E"/>
+          <path d="M16 40 L20 35 M32 40 L28 35" stroke="#8A6234" stroke-width="2" stroke-linecap="round"/>`);
+      case "vlag":
+        return s(`
+          <rect x="12" y="8" width="2.6" height="34" rx="1" fill="#8A6234"/>
+          <path d="M14.6 9 L36 9 L36 24 L14.6 24 Z" fill="#F0554C"/>
+          <path d="M14.6 9 Q26 13 36 9 L36 12 Q26 16 14.6 12 Z" fill="#fff" opacity="0.25"/>`);
+      case "vlinder":
+        return s(`
+          <path d="M24 24 C16 12 6 14 8 24 C6 34 16 36 24 24 Z" fill="#F291B7"/>
+          <path d="M24 24 C32 12 42 14 40 24 C42 34 32 36 24 24 Z" fill="#F49CC4"/>
+          <ellipse cx="24" cy="24" rx="2" ry="9" fill="#6C43A6"/>
+          <path d="M24 16 L20 10 M24 16 L28 10" stroke="#6C43A6" stroke-width="1.6" stroke-linecap="round"/>`);
+      case "wolk":
+        return s(`
+          <g fill="#CFE6F2">
+            <circle cx="17" cy="28" r="9"/><circle cx="28" cy="24" r="11"/><circle cx="36" cy="30" r="8"/>
+            <rect x="15" y="30" width="24" height="8" rx="4"/>
+          </g>`);
+      case "wortel":
+        return s(`
+          <path d="M18 18 L30 18 L26 42 Q24 45 22 42 Z" fill="#F0812E" stroke="#C96A20" stroke-width="1"/>
+          <path d="M20 24 L28 24 M21 30 L27 30" stroke="#C96A20" stroke-width="1"/>
+          <path d="M18 18 C14 10 18 8 20 12 C22 6 26 8 24 14 C28 10 30 14 26 18 Z" fill="#6BBB57"/>`);
+      case "zon":
+        return s(`
+          <circle cx="24" cy="24" r="10" fill="#FBC02D"/>
+          <g stroke="#FBC02D" stroke-width="3" stroke-linecap="round">
+            <path d="M24 6 V11 M24 37 V42 M6 24 H11 M37 24 H42 M11 11 L14.5 14.5 M37 37 L33.5 33.5 M37 11 L33.5 14.5 M11 37 L14.5 33.5"/>
+          </g>`);
+      case "zee":
+        return s(`
+          <rect x="6" y="20" width="36" height="22" rx="3" fill="#4FA6E0"/>
+          <path d="M6 25 Q12 21 18 25 T30 25 T42 25" stroke="#fff" stroke-width="1.6" fill="none" opacity="0.7"/>
+          <path d="M6 32 Q12 28 18 32 T30 32 T42 32" stroke="#fff" stroke-width="1.6" fill="none" opacity="0.6"/>
+          <path d="M6 39 Q12 35 18 39 T30 39 T42 39" stroke="#fff" stroke-width="1.6" fill="none" opacity="0.5"/>`);
+      case "zebra":
+        return s(`
+          <ellipse cx="24" cy="27" rx="11" ry="13" fill="#F4F4F4" stroke="#3E4A57" stroke-width="1"/>
+          <path d="M14 14 L18 8 L20 14 Z" fill="#F4F4F4" stroke="#3E4A57" stroke-width="1"/>
+          <path d="M34 14 L30 8 L28 14 Z" fill="#F4F4F4" stroke="#3E4A57" stroke-width="1"/>
+          <path d="M17 22 H31 M18 27 H30 M20 33 H28 M24 14 V20" stroke="#2A2A2A" stroke-width="2"/>
+          <circle cx="20" cy="24" r="1.6" fill="#2A2A2A"/><circle cx="28" cy="24" r="1.6" fill="#2A2A2A"/>
+          <ellipse cx="24" cy="38" rx="4" ry="3" fill="#DFDFDF"/>`);
+
       default:
         return s(`<circle cx="24" cy="24" r="14" fill="#F49CC4"/>`);
     }
