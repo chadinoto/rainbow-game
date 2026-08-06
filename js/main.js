@@ -448,7 +448,9 @@
         gift_name: gift ? gift.name : null,
         gift_art: gift ? gift.art : null,
       })
-      .catch(() => {}); // statistieken mogen het spel nooit blokkeren
+      // Lea mag nooit een foutmelding zien, maar wij willen hem wél kunnen vinden:
+      // stil wegslikken heeft ons weken gekost bij het letterspel.
+      .catch((e) => console.warn("sessie niet opgeslagen:", (e && e.message) || e));
   }
 
   // Logt elk antwoord (juist én fout) voor de statistieken-tabel
@@ -473,7 +475,9 @@
         input_mode: current.input === "numpad" ? "numpad" : "multiple choice",
         created_at: new Date().toISOString(), // zelf zetten: nooit afhankelijk van een DB-default
       })
-      .catch(() => {}); // statistieken mogen het spel nooit blokkeren
+      // Het antwoord staat nu veilig in de wachtrij (zie cloud.logAnswer); de
+      // melding is enkel voor ons in de console, Lea merkt er niets van.
+      .catch((e) => console.warn("antwoord niet opgeslagen:", (e && e.message) || e));
   }
 
   function renderOptions(options) {
