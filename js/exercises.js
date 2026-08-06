@@ -73,10 +73,17 @@ RB.exercises = {
 
   // --- Beginletter: hoort een woordje + ziet het plaatje, kiest de beginletter ---
   // Enkel woorden waarvan de BEGINLETTER zuiver bij de klank past. Bewust NIET:
-  //   ijsje (begint met de "ij"-klank, niet "i"), cadeau (klinkt als "k", niet "c").
-  // Alle plaatjes bestaan al in art.js (object/treat) → geen nieuwe tekeningen.
-  // 50 woorden. De meeste plaatjes worden getekend in art.js (object of treat);
-  // enkele hergebruiken bestaande tekeningen (apple, star, fish, …).
+  //   ijsje  (begint met de "ij"-klank, niet "i")
+  //   cadeau (klinkt als "k", niet "c")
+  //   giraf  (klinkt als "zj", niet als de gewone g)
+  //   uil    (begint met de "ui"-klank, niet met een losse "u")
+  // Die laatste twee stonden er eerst wel in en zijn eruit gehaald: zo leert ze
+  // een uitzondering aan in plaats van de regel. Daardoor komt de letter U nu
+  // niet meer voor — pure U-woorden zijn in het Nederlands nauwelijks te vinden
+  // (bijna alles begint met ui-, uu- of eu-).
+  //
+  // 68 woorden. Alle plaatjes staan in art.js (object of treat); enkele
+  // hergebruiken een bestaande tekening (apple, star, fish, leaf, flower, …).
   PICTURE_WORDS: [
     { word: "appel",     letter: "A", kind: "object", art: "apple" },
     { word: "aardbei",   letter: "A", kind: "object", art: "aardbei" },
@@ -84,47 +91,65 @@ RB.exercises = {
     { word: "brood",     letter: "B", kind: "object", art: "brood" },
     { word: "boot",      letter: "B", kind: "object", art: "boot" },
     { word: "bed",       letter: "B", kind: "object", art: "bed" },
+    { word: "blad",      letter: "B", kind: "object", art: "leaf" },
+    { word: "bloem",     letter: "B", kind: "object", art: "flower" },
+    { word: "boek",      letter: "B", kind: "object", art: "boek" },
     { word: "deur",      letter: "D", kind: "object", art: "deur" },
     { word: "das",       letter: "D", kind: "object", art: "das" },
+    { word: "doos",      letter: "D", kind: "object", art: "doos" },
     { word: "eend",      letter: "E", kind: "object", art: "eend" },
     { word: "emmer",     letter: "E", kind: "object", art: "emmer" },
     { word: "friet",     letter: "F", kind: "treat",  art: "fries" },
     { word: "fiets",     letter: "F", kind: "object", art: "fiets" },
     { word: "fles",      letter: "F", kind: "object", art: "fles" },
     { word: "gras",      letter: "G", kind: "object", art: "gras" },
-    { word: "giraf",     letter: "G", kind: "object", art: "giraf" },
     { word: "glas",      letter: "G", kind: "object", art: "glas" },
     { word: "hart",      letter: "H", kind: "object", art: "heart" },
     { word: "huis",      letter: "H", kind: "object", art: "huis" },
     { word: "hond",      letter: "H", kind: "object", art: "hond" },
+    { word: "hoed",      letter: "H", kind: "object", art: "hoed" },
+    { word: "hamer",     letter: "H", kind: "object", art: "hamer" },
     { word: "iglo",      letter: "I", kind: "object", art: "iglo" },
     { word: "jas",       letter: "J", kind: "object", art: "jas" },
     { word: "kers",      letter: "K", kind: "object", art: "cherry" },
     { word: "kat",       letter: "K", kind: "object", art: "kat" },
     { word: "koe",       letter: "K", kind: "object", art: "koe" },
+    { word: "kam",       letter: "K", kind: "object", art: "kam" },
+    { word: "kaars",     letter: "K", kind: "object", art: "kaars" },
     { word: "lolly",     letter: "L", kind: "treat",  art: "lolly" },
     { word: "lamp",      letter: "L", kind: "object", art: "lamp" },
+    { word: "lepel",     letter: "L", kind: "object", art: "lepel" },
     { word: "maan",      letter: "M", kind: "object", art: "maan" },
     { word: "muis",      letter: "M", kind: "object", art: "muis" },
+    { word: "mes",       letter: "M", kind: "object", art: "mes" },
     { word: "neus",      letter: "N", kind: "object", art: "neus" },
+    { word: "nest",      letter: "N", kind: "object", art: "nest" },
     { word: "oog",       letter: "O", kind: "object", art: "oog" },
     { word: "paraplu",   letter: "P", kind: "object", art: "paraplu" },
     { word: "peer",      letter: "P", kind: "object", art: "peer" },
+    { word: "pen",       letter: "P", kind: "object", art: "pen" },
+    { word: "potlood",   letter: "P", kind: "object", art: "potlood" },
     { word: "regenboog", letter: "R", kind: "object", art: "regenboog" },
     { word: "raket",     letter: "R", kind: "object", art: "raket" },
     { word: "ring",      letter: "R", kind: "object", art: "ring" },
+    { word: "raam",      letter: "R", kind: "object", art: "raam" },
     { word: "ster",      letter: "S", kind: "object", art: "star" },
     { word: "slang",     letter: "S", kind: "object", art: "slang" },
     { word: "sok",       letter: "S", kind: "object", art: "sok" },
+    { word: "sleutel",   letter: "S", kind: "object", art: "sleutel" },
     { word: "taart",     letter: "T", kind: "treat",  art: "cake" },
     { word: "tijger",    letter: "T", kind: "object", art: "tijger" },
     { word: "tomaat",    letter: "T", kind: "object", art: "tomaat" },
-    { word: "uil",       letter: "U", kind: "object", art: "uil" },
+    { word: "tent",      letter: "T", kind: "object", art: "tent" },
+    { word: "tuin",      letter: "T", kind: "object", art: "tuin" },
     { word: "vis",       letter: "V", kind: "object", art: "fish" },
     { word: "vlinder",   letter: "V", kind: "object", art: "vlinder" },
     { word: "vlag",      letter: "V", kind: "object", art: "vlag" },
+    { word: "vork",      letter: "V", kind: "object", art: "vork" },
+    { word: "verf",      letter: "V", kind: "object", art: "verf" },
     { word: "wolk",      letter: "W", kind: "object", art: "wolk" },
     { word: "wortel",    letter: "W", kind: "object", art: "wortel" },
+    { word: "worm",      letter: "W", kind: "object", art: "worm" },
     { word: "zon",       letter: "Z", kind: "object", art: "zon" },
     { word: "zee",       letter: "Z", kind: "object", art: "zee" },
     { word: "zebra",     letter: "Z", kind: "object", art: "zebra" },

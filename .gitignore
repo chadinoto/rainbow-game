@@ -12,6 +12,10 @@ wheels/
 # Besturingssysteem
 .DS_Store
 
+# Gegenereerde preview van de letterwoorden (maak opnieuw met
+# node tools/check-letterwoorden.mjs)
+tools/preview-letterwoorden.html
+
 # Referentiespel van mijn zoon — NIET publiceren (bevat secrets.toml)
 maaltafels/
 __sync-test.html
