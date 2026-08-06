@@ -868,6 +868,7 @@
     try {
       await RB.cloud.save(state); // de (ge-seede) stand meteen naar de cloud
     } catch (e) {}
+    RB.cloud.flushPending().catch(() => {}); // antwoorden die eerder niet weg konden
     renderStart();
     show("start");
   }
@@ -975,12 +976,23 @@
       finalizeSession(false, null);
       flushCloud();
     });
+
+    // weer wifi? dan alsnog de antwoorden opsturen die tijdens de storing
+    // op het toestel geparkeerd werden.
+    window.addEventListener("online", () => {
+      RB.cloud.refresh().catch(() => {});
+    });
     document.addEventListener("visibilitychange", async () => {
       if (document.visibilityState === "hidden") {
         finalizeSession(false, null); // app naar achtergrond → sessie afsluiten
         flushCloud();
         return;
       }
+      // Eerst de verbinding bijwerken. Een iPad die dagen op dezelfde pagina
+      // staat, komt terug met een verlopen login: de app lijkt dan nog ingelogd
+      // terwijl elk antwoord onderweg sneuvelt. Dit vernieuwt de sessie en
+      // stuurt alsnog op wat er intussen in de wachtrij belandde.
+      RB.cloud.refresh().catch(() => {});
       if (screens.game.classList.contains("active")) return; // niet storen tijdens een oefening
       if (!(await pullCloud())) return;
       if (screens.start.classList.contains("active")) renderStart();
