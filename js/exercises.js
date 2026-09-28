@@ -101,10 +101,21 @@ RB.exercises = {
   // Zelfde regels als bij de woorden: geen open lettergrepen (ga, zo, mama), behalve
   // de, het en een — die leren ze op school als eerste "vaste" woordjes.
   // Een zinnetje verschijnt pas als ze ALLE klanken erin kent.
+  // Zinnetjes uit haar leesboek (zonder leestekens) — ook met voorrang
+  BOOK_SENTENCES: [
+    "ik pik", "pik kip", "is pip sip", "kip pip is sip", "pik kip pip", "ik mik", "kim ik mik",
+    "ik mis aap", "ik maak kaas", "mik ik", "pim is sip", "maak aap pim", "maak aap pip", "kim is pips",
+    "ik raak rik", "ik raap", "ik sis", "ik mis aap rik", "aap rik", "ik raas", "ik raak saar", "ik mep",
+    "ik raak sem", "ik mis kik", "raas maar saar", "raas maar sem", "rem sem rem", "rem saar rem",
+    "kip is er", "ik spaar", "ik maak paars", "vik is ver", "ik vaar", "pip is sip", "ik mis sim",
+    "saar is ver", "saar is vaak ver", "vaar maar saar", "ik vis", "ik mis skip", "kip skip",
+    "ik mis kip skip", "ik mis kim",
+  ],
+
   READ_SENTENCES: [
     // al te lezen met i k m s aa r e
-    "ik mis kaas", "ik maak kaas", "kaas is raar", "ik mis kers", "ik mis kermis", "ik maak kaars",
-    "ik mis kim", "ik mis rik", "ik mis sem", "ik mis sim", "kim is er", "sem is er",
+    "ik mis kaas", "kaas is raar", "ik mis kers", "ik mis kermis", "ik maak kaars",
+    "ik mis rik", "ik mis sem", "kim is er", "sem is er",
     // met namen
     "kim is ziek", "rik is moe", "pim is blij", "tim eet kaas", "sem heeft een kat", "mies is lief",
     "tom zit in de boom", "bas eet een peer", "noor is mijn zus", "fien heeft een hond",
@@ -131,6 +142,16 @@ RB.exercises = {
   //   - geen c/q/x/y
   //   - namen mogen wél (kim, sim, pim — zoals in de leesboekjes), altijd in kleine letters
   // Uitzondering: "kermis" (beide lettergrepen gesloten, klinkt zoals geschreven).
+  // Woorden uit Lea's eerste leesboek (blz. 1–30: i k m s p aa r e v). Die krijgen
+  // voorrang bij het kiezen (zie _pickFresh) en worden onderaan het bestand vooraan
+  // in READ_WORDS gezet.
+  BOOK_WORDS: [
+    "ik", "is", "mis", "sis", "sik", "mik", "kik", "pik", "sip", "kip", "pip", "pips", "kim", "sim", "pim",
+    "aap", "aas", "kaas", "kaap", "kaak", "maak", "maas", "raam", "paar", "raak", "raap", "raar", "maar",
+    "raas", "aar", "saar", "rik", "smaak", "spaak", "spaar", "paars", "mes", "rek", "mep", "sem", "rem",
+    "rep", "per", "er", "es", "pek", "vaas", "vis", "vik", "ver", "vaar", "vaak", "skip",
+  ],
+
   READ_WORDS: [
     // a
     "bad", "bak", "bal", "bank", "dak", "das", "dam", "gat", "gas", "hak", "ham", "hand", "hart", "jas",
@@ -139,20 +160,20 @@ RB.exercises = {
     "slang", "bang", "lang", "tang", "vang", "hang", "klap", "trap", "grap", "gras", "glas", "tram",
     "kras", "vlag", "dans", "kans", "arm", "warm", "park", "kalf", "half", "want", "plank", "klank", "smal",
     // aa
-    "aap", "baan", "baas", "haan", "haar", "haas", "jaar", "kaas", "maan", "raam", "taart", "paard", "maar",
-    "naar", "laat", "zaag", "zaad", "draak", "kraan", "graag", "staart", "vaas", "kaart", "laars", "straat",
-    "schaap", "slaap", "haak", "taak", "zaal", "paal", "raar", "kaak", "maak", "raak", "kraam", "kraak",
-    "smaak", "aas", "kaars", "waar", "daar", "maand", "praat", "gaat", "staat", "klaar", "baard", "zaak",
+    "baan", "baas", "haan", "haar", "haas", "jaar", "maan", "taart", "paard",
+    "naar", "laat", "zaag", "zaad", "draak", "kraan", "graag", "staart", "kaart", "laars", "straat",
+    "schaap", "slaap", "haak", "taak", "zaal", "paal", "kraam", "kraak",
+    "kaars", "waar", "daar", "maand", "praat", "gaat", "staat", "klaar", "baard", "zaak",
     // e
-    "bed", "pen", "mes", "rek", "rem", "net", "pet", "bek", "les", "fles", "vest", "hek", "nek", "tent",
+    "bed", "pen", "net", "pet", "bek", "les", "fles", "vest", "hek", "nek", "tent",
     "bel", "weg", "heks", "kerk", "merk", "berg", "verf", "ster", "spek", "stem", "wesp", "nest", "zes",
     "elf", "gek", "kers", "vet", "hert", "snel", "spel", "zwem", "kermis", "wek", "en",
     // ee
     "been", "beer", "peer", "zee", "twee", "veer", "meer", "deeg", "leeg", "veel", "steen", "teen", "eend",
     "zeep", "meel", "keel", "weet", "geel", "speer", "neef", "week", "reep", "zeef", "heet", "beet", "mee",
     // i
-    "vis", "pit", "kip", "lip", "dik", "wit", "zit", "mis", "ik", "is", "pil", "ring", "ding", "kist", "lift",
-    "pink", "vink", "wind", "kind", "stil", "bril", "tik", "mik", "rits", "schip", "prik", "klik", "drink",
+    "pit", "lip", "dik", "wit", "zit", "pil", "ring", "ding", "kist", "lift",
+    "pink", "vink", "wind", "kind", "stil", "bril", "tik", "rits", "schip", "prik", "klik", "drink",
     "zin", "win", "film", "wip", "strik", "krik", "lid", "slim", "kring", "in", "wil",
     // o
     "bos", "pot", "rok", "sok", "top", "hok", "kom", "mond", "hond", "pop", "zon", "kop", "klok", "stok",
@@ -182,13 +203,13 @@ RB.exercises = {
     "geit", "reis", "trein", "plein", "wei", "zeil", "dweil", "kei", "wijk", "pijn", "vijf", "blij",
     "krijt", "fijn", "rijk", "wij",
     // minder gewone, maar echte woorden (vooral voor de eerste letters)
-    "sik", "sis", "ris", "aar", "raas", "maas", "kik",
+    "ris",
     // namen (klein geschreven, zoals in de eerste leesboekjes)
-    "kim", "rik", "sem", "sim", "kris", "pim", "tim", "tom", "bas", "jan", "lot", "fien", "noor",
+    "kris", "tim", "tom", "bas", "jan", "lot", "fien", "noor",
     "mies", "lies", "bram", "jet", "stijn", "teun", "wim", "mees", "kees", "ruud", "sep", "jip", "juul",
     // kleine woordjes van twee klanken (ik, is, in, en, om, op staan hierboven al)
     // Bewust NIET: "een" en "de" als los leeswoord (daar klinkt de e als "uh").
-    "er", "al", "af", "of", "as", "wie", "die", "hoe", "toe", "doe", "nee", "hij", "zij", "mij", "jij",
+    "al", "af", "of", "as", "wie", "die", "hoe", "toe", "doe", "nee", "hij", "zij", "mij", "jij",
     "dit", "dat", "het", "ook", "aan", "heb", "ben",
     // ou / au
     "hout", "zout", "goud", "koud", "oud", "kou", "saus", "pauw", "klauw", "dauw", "blauw",
@@ -198,7 +219,8 @@ RB.exercises = {
   ],
 
   // Nooit voorlezen, ook niet als verzonnen afleider
-  READ_BLOCK: ["kut", "lul", "pik", "pis", "kak", "seks", "sex", "hoer", "tiet", "reet", "aars", "kont", "pies", "ruk"],
+  // ("pik" staat er bewust NIET in: "ik pik" = pikken, zoals een kip, staat in haar leesboek)
+  READ_BLOCK: ["kut", "lul", "pis", "kak", "seks", "sex", "hoer", "tiet", "reet", "aars", "kont", "pies", "ruk"],
 
   _MULTI: ["aa", "ee", "oo", "uu", "ie", "oe", "eu", "ui", "ei", "ij", "ou", "au", "ch", "ng", "nk"],
   _VOWELS: new Set(["a", "e", "i", "o", "u", "aa", "ee", "oo", "uu", "ie", "oe", "eu", "ui", "ei", "ij", "ou", "au"]),
@@ -294,9 +316,13 @@ RB.exercises = {
   },
 
   // Kiest een item dat niet net nog aan de beurt was (als er genoeg keuze is)
+  // Uit haar leesboek? Dan in 70% van de beurten daaruit kiezen.
   _pickFresh(items) {
     const fresh = items.filter((w) => !this._recentRead.includes(w));
-    const pickFrom = fresh.length ? fresh : items;
+    let pickFrom = fresh.length ? fresh : items;
+    const book = new Set(this.BOOK_WORDS.concat(this.BOOK_SENTENCES));
+    const fromBook = pickFrom.filter((w) => book.has(w));
+    if (fromBook.length && Math.random() < 0.7) pickFrom = fromBook;
     const target = pickFrom[this._rndInt(0, pickFrom.length - 1)];
     this._recentRead.push(target);
     if (this._recentRead.length > Math.min(6, Math.floor(items.length / 2))) this._recentRead.shift();
@@ -688,3 +714,11 @@ RB.exercises = {
     return `<div class="dots">${dots}</div>`;
   },
 };
+
+// Het leesboek hoort er gewoon bij: vooraan in de volledige lijsten (zonder dubbels)
+RB.exercises.READ_WORDS = RB.exercises.BOOK_WORDS.concat(
+  RB.exercises.READ_WORDS.filter((w) => !RB.exercises.BOOK_WORDS.includes(w))
+);
+RB.exercises.READ_SENTENCES = RB.exercises.BOOK_SENTENCES.concat(
+  RB.exercises.READ_SENTENCES.filter((z) => !RB.exercises.BOOK_SENTENCES.includes(z))
+);
