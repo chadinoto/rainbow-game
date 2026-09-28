@@ -15,7 +15,7 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png" />
   <link rel="icon" type="image/png" href="icons/icon-192.png" />
 
-  <link rel="stylesheet" href="css/style.css?v=20260806b" />
+  <link rel="stylesheet" href="css/style.css?v=20260928b" />
 </head>
 <body>
   <div id="app">
@@ -101,6 +101,22 @@
       </div>
     </section>
 
+    <!-- ============ LETTERS KIEZEN (vóór "Woordjes lezen") ============
+         Welke klanken kent ze al? Enkel woorden met díe klanken komen in het spel. -->
+    <section id="letters-screen" class="screen">
+      <button class="icon-btn home-btn" title="Naar huis" data-icon="home"></button>
+      <div class="letters-card">
+        <h2 class="letters-title">Welke letters ken je al?</h2>
+        <p class="letters-sub">Tik de letters aan die je op school geleerd hebt.</p>
+        <p class="mini-label">Klinkers</p>
+        <div id="letters-vowels" class="letter-grid"></div>
+        <p class="mini-label">Medeklinkers</p>
+        <div id="letters-cons" class="letter-grid"></div>
+        <p id="letters-count" class="letters-count"></p>
+        <button id="letters-go" class="btn-primary"><span class="btn-ic" data-icon="play"></span>Spelen</button>
+      </div>
+    </section>
+
     <!-- ============ FEEST SCHERM ============ -->
     <section id="celebrate-screen" class="screen">
       <button class="icon-btn home-btn" title="Naar huis" data-icon="home"></button>
@@ -168,6 +184,8 @@
           <div id="treasure-tracker" class="reward-tracker big"></div>
           <h3 class="rewards-heading">Wat je kan verdienen</h3>
           <div id="treasure-rewards" class="rewards-list"></div>
+          <!-- aparte lees-challenge (los van de gewone cadeautjes) -->
+          <div id="treasure-challenge" class="treasure-challenge"></div>
         </div>
 
         <!-- tab: de kalender (wat deed je wanneer) -->
@@ -190,6 +208,11 @@
           <input type="checkbox" id="sound-toggle" />
         </label>
 
+        <div class="settings-actions start">
+          <button id="open-dashboard" class="btn-primary small">Hoe gaat het?</button>
+        </div>
+        <p class="settings-sub">Bekijk hoeveel er geoefend wordt, wat er lukt en of het vlotter gaat.</p>
+
         <div class="reset-block">
           <button id="reset-player" class="reset-btn">Verzameling van <span id="reset-player-name">Lea</span> wissen</button>
           <button id="reset-all" class="reset-btn">Alles van iedereen wissen</button>
@@ -202,22 +225,38 @@
       </div>
     </section>
 
+    <!-- ============ DASHBOARD (alleen voor mama & papa) ============
+         Hier mag wél een percentage, een fout en een grafiek staan.
+         Het spel zelf blijft vrij van score, fouten en tijdsdruk. -->
+    <section id="dashboard-screen" class="screen">
+      <button class="icon-btn home-btn" title="Naar huis" data-icon="home"></button>
+      <div class="dash-card">
+        <h2 class="dash-title">Hoe gaat het?</h2>
+        <p class="dash-sub">Een overzicht voor mama &amp; papa — de kinderen zien dit scherm niet.</p>
+        <div id="dashboard-view" class="dashboard-view"></div>
+        <div class="settings-actions end">
+          <button id="dash-back" class="btn-primary small">Klaar</button>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <!-- Geen ES-modules: gewone scripts, zodat het werkt door dubbelklikken (file://) -->
   <!-- ?v=… = cache-buster: verhoog dit getal bij elke update zodat de browser/iPad
        gegarandeerd de nieuwe bestanden ophaalt i.p.v. een oude versie uit de cache. -->
-  <script src="js/config.js?v=20260806b"></script>
-  <script src="js/supabase-config.js?v=20260806b"></script>
+  <script src="js/config.js?v=20260928b"></script>
+  <script src="js/supabase-config.js?v=20260928b"></script>
   <script src="js/supabase.min.js"></script>
-  <script src="js/cloud.js?v=20260806b"></script>
-  <script src="js/storage.js?v=20260806b"></script>
-  <script src="js/art.js?v=20260806b"></script>
-  <script src="js/audio.js?v=20260806b"></script>
-  <script src="js/gems.js?v=20260806b"></script>
-  <script src="js/rainbow.js?v=20260806b"></script>
-  <script src="js/exercises.js?v=20260806b"></script>
-  <script src="js/calendar.js?v=20260806b"></script>
-  <script src="js/main.js?v=20260806b"></script>
+  <script src="js/cloud.js?v=20260928b"></script>
+  <script src="js/storage.js?v=20260928b"></script>
+  <script src="js/art.js?v=20260928b"></script>
+  <script src="js/audio.js?v=20260928b"></script>
+  <script src="js/gems.js?v=20260928b"></script>
+  <script src="js/rainbow.js?v=20260928b"></script>
+  <script src="js/exercises.js?v=20260928b"></script>
+  <script src="js/calendar.js?v=20260928b"></script>
+  <script src="js/dashboard.js?v=20260928b"></script>
+  <script src="js/main.js?v=20260928b"></script>
 </body>
 </html>

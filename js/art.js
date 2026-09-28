@@ -756,6 +756,19 @@ RB.art = {
          <path d="M63 13 C67 11 69 14 68 17 C64 18 63 15 63 13 Z" fill="#7FB77E"/>`;
       return wrap(g);
     }
+    if (id === 20 || id === 21 || id === 22) {
+      // een woordkaartje + geluidsgolfjes: lezen en herkennen (kort woord / lang woord / zinnetje)
+      const txt = { 20: "kaas", 21: "kraam", 22: "ik mis kaas" }[id];
+      const fs = { 20: 15, 21: 13.5, 22: 8.6 }[id];
+      const g =
+        `<rect x="5" y="12" width="46" height="28" rx="7" fill="#E3E9FE" stroke="#6C8EF5" stroke-width="2.2"/>
+         <text x="28" y="31" text-anchor="middle" font-family="ui-rounded, system-ui, sans-serif"
+               font-size="${fs}" font-weight="800" fill="#3F5FCF">${txt}</text>
+         <path d="M58 21 Q62 26 58 31" stroke="#6C8EF5" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+         <path d="M63 17 Q70 26 63 35" stroke="#6C8EF5" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.7"/>
+         <path d="M68 13 Q78 26 68 39" stroke="#6C8EF5" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="0.45"/>`;
+      return wrap(g);
+    }
     // niveau 5: plus én min + oplopende sterren (grotere getallen)
     let stars = "";
     for (let i = 0; i < 3; i++) {
@@ -770,6 +783,17 @@ RB.art = {
   treat(name) {
     const s = (inner) => `<svg viewBox="0 0 48 48" class="treat">${inner}</svg>`;
     switch (name) {
+      case "chips":
+        // een zakje chips: bol zakje met gekartelde randen, chipjes eruit
+        return s(`
+          <ellipse cx="18" cy="9" rx="5.5" ry="3.6" fill="#F8D64A" transform="rotate(-18 18 9)"/>
+          <ellipse cx="28" cy="7" rx="5.5" ry="3.6" fill="#F6C915" transform="rotate(14 28 7)"/>
+          <path d="M11 11 L37 11 L36 16 Q40 29 36 42 L37 46 L11 46 L12 42 Q8 29 12 16 Z" fill="#4FA6E0"/>
+          <path d="M11 11 l3 -2 l3 2 l3 -2 l3 2 l3 -2 l3 2 l3 -2 l3 2 l3 -2 L37 11 Z" fill="#4FA6E0"/>
+          <path d="M11 46 l3 2 l3 -2 l3 2 l3 -2 l3 2 l3 -2 l3 2 l3 -2 l3 2 L37 46 Z" fill="#2C66B0"/>
+          <ellipse cx="24" cy="29" rx="9" ry="7" fill="#fff" opacity="0.92"/>
+          <ellipse cx="24" cy="29" rx="5.5" ry="3.8" fill="#F6C915" transform="rotate(-12 24 29)"/>
+          <rect x="15" y="15" width="3" height="24" rx="1.5" fill="#fff" opacity="0.3"/>`);
       case "fries":
         return s(`
           <rect x="14" y="9" width="4.5" height="22" rx="2.2" fill="#F6C915"/>

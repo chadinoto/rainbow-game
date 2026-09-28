@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voorbeeld — dashboard</title>
+  <!-- Voorbeeldpagina om het dashboard te bekijken zonder in te loggen:
+       de cloud is vervangen door verzonnen antwoorden. Dubbelklikken volstaat. -->
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    html, body { overflow: auto; height: auto; }
+    #app { height: auto; }
+    .screen { position: static; display: flex; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <section id="dashboard-screen" class="screen active">
+      <div class="dash-card">
+        <h2 class="dash-title">Hoe gaat het?</h2>
+        <p class="dash-sub">Een overzicht voor mama &amp; papa — de kinderen zien dit scherm niet.</p>
+        <div id="dashboard-view" class="dashboard-view"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/calendar.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    // ---- verzonnen antwoorden (zoals ze in rainbow_answers zouden staan) ----
+    function makeRows(player, levels, days, startSecs, endSecs, wrongRate) {
+      const rows = [];
+      const DAY = 86400000;
+      const now = new Date(); now.setHours(15, 0, 0, 0);
+      for (let d = days - 1; d >= 0; d--) {
+        if ((d * 7919) % 5 === 0) continue;                 // niet elke dag geoefend
+        const t0 = now.getTime() - d * DAY;
+        const frac = (days - 1 - d) / Math.max(1, days - 1);
+        const secs = startSecs + (endSecs - startSecs) * frac;
+        const n = 18 + ((d * 31) % 22);
+        for (let i = 0; i < n; i++) {
+          // per blok van 12 antwoorden hetzelfde niveau (zoals een echte regenboog)
+          const level = levels[(d + Math.floor(i / 12)) % levels.length];
+          const a = 1 + ((i * 7 + d) % 9), b = 1 + ((i * 3 + d) % 8);
+          const wrong = ((i * 13 + d * 5) % 100) < wrongRate * 100;
+          const jitter = 0.6 + ((i * 17) % 10) / 10;
+          rows.push({
+            player, level,
+            exercise: `${a} + ${b}`,
+            given_answer: wrong ? a + b + 1 : a + b,
+            correct_answer: a + b,
+            is_correct: !wrong,
+            duration_ms: Math.round(secs * 1000 * jitter),
+            created_at: new Date(t0 + i * 45000).toISOString(),
+          });
+        }
+      }
+      return rows;
+    }
+
+    const DATA = {
+      Lea: makeRows("Lea", [1, 2, 3, 14, 19], 75, 9, 4.5, 0.12),
+      Raphael: makeRows("Raphael", [6, 8, 12], 75, 12, 7, 0.18),
+      Mama: [],
+      Papa: [],
+    };
+
+    RB.cloud = {
+      user: { id: "voorbeeld" },
+      async fetchAnswers(player) { return DATA[player] || []; },
+    };
+
+    RB.dashboard.render(document.getElementById("dashboard-view"), "Lea");
+  </script>
+</body>
+</html>

@@ -91,6 +91,8 @@
     celebrate: $("celebrate-screen"),
     treasure: $("treasure-screen"),
     settings: $("settings-screen"),
+    dashboard: $("dashboard-screen"),
+    letters: $("letters-screen"),
   };
 
   function show(name) {
@@ -120,7 +122,7 @@
   }
 
   // Totaal aantal diamanten van een speler (alle niveaus samen)
-  const LEVELS_ALL = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19];
+  const LEVELS_ALL = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22];
   function total(p) {
     let n = 0;
     for (const k of LEVELS_ALL) n += p.gems[k] || 0;
@@ -138,6 +140,15 @@
   }
   function curRewards() {
     return rewardsForName(state.currentPlayer);
+  }
+  // De lees-challenge: een aparte ladder (leeg voor wie ze niet heeft, bv. Raphael)
+  function challengeForName(name) {
+    if (!cfg.CHALLENGE) return [];
+    if (cfg.PLAYER_CHALLENGE && cfg.PLAYER_CHALLENGE[name] === null) return [];
+    return cfg.CHALLENGE.rewards;
+  }
+  function curChallenge() {
+    return challengeForName(state.currentPlayer);
   }
 
   // Diamanten van kleur c die eerdere cadeautjes al hebben opgebruikt (geen dubbeltellingen)
@@ -273,12 +284,37 @@
     save();
     RB.audio.unlock();
     RB.audio.setEnabled(state.soundOn);
-    startGame();
+    if (READ_LEVELS.includes(id)) showLetters();
+    else startGame();
   }
 
   function refreshRewards() {
     renderTracker($("treasure-tracker"));
     renderRewardsList($("treasure-rewards"));
+    renderChallenge($("treasure-challenge"));
+  }
+
+  // De lees-challenge in de schatkist: elk cadeautje met zijn eigen voortgang
+  function renderChallenge(el) {
+    const list = curChallenge();
+    if (!list.length) { el.innerHTML = ""; return; }
+    const reached = rewardsReached(list, player);
+    el.innerHTML =
+      `<h3 class="rewards-heading">${cfg.CHALLENGE.name}</h3>` +
+      list
+        .map((r, i) => `
+          <div class="reward-tracker big challenge-card">
+            <div class="tracker-head"><span class="tracker-treat">${RB.art.treat(r.art)}</span><b>${r.name}</b></div>
+            ${i < reached ? `<p class="tracker-met">Dit heb je al behaald!</p>` : rewardProgressHTML(list, r)}
+          </div>`)
+        .join("");
+    // tik op het labeltje → meteen die lees-oefening
+    el.querySelectorAll(".need-tag[data-level]").forEach((tag) =>
+      tag.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startLevel(Number(tag.getAttribute("data-level")));
+      })
+    );
   }
 
   // Stapel diamanten in een kist; grootte/kleur/glans per niveau (gedeeld door schatkist + feest)
@@ -371,11 +407,67 @@
     RB.audio.setEnabled(state.soundOn);
     RB.audio.speak(lv.name); // Lea hoort wat ze koos (ze leest nog niet)
     renderStartLevels();
-    setTimeout(startGame, 700); // even de naam laten horen, dan starten
+    // Woordjes lezen: eerst kiezen welke letters ze al kent
+    setTimeout(READ_LEVELS.includes(lv.id) ? showLetters : startGame, 700); // even de naam laten horen, dan starten
+  }
+
+  // ---------- LETTERS KIEZEN (voor "Woordjes lezen") ----------
+  const READ_LEVELS = [20, 21, 22]; // korte woordjes, langere woordjes, zinnetjes
+  const MIN_READ_WORDS = 3; // minder woordjes = steeds hetzelfde, dan eerst meer letters kiezen
+
+  function playerLetters() {
+    return player.letters && player.letters.length ? player.letters : RB.exercises.DEFAULT_LETTERS;
+  }
+
+  function showLetters() {
+    renderLetters();
+    show("letters");
+  }
+
+  function renderLetters() {
+    const chosen = new Set(playerLetters());
+    const fill = (el, list) => {
+      el.innerHTML = "";
+      list.forEach((k) => {
+        const b = document.createElement("button");
+        b.className = "letter-tile" + (chosen.has(k) ? " on" : "");
+        b.textContent = k;
+        b.addEventListener("click", () => {
+          if (chosen.has(k)) chosen.delete(k);
+          else chosen.add(k);
+          // bewaar meteen: de volgorde van de tegeltjes, zodat het lijstje netjes blijft
+          const all = RB.exercises.KLANKEN_KLINKERS.concat(RB.exercises.KLANKEN_MEDEKLINKERS);
+          player.letters = all.filter((x) => chosen.has(x));
+          player.lettersAt = Date.now();
+          save();
+          b.classList.toggle("on", chosen.has(k));
+          updateLettersCount();
+        });
+        el.appendChild(b);
+      });
+    };
+    fill($("letters-vowels"), RB.exercises.KLANKEN_KLINKERS);
+    fill($("letters-cons"), RB.exercises.KLANKEN_MEDEKLINKERS);
+    updateLettersCount();
+  }
+
+  function updateLettersCount() {
+    const n = RB.exercises.readableItems(playerLetters(), player.level).length;
+    const unit = (RB.exercises.READ_LEVELS[player.level] || { unit: "woordjes" }).unit;
+    const enough = n >= MIN_READ_WORDS;
+    $("letters-count").textContent = enough
+      ? `Met deze letters kan je ${n} ${unit} lezen.`
+      : `Kies nog een paar letters, dan kunnen we ${unit} maken.`;
+    $("letters-go").disabled = !enough;
   }
 
   // ---------- SPEL ----------
   function startGame() {
+    if (READ_LEVELS.includes(player.level)) {
+      RB.exercises.setLetters(playerLetters());
+      // bv. op een ander toestel letters weggeklikt → eerst terug naar het letterscherm
+      if (RB.exercises.readableItems(playerLetters(), player.level).length < MIN_READ_WORDS) return showLetters();
+    }
     finalizeSession(false, null); // sluit een eventueel openstaande sessie af
     // een nieuwe oefenreeks begint altijd met een lege regenboog
     player.collected = 0;
@@ -410,7 +502,18 @@
       renderOptions(current.options);
     }
     exerciseStart = Date.now(); // start de tijdmeting voor de statistieken
-    setTimeout(() => RB.audio.speak(current.speakText), 250);
+    setTimeout(() => sayCurrent(current.speakText), 250);
+  }
+
+  // Voorlezen. Bij "Woordjes lezen" als losse zinnetjes: de kaart die voorgelezen
+  // wordt licht op (zinnetje 0 = de vraag, 1..3 = kaart 1..3).
+  function sayCurrent(text) {
+    if (!current) return;
+    if (!current.speakParts) return RB.audio.speak(text);
+    const cards = $("options").querySelectorAll(".word-opt");
+    RB.audio.speakList(current.speakParts, (i) => {
+      cards.forEach((c, j) => c.classList.toggle("speaking", j === i - 1));
+    });
   }
 
   // ---------- OEFENSESSIE (start/eind exact registreren → rainbow_sessions) ----------
@@ -483,12 +586,32 @@
   function renderOptions(options) {
     const box = $("options");
     box.innerHTML = "";
+    if (current && (current.type === "leeswoord" || current.type === "leeszin")) return renderWordOptions(options);
     options.forEach((val) => {
       const btn = document.createElement("button");
       btn.className = "opt";
       btn.textContent = val;
       btn.addEventListener("click", () => onAnswer(val, btn));
       box.appendChild(btn);
+    });
+  }
+
+  // Woordjes lezen: drie kaarten met een nummer. Het woord zelf staat er NIET op
+  // (dan zou ze gewoon letters vergelijken); ze hoort het met het luidsprekertje.
+  function renderWordOptions(options) {
+    const box = $("options");
+    options.forEach((word, i) => {
+      const card = document.createElement("div");
+      card.className = "word-opt";
+      card.innerHTML = `
+        <button class="word-listen" title="Nog eens horen">${RB.art.icon("sound")}</button>
+        <button class="opt word-pick">${i + 1}</button>`;
+      card.querySelector(".word-listen").addEventListener("click", () => {
+        box.querySelectorAll(".word-opt").forEach((c) => c.classList.remove("speaking")); // onderbroken voorlezen
+        RB.audio.speakList([word], (k) => card.classList.toggle("speaking", k === 0));
+      });
+      card.querySelector(".word-pick").addEventListener("click", () => onAnswer(word, card));
+      box.appendChild(card);
     });
   }
 
@@ -554,6 +677,7 @@
       btn.classList.remove("wiggle-wrong");
       btn.classList.add("faded");
       btn.disabled = true;
+      btn.querySelectorAll("button").forEach((b) => (b.disabled = true)); // kaart bij woordjes lezen
     }, 400);
 
     // meer dan 2 fouten in de hele ronde → de regenboog begint opnieuw (schatkist blijft)
@@ -593,10 +717,11 @@
     const help = $("help-area");
     let html = "";
     if (current.help) html += RB.exercises.helpHTML(current.help);
+    if (current.helpHTML) html += current.helpHTML; // bv. het woord in klanken: k · aa · s
     if (current.helpText) html += `<p class="help-text">${current.helpText}</p>`;
     help.innerHTML = html;
     help.classList.add("show");
-    if (current.repeatText) setTimeout(() => RB.audio.speak(current.repeatText), 200);
+    if (current.repeatText) setTimeout(() => sayCurrent(current.repeatText), 200);
   }
 
   function onCorrect(btn) {
@@ -642,7 +767,13 @@
     // sessie afsluiten als voltooid: registreer de diamant + een eventueel behaald cadeautje
     const rewardsAtWin = curRewards();
     const reachedAtWin = rewardsReached(rewardsAtWin, player);
-    const newGift = reachedAtWin > player.seenRewards ? rewardsAtWin[player.seenRewards] : null;
+    const chAtWin = curChallenge();
+    const newGift =
+      reachedAtWin > player.seenRewards
+        ? rewardsAtWin[player.seenRewards]
+        : rewardsReached(chAtWin, player) > (player.seenChallenge || 0)
+          ? chAtWin[player.seenChallenge || 0]
+          : null;
     finalizeSession(true, newGift);
 
     const fly = $("reward-fly");
@@ -679,12 +810,21 @@
   }
 
   // Toont het cadeautje-feest als er een puntendrempel gehaald is
+  // (Twee tegelijk? Dan komt de tweede na "Joepie!", zie prize-ok.)
   function maybeShowPrize() {
     const rewards = curRewards();
     const reached = rewardsReached(rewards, player);
-    if (reached <= player.seenRewards) return;
-    const prize = rewards[player.seenRewards];
-    player.seenRewards++;
+    let prize = null;
+    if (reached > player.seenRewards) {
+      prize = rewards[player.seenRewards];
+      player.seenRewards++;
+    } else {
+      const ch = curChallenge();
+      const seen = player.seenChallenge || 0;
+      if (rewardsReached(ch, player) <= seen) return;
+      prize = ch[seen];
+      player.seenChallenge = seen + 1;
+    }
     save();
 
     $("prize-art").innerHTML = RB.art.treat(prize.art);
@@ -724,6 +864,7 @@
         : "Maak een regenboog af om je eerste diamant te verdienen.";
     renderTracker($("treasure-tracker"));
     renderRewardsList($("treasure-rewards"));
+    renderChallenge($("treasure-challenge"));
   }
 
   // De cadeautjes-ladder (wat je al hebt en nog kan verdienen)
@@ -829,6 +970,7 @@
       const p = state.players[name];
       if (!p) continue;
       p.seenRewards = rewardsReached(rewardsForName(name), p);
+      p.seenChallenge = rewardsReached(challengeForName(name), p);
     }
   }
 
@@ -844,7 +986,13 @@
       if (!p) continue;
       for (const l of LEVELS_ALL) p.gems[l] = Math.max((a && a.gems[l]) || 0, (b && b.gems[l]) || 0);
       p.seenRewards = Math.max((a && a.seenRewards) || 0, (b && b.seenRewards) || 0);
+      p.seenChallenge = Math.max((a && a.seenChallenge) || 0, (b && b.seenChallenge) || 0);
       if (a && a.level) p.level = a.level;      // niveau-keuze van dit toestel
+      // gekozen letters: de nieuwste keuze wint (bv. mama zette ze op haar gsm)
+      const la = (a && a.lettersAt) || 0, lb = (b && b.lettersAt) || 0;
+      const newest = la >= lb ? a : b;
+      p.letters = newest && newest.letters ? newest.letters.slice() : null;
+      p.lettersAt = Math.max(la, lb);
       p.collected = (a && a.collected) || 0;    // lopende regenboog is toestel-eigen
     }
     return out;
@@ -900,10 +1048,15 @@
     );
 
     $("repeat-sound").addEventListener("click", () => {
-      if (current) RB.audio.speak(current.repeatText || current.speakText);
+      if (current) sayCurrent(current.repeatText || current.speakText);
     });
 
     $("again-btn").addEventListener("click", () => startGame());
+    $("letters-go").addEventListener("click", () => {
+      RB.audio.unlock();
+      RB.audio.setEnabled(state.soundOn);
+      startGame();
+    });
     $("celebrate-treasure").addEventListener("click", () => {
       window.speechSynthesis && window.speechSynthesis.cancel();
       showTreasure();
@@ -922,6 +1075,7 @@
 
     $("prize-ok").addEventListener("click", () => {
       $("prize-pop").classList.remove("show");
+      setTimeout(maybeShowPrize, 500); // nog een cadeautje verdiend (bv. de lees-challenge)?
     });
 
     // tabbladen in de schatkist (Schatkist / Kalender)
@@ -936,6 +1090,17 @@
     $("close-settings").addEventListener("click", () => {
       renderStart();
       show("start");
+    });
+
+    // het analyse-scherm voor mama & papa (geen score voor de kinderen: het zit
+    // bewust achter de instellingen en niet op het startscherm)
+    $("open-dashboard").addEventListener("click", () => {
+      show("dashboard");
+      RB.dashboard.render($("dashboard-view"), state.currentPlayer);
+    });
+    $("dash-back").addEventListener("click", () => {
+      renderSettings();
+      show("settings");
     });
 
     $("sound-toggle").addEventListener("change", (e) => {

@@ -111,6 +111,32 @@ RB.audio = {
     if (best) this._voice = best;
   },
 
+  // Leest een reeks zinnetjes na elkaar voor. onStart(i) loopt telkens als
+  // zinnetje i begint (zo kan het spel de kaart die voorgelezen wordt laten oplichten).
+  // Zonder stem/geluid: meteen onStart(-1) zodat niets blijft oplichten.
+  speakList(parts, onStart) {
+    const done = () => onStart && onStart(-1);
+    if (!this.enabled || !("speechSynthesis" in window)) return done();
+    try {
+      window.speechSynthesis.cancel();
+      if (!this._voice) this._pickVoice();
+      parts.forEach((text, i) => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = this._voice ? this._voice.lang : "nl-BE";
+        if (this._voice) u.voice = this._voice;
+        u.rate = 0.7; // duidelijk trager: het gaat om het verschil tussen klanken
+        u.pitch = 1.05;
+        if (onStart) {
+          u.onstart = () => onStart(i);
+          if (i === parts.length - 1) u.onend = done;
+        }
+        window.speechSynthesis.speak(u);
+      });
+    } catch (e) {
+      done();
+    }
+  },
+
   speak(text) {
     if (!this.enabled || !("speechSynthesis" in window)) return;
     try {

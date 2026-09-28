@@ -68,7 +68,321 @@ RB.exercises = {
     if (level === 16) return this._add(15);                    // Lea: plus tot 15
     if (level === 17) return this._sub(15);                    // Lea: min tot 15
     if (level === 19) return this._beginLetter();              // Lea: beginletter (woord → letter)
+    if (level === 20 || level === 21) return this._readWord(level); // Lea: woordjes lezen (kort / lang)
+    if (level === 22) return this._readSentence();                    // Lea: zinnetjes lezen
     return this._addSub(20);
+  },
+
+  // ============================================================
+  // --- Woordjes lezen: ze LEEST een woord en kiest welke van de drie
+  //     voorgelezen woorden er staat ---
+  // Enkel met de klanken die ze al kent (gekozen op het letterscherm).
+  // ============================================================
+
+  // Alle klanken die op het letterscherm staan, in de volgorde van de tegeltjes
+  KLANKEN_KLINKERS: ["a", "e", "i", "o", "u", "aa", "ee", "oo", "uu", "ie", "oe", "eu", "ui", "ei", "ij", "ou", "au"],
+  KLANKEN_MEDEKLINKERS: ["b", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "r", "s", "t", "v", "w", "z", "ch", "ng", "nk"],
+
+  // Wat Lea op 28-09-2026 kende — wordt voorgeselecteerd zolang er niets gekozen is
+  DEFAULT_LETTERS: ["i", "k", "m", "s", "aa", "r", "e"],
+
+  // De drie lees-niveaus. "Letters" tellen zoals op het letterscherm: "aa" is één
+  // tegeltje, dus kaas = k·aa·s = 3 letters.
+  //   20: hoogstens 3 letters (ik, mes, kaas)
+  //   21: 4 letters of meer   (kerk, kraam, kaars, kermis)
+  //   22: korte zinnetjes     (ik mis kaas)
+  READ_LEVELS: {
+    20: { min: 1, max: 3, unit: "woordjes" },
+    21: { min: 4, max: 99, unit: "woordjes" },
+    22: { sentences: true, unit: "zinnetjes" },
+  },
+
+  // Korte zinnetjes, alles in kleine letters en zonder leesteken (zo leert ze lezen).
+  // Zelfde regels als bij de woorden: geen open lettergrepen (ga, zo, mama), behalve
+  // de, het en een — die leren ze op school als eerste "vaste" woordjes.
+  // Een zinnetje verschijnt pas als ze ALLE klanken erin kent.
+  READ_SENTENCES: [
+    // al te lezen met i k m s aa r e
+    "ik mis kaas", "ik maak kaas", "kaas is raar", "ik mis kers", "ik mis kermis", "ik maak kaars",
+    // met meer letters
+    "ik mis mijn kat", "ik zie een aap", "ik zie de maan", "de maan is geel", "de kaas is geel",
+    "ik heb een vis", "de vis is nat", "de kat is dik", "de kip is wit", "ik ben ziek", "ik ben moe",
+    "de zon is heet", "de boom is groot", "ik zit op de bank", "de pen is rood", "de hond is lief",
+    "het huis is groot", "ik eet kaas", "ik eet een peer", "ik loop naar huis", "de muis is klein",
+    "de vaas is vol", "het raam is dicht", "de deur is dicht", "ik lees een boek", "de koe is groot",
+    "mijn jas is rood", "de bal is rood", "de bus is geel", "ik zie een ster", "ik bak een taart",
+    "de roos is rood", "de soep is heet", "de boot is groot", "ik drink melk", "mijn neus is koud",
+    "het is nacht", "het ijs is koud", "de trein is lang", "ik fiets naar school", "de wolk is wit",
+    "ik zing een lied", "de sok is nat", "het bed is warm", "ik zie een kip", "mijn buik is vol",
+    "het gras is groen", "ik heb een fiets", "ik eet soep", "de pan is heet", "de lamp is aan",
+    "de zak is vol", "de aap eet een peer", "de kraan is dicht", "de vos is rood", "ik zit in de tuin",
+    "de beer is groot", "ik heb een hond", "de melk is koud", "het ei is wit", "de geit is lief",
+    "ik ben blij", "de kaars is aan", "ik zie een vis", "de kers is rood", "ik eet een kers",
+  ],
+
+  // Bestaande, kindvriendelijke woorden. Bewust (bijna) enkel één lettergreep:
+  //   - geen open lettergrepen (ma-ken: daar klinkt de "a" als "aa" → verwarrend)
+  //   - geen stomme e / schwa (emmer, kikker)
+  //   - geen aai/ooi/oei/eeuw/ieuw (die leert ze later als eigen klank)
+  //   - geen namen, geen c/q/x/y
+  // Uitzondering: "kermis" (beide lettergrepen gesloten, klinkt zoals geschreven).
+  READ_WORDS: [
+    // a
+    "bad", "bak", "bal", "bank", "dak", "das", "dam", "gat", "gas", "hak", "ham", "hand", "hart", "jas",
+    "kam", "kat", "kast", "lam", "lamp", "land", "mat", "mand", "man", "map", "nat", "pak", "pan", "pad",
+    "pap", "rat", "ram", "rand", "sap", "tak", "tas", "van", "wat", "zak", "zand", "stad", "stal",
+    "slang", "bang", "lang", "tang", "vang", "hang", "klap", "trap", "grap", "gras", "glas", "tram",
+    "kras", "vlag", "dans", "kans", "arm", "warm", "park", "kalf", "half", "want", "plank", "klank", "smal",
+    // aa
+    "aap", "baan", "baas", "haan", "haar", "haas", "jaar", "kaas", "maan", "raam", "taart", "paard", "maar",
+    "naar", "laat", "zaag", "zaad", "draak", "kraan", "graag", "staart", "vaas", "kaart", "laars", "straat",
+    "schaap", "slaap", "haak", "taak", "zaal", "paal", "raar", "kaak", "maak", "raak", "kraam", "kraak",
+    "smaak", "aas", "kaars", "waar", "daar", "maand", "praat", "gaat", "staat", "klaar", "baard", "zaak",
+    // e
+    "bed", "pen", "mes", "rek", "rem", "net", "pet", "bek", "les", "fles", "vest", "hek", "nek", "tent",
+    "bel", "weg", "heks", "kerk", "merk", "berg", "verf", "ster", "spek", "stem", "wesp", "nest", "zes",
+    "elf", "gek", "kers", "vet", "hert", "snel", "spel", "zwem", "kermis", "wek", "en",
+    // ee
+    "been", "beer", "peer", "zee", "twee", "veer", "meer", "deeg", "leeg", "veel", "steen", "teen", "eend",
+    "zeep", "meel", "keel", "weet", "geel", "speer", "neef", "week", "reep", "zeef", "heet", "beet", "mee",
+    // i
+    "vis", "pit", "kip", "lip", "dik", "wit", "zit", "mis", "ik", "is", "pil", "ring", "ding", "kist", "lift",
+    "pink", "vink", "wind", "kind", "stil", "bril", "tik", "mik", "rits", "schip", "prik", "klik", "drink",
+    "zin", "win", "film", "wip", "strik", "krik", "lid", "slim", "kring", "in", "wil",
+    // o
+    "bos", "pot", "rok", "sok", "top", "hok", "kom", "mond", "hond", "pop", "zon", "kop", "klok", "stok",
+    "rots", "vos", "tol", "bol", "os", "wolk", "wolf", "mol", "tong", "bot", "dop", "slot", "pomp", "stop",
+    "trom", "vork", "worm", "storm", "som", "kok", "hop", "stof", "jong", "om", "op", "vonk",
+    // oo
+    "boom", "boot", "boon", "roos", "rook", "oog", "oor", "hoop", "noot", "poot", "room", "droom", "doos",
+    "loop", "rood", "brood", "boos", "oom", "zoon", "kool", "school", "knoop", "sloot", "groot", "kroon",
+    // u
+    "bus", "kus", "put", "hut", "mus", "dus", "pup", "tulp", "stuk", "druk", "bult", "mug", "rug", "jurk",
+    "kurk", "brug", "dun", "punt", "hulp", "rups", "zus", "nul", "krul",
+    // uu
+    "muur", "vuur", "uur", "zuur", "duur", "stuur",
+    // ie
+    "vier", "dier", "mier", "kies", "lief", "niet", "ziek", "tien", "fiets", "knie", "drie", "wiel",
+    "brief", "dief", "lied", "kiem", "hiel", "riem", "zie", "bier",
+    // oe
+    "boek", "koe", "hoed", "voet", "snoep", "koek", "boer", "poes", "stoel", "schoen", "moe", "roep",
+    "soep", "bloem", "hoek", "doek", "zoek", "groen", "koel", "broek", "moet", "goed", "zoen",
+    // eu
+    "deur", "neus", "reus", "keus", "geur", "kleur", "deuk", "leuk", "reuk",
+    // ui
+    "huis", "muis", "buik", "duim", "tuin", "luis", "kuil", "ruit", "fluit", "uil", "sluis", "kruis",
+    "duif", "ui", "kuif", "ruik",
+    // ei / ij
+    "ijs", "rijst", "pijl", "dijk", "lijm", "mijn", "prijs", "tijd", "lijn", "bij", "pijp", "klei", "ei",
+    "geit", "reis", "trein", "plein", "wei", "zeil", "dweil", "kei", "wijk", "pijn", "vijf", "blij",
+    "krijt", "fijn", "rijk", "wij",
+    // ou / au
+    "hout", "zout", "goud", "koud", "oud", "kou", "saus", "pauw", "klauw", "dauw", "blauw",
+    // ch
+    "lach", "licht", "nacht", "acht", "echt", "zacht", "vlecht", "pech", "bocht", "lucht", "zucht",
+    "slecht", "kuch",
+  ],
+
+  // Nooit voorlezen, ook niet als verzonnen afleider
+  READ_BLOCK: ["kut", "lul", "pik", "pis", "kak", "seks", "sex", "hoer", "tiet", "reet", "aars", "kont", "pies", "ruk"],
+
+  _MULTI: ["aa", "ee", "oo", "uu", "ie", "oe", "eu", "ui", "ei", "ij", "ou", "au", "ch", "ng", "nk"],
+  _VOWELS: new Set(["a", "e", "i", "o", "u", "aa", "ee", "oo", "uu", "ie", "oe", "eu", "ui", "ei", "ij", "ou", "au"]),
+
+  letters: null,       // de gekozen klanken (Set), gezet door main.js vóór het spel start
+  _recentRead: [],     // laatste doelwoorden, zodat hetzelfde woord niet meteen terugkomt
+
+  setLetters(arr) {
+    this.letters = new Set(arr && arr.length ? arr : this.DEFAULT_LETTERS);
+  },
+
+  // Splitst een woord in klanken: "kaars" → ["k","aa","r","s"] (langste klank eerst)
+  klanken(word) {
+    const out = [];
+    let i = 0;
+    while (i < word.length) {
+      const two = word.slice(i, i + 2);
+      if (this._MULTI.includes(two)) { out.push(two); i += 2; }
+      else { out.push(word[i]); i += 1; }
+    }
+    return out;
+  },
+
+  // Hoe het woord KLINKT: ei=ij, au=ou, g=ch, v=f, z=s, eind-d=t, eind-b=p.
+  // Twee opties met dezelfde klank kunnen niet allebei in één vraag (reis/rijs, lach/lag).
+  _soundKey(word) {
+    const map = { ei: "ij", au: "ou", g: "ch", v: "f", z: "s" };
+    const k = this.klanken(word).map((x) => map[x] || x);
+    const last = k.length - 1;
+    if (k[last] === "d") k[last] = "t";
+    if (k[last] === "b") k[last] = "p";
+    return k.join("|");
+  },
+
+  // Welke woorden kan ze lezen met de gekozen klanken? (level = 20/21 → ook op lengte)
+  readableWords(letters, level) {
+    const set = letters instanceof Set ? letters : new Set(letters || []);
+    const lv = this.READ_LEVELS[level] || { min: 1, max: 99 };
+    return this.READ_WORDS.filter((w) => {
+      const kl = this.klanken(w);
+      return kl.length >= lv.min && kl.length <= lv.max && kl.every((k) => set.has(k));
+    });
+  },
+
+  readableSentences(letters) {
+    const set = letters instanceof Set ? letters : new Set(letters || []);
+    return this.READ_SENTENCES.filter((z) => z.split(" ").every((w) => this.klanken(w).every((k) => set.has(k))));
+  },
+
+  // Woorden of zinnetjes, afhankelijk van het lees-niveau (voor het letterscherm)
+  readableItems(letters, level) {
+    return this.READ_LEVELS[level] && this.READ_LEVELS[level].sentences
+      ? this.readableSentences(letters)
+      : this.readableWords(letters, level);
+  },
+
+  // Verschillen twee klank-rijen precies één klank? (vervangen, toevoegen of weglaten)
+  _oneApart(a, b) {
+    if (a.length === b.length) {
+      let diff = 0;
+      for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) diff++;
+      return diff === 1;
+    }
+    if (Math.abs(a.length - b.length) !== 1) return false;
+    const [long, short] = a.length > b.length ? [a, b] : [b, a];
+    for (let i = 0; i < long.length; i++) {
+      const cut = long.slice(0, i).concat(long.slice(i + 1));
+      if (cut.join("|") === short.join("|")) return true;
+    }
+    return false;
+  },
+
+  // Verzonnen afleider: één klank vervangen door een andere GEKENDE klank
+  // (klinker ↔ klinker; medeklinker ↔ medeklinker, maar enkel tussen klinkers of
+  // aan de rand van het woord, zodat het uitspreekbaar blijft: geen "sraam").
+  _pseudoNeighbors(kl, pool) {
+    const out = [];
+    for (let i = 0; i < kl.length; i++) {
+      const isV = this._VOWELS.has(kl[i]);
+      if (!isV) {
+        const prevOk = i === 0 || this._VOWELS.has(kl[i - 1]);
+        const nextOk = i === kl.length - 1 || this._VOWELS.has(kl[i + 1]);
+        if (!prevOk || !nextOk) continue;
+      }
+      for (const rep of pool) {
+        if (rep === kl[i] || this._VOWELS.has(rep) !== isV) continue;
+        if (i === 0 && (rep === "ng" || rep === "nk")) continue; // "ngaam" bestaat niet
+        const w = kl.slice(0, i).concat(rep, kl.slice(i + 1)).join("");
+        out.push(w);
+      }
+    }
+    return out;
+  },
+
+  // Kiest een item dat niet net nog aan de beurt was (als er genoeg keuze is)
+  _pickFresh(items) {
+    const fresh = items.filter((w) => !this._recentRead.includes(w));
+    const pickFrom = fresh.length ? fresh : items;
+    const target = pickFrom[this._rndInt(0, pickFrom.length - 1)];
+    this._recentRead.push(target);
+    if (this._recentRead.length > Math.min(6, Math.floor(items.length / 2))) this._recentRead.shift();
+    return target;
+  },
+
+  // Afleiders voor één woord, beste eerst. `used` = klank-sleutels die al bezet zijn.
+  //   1) bestaande woorden die één klank verschillen — eerst even lang (kaas/kaak),
+  //      dan één klank meer of minder (kaas/kaars)
+  //   2) verzonnen woordje met gekende klanken (zoals aap → aam)
+  //   3) noodgeval (heel weinig letters gekozen): met alle klanken
+  _wordDistractors(target, n, used) {
+    const kl = this.klanken(target);
+    const out = [];
+    const take = (list) => {
+      for (const w of this._shuffle(list)) {
+        if (out.length >= n) return;
+        const key = this._soundKey(w);
+        if (this.READ_BLOCK.includes(w) || used.has(key)) continue;
+        used.add(key);
+        out.push(w);
+      }
+    };
+    const real = this.READ_WORDS.filter((w) => w !== target && this._oneApart(kl, this.klanken(w)));
+    take(real.filter((w) => this.klanken(w).length === kl.length));
+    take(real.filter((w) => this.klanken(w).length !== kl.length));
+    take(this._pseudoNeighbors(kl, Array.from(this.letters)));
+    take(this._pseudoNeighbors(kl, this.KLANKEN_KLINKERS.concat(this.KLANKEN_MEDEKLINKERS)));
+    return out;
+  },
+
+  // Het oefening-object voor woord én zin (zelfde kaarten, zelfde voorlezen)
+  _readExercise(type, target, options, helpHTML, helpText) {
+    const nums = ["één", "twee", "drie", "vier"];
+    const q = type === "leeszin" ? "Welk zinnetje staat er?" : "Welk woord staat er?";
+    // Voorlezen als losse zinnetjes, zodat main.js elke kaart kan laten oplichten
+    const parts = [q].concat(options.map((w, i) => `${nums[i]}: ${w}.`));
+    return {
+      type: type,
+      text: `lezen ${target}`,
+      instruction: q,
+      speakText: parts.join(" "),
+      speakParts: parts,
+      mainHTML: `<div class="read-word${type === "leeszin" ? " sentence" : ""}">${target}</div>`,
+      options: options,
+      answer: target,
+      help: null,
+      helpHTML: helpHTML,
+      helpText: helpText,
+      repeatText: parts.join(" "),
+    };
+  },
+
+  _readWord(level) {
+    if (!this.letters) this.setLetters(null);
+    let words = this.readableWords(this.letters, level);
+    if (!words.length) words = this.readableWords(this.letters); // vangnet: dan maar alle lengtes
+    const target = this._pickFresh(words);
+    const distractors = this._wordDistractors(target, 2, new Set([this._soundKey(target)]));
+    const kl = this.klanken(target);
+    return this._readExercise(
+      "leeswoord",
+      target,
+      this._shuffle([target].concat(distractors)),
+      `<div class="read-split">${kl.map((k) => `<span class="read-klank">${k}</span>`).join("")}</div>`,
+      "Lees klank per klank, en zeg ze dan snel na elkaar."
+    );
+  },
+
+  // Zinnetje: de twee afleiders verschillen telkens in één woord (ik mis kaas → ik mis kaak),
+  // liefst op een andere plek in de zin, zodat ze élk woord echt moet lezen.
+  _readSentence() {
+    if (!this.letters) this.setLetters(null);
+    const target = this._pickFresh(this.readableSentences(this.letters));
+    const words = target.split(" ");
+    const sentKey = (ws) => ws.map((w) => this._soundKey(w)).join(" ");
+    const usedSent = new Set([sentKey(words)]);
+    const distractors = [];
+    const positions = this._shuffle(words.map((_, i) => i).filter((i) => this.klanken(words[i]).length >= 2));
+    for (let round = 0; round < 2 && distractors.length < 2; round++) {
+      for (const i of positions) {
+        if (distractors.length >= 2) break;
+        const cands = this._wordDistractors(words[i], 4, new Set([this._soundKey(words[i])]));
+        for (const c of cands) {
+          const ws = words.slice();
+          ws[i] = c;
+          if (usedSent.has(sentKey(ws))) continue;
+          usedSent.add(sentKey(ws));
+          distractors.push(ws.join(" "));
+          break;
+        }
+      }
+    }
+    return this._readExercise(
+      "leeszin",
+      target,
+      this._shuffle([target].concat(distractors)),
+      `<div class="read-split">${words.map((w) => `<span class="read-klank">${w}</span>`).join("")}</div>`,
+      "Lees woord per woord, rustig na elkaar."
+    );
   },
 
   // --- Beginletter: hoort een woordje + ziet het plaatje, kiest de beginletter ---

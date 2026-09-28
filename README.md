@@ -19,7 +19,7 @@ Dubbelklik op `index.html` — het opent in de browser, geen server nodig.
 Werkt ook op de iPad (zet het bestand online, bv. via GitHub Pages, of open lokaal).
 
 - **▶ Spelen** — start het spel
-- **⚙️ Voor mama & papa** — kies het niveau en zet geluid aan/uit
+- **⚙️ Voor mama & papa** — zet geluid aan/uit, wis een verzameling, of open **"Hoe gaat het?"**
 - **🔊** in het spel — het getal nog eens laten voorlezen
 - **🏠** — terug naar het startscherm
 
@@ -29,6 +29,32 @@ Werkt ook op de iPad (zet het bestand online, bv. via GitHub Pages, of open loka
 2. **Plus tot 10** — optellen met stipjes als hulp
 3. **Plus en min tot 10** — optellen én aftrekken
 4. **Plus en min tot 20** — grotere sommen
+
+### Lezen (Lea leert lezen)
+
+Drie niveaus, alle drie met enkel de klanken die ze al kent:
+
+1. **Korte woordjes** — hoogstens 3 letters, zoals op het letterscherm geteld (`kaas` = k·aa·s)
+2. **Langere woordjes** — 4 letters of meer (`kaars`, `kraam`, `kermis`)
+3. **Zinnetjes** — korte zinnen (`ik mis kaas`); de afleiders verschillen in één woord
+
+**Lees-challenge** (los van de gewone cadeautjes): 10 korenblauwe diamanten op
+*Korte woordjes lezen* = **een zakje chips**. Staat onderaan in de schatkist;
+aanpassen in `CHALLENGE` in `js/config.js`.
+
+
+Eerst kiest ze op een **letterscherm** welke klanken ze al kent (bv. `i k m s aa r e`);
+die keuze blijft bewaard per speler en synchroniseert via de cloud. Daarna staat er een
+woordje dat ze met díe klanken kan lezen (bv. `kaas`), en leest de stem drie
+mogelijkheden voor: *één: kaak, twee: kaas, drie: kaars*. Ze tikt het nummer aan van
+het woord dat er staat; met het luidsprekertje op elke kaart hoort ze die opnieuw.
+
+- Afleiders zijn bij voorkeur **bestaande woorden** die één klank verschillen; pas als
+  die er niet zijn, een verzonnen woordje met haar klanken (zoals *aap → aam*).
+- Opties die hetzelfde klinken (reis/rijs, lach/lag, hond/hont) komen nooit samen.
+- Na een mis-tik verschijnt het woord in klanken: `k · aa · r · s`.
+- Nieuwe woorden toevoegen: `READ_WORDS` in `js/exercises.js`, daarna
+  `node tools/check-leeswoorden.mjs i k m s aa r e` om te controleren.
 
 Voortgang en verzameling worden op het toestel bewaard (browser `localStorage`).
 
@@ -46,5 +72,22 @@ js/storage.js     voortgang bewaren
 js/audio.js       geluidjes + Nederlandse voorleesstem
 js/gems.js        diamanten tekenen (SVG) + fonkelen
 js/exercises.js   oefeningen maken per niveau
+js/calendar.js    kalender in de schatkist (per dag: diamanten, minuten, cadeautjes)
+js/dashboard.js   "Hoe gaat het?" — analyse voor de ouders
 js/main.js        de spellus en de schermen
+
+tools/check-leeswoorden.mjs   node tools/check-leeswoorden.mjs → controleert woordjes lezen
+tools/test-dashboard.mjs      node tools/test-dashboard.mjs  → controleert de cijfers
+tools/preview-dashboard.html  het dashboard bekijken met verzonnen data (dubbelklikken)
 ```
+
+## Hoe gaat het? (alleen voor de ouders)
+
+Achter ⚙️ zit een dashboard over de gelogde antwoorden: hoeveel er geoefend wordt,
+hoeveel er lukt, hoe lang een oefening duurt en of dat vlotter wordt. Per kind en per
+periode (7 / 30 / 90 dagen of alles), met een vergelijking tussen de eerste en de
+tweede helft van die periode — zo zie je vooruitgang zonder dat er ergens een score staat.
+
+Dit scherm is **bewust niet zichtbaar voor de kinderen**: percentages, fouten en tijden
+horen niet thuis in een spel dat rond faalangst gebouwd is. De minuten en diamanten
+komen uit dezelfde reconstructie als de kalender, zodat beide schermen hetzelfde tonen.

@@ -45,6 +45,9 @@ RB.config = {
     { id: 5, name: "Plus en min tot 20", desc: "Optellen en aftrekken tot 20." },
     { id: 7, name: "Plus en min tot 20", desc: "Optellen en aftrekken tot 20." },
     { id: 19, name: "Beginletter", desc: "Ze hoort een woordje en tikt de letter aan waarmee het begint." },
+    { id: 20, name: "Korte woordjes lezen", desc: "Woordjes van hoogstens 3 letters (kaas = k·aa·s)." },
+    { id: 21, name: "Langere woordjes lezen", desc: "Woordjes van 4 letters of meer (kaars, kraam)." },
+    { id: 22, name: "Zinnetjes lezen", desc: "Korte zinnetjes met haar letters (ik mis kaas)." },
     // --- Raphael ---
     { id: 6, name: "Plus tot 100", desc: "Optellen tot 100." },
     { id: 8, name: "Min tot 100", desc: "Aftrekken tot 100." },
@@ -79,6 +82,9 @@ RB.config = {
     16: { color: "#3DBE8B", size: 1.14, label: "smaragd" }, // Lea: plus tot 15
     17: { color: "#F2775A", size: 1.16, label: "zalm" },    // Lea: min tot 15
     19: { color: "#FF8A5B", size: 1.10, label: "abrikoos" }, // Lea: beginletter
+    20: { color: "#6C8EF5", size: 1.12, label: "korenblauwe" }, // Lea: korte woordjes lezen
+    21: { color: "#3F5FCF", size: 1.18, label: "saffierblauwe" }, // Lea: langere woordjes lezen
+    22: { color: "#B05FD8", size: 1.24, shiny: true, label: "amethist" }, // Lea: zinnetjes lezen
   },
 
   // Nederlandse getalwoorden (voor de voorleesstem)
@@ -99,7 +105,7 @@ RB.config = {
   // ouders (niet in deze lijst) zien alle niveaus.
   // De volgorde hier bepaalt ook de getoonde nummering: Lea = niveau 1..10, Raphael = 11..17.
   PLAYER_LEVELS: {
-    Lea: [1, 2, 3, 14, 15, 16, 17, 4, 5, 7, 19],
+    Lea: [1, 2, 3, 14, 15, 16, 17, 4, 5, 7, 19, 20, 21, 22],
     Raphael: [6, 8, 9, 10, 11, 12, 13],
   },
 
@@ -120,6 +126,18 @@ RB.config = {
     // blauw + groen + paars + roze + lila + amber + smaragd + zalm (niet de gouden/turkooizen)
     { name: "Een cadeautje krijgen", art: "gift", need: { 1: 10, 2: 10, 3: 10, 4: 10, 14: 10, 15: 10, 16: 10, 17: 10 } },
   ],
+
+  // Aparte challenge, los van de gewone cadeautjes-ladder: enkel de lees-oefeningen.
+  // Zelfde regels als REWARDS (need = diamanten per kleur, in volgorde verbruikt),
+  // maar met een eigen "gezien"-teller (seenChallenge), zodat beide ladders elkaar
+  // niet in de weg zitten. Geldt voor iedereen behalve wie in PLAYER_CHALLENGE op null staat.
+  CHALLENGE: {
+    name: "Lees-challenge",
+    rewards: [
+      { name: "Een zakje chips", art: "chips", need: { 20: 10 } }, // 10 korenblauwe (korte woordjes)
+    ],
+  },
+  PLAYER_CHALLENGE: { Raphael: null },
 
   // Aparte cadeautjes per speler. Raphael verdient rode diamanten (niveau 6),
   // dus zijn cadeautjes tellen die. Wie niet in de lijst staat, gebruikt REWARDS.
