@@ -104,6 +104,10 @@ RB.exercises = {
   READ_SENTENCES: [
     // al te lezen met i k m s aa r e
     "ik mis kaas", "ik maak kaas", "kaas is raar", "ik mis kers", "ik mis kermis", "ik maak kaars",
+    "ik mis kim", "ik mis rik", "ik mis sem", "ik mis sim", "kim is er", "sem is er",
+    // met namen
+    "kim is ziek", "rik is moe", "pim is blij", "tim eet kaas", "sem heeft een kat", "mies is lief",
+    "tom zit in de boom", "bas eet een peer", "noor is mijn zus", "fien heeft een hond",
     // met meer letters
     "ik mis mijn kat", "ik zie een aap", "ik zie de maan", "de maan is geel", "de kaas is geel",
     "ik heb een vis", "de vis is nat", "de kat is dik", "de kip is wit", "ik ben ziek", "ik ben moe",
@@ -124,7 +128,8 @@ RB.exercises = {
   //   - geen open lettergrepen (ma-ken: daar klinkt de "a" als "aa" → verwarrend)
   //   - geen stomme e / schwa (emmer, kikker)
   //   - geen aai/ooi/oei/eeuw/ieuw (die leert ze later als eigen klank)
-  //   - geen namen, geen c/q/x/y
+  //   - geen c/q/x/y
+  //   - namen mogen wél (kim, sim, pim — zoals in de leesboekjes), altijd in kleine letters
   // Uitzondering: "kermis" (beide lettergrepen gesloten, klinkt zoals geschreven).
   READ_WORDS: [
     // a
@@ -176,6 +181,15 @@ RB.exercises = {
     "ijs", "rijst", "pijl", "dijk", "lijm", "mijn", "prijs", "tijd", "lijn", "bij", "pijp", "klei", "ei",
     "geit", "reis", "trein", "plein", "wei", "zeil", "dweil", "kei", "wijk", "pijn", "vijf", "blij",
     "krijt", "fijn", "rijk", "wij",
+    // minder gewone, maar echte woorden (vooral voor de eerste letters)
+    "sik", "sis", "ris", "aar", "raas", "maas", "kik",
+    // namen (klein geschreven, zoals in de eerste leesboekjes)
+    "kim", "rik", "sem", "sim", "kris", "pim", "tim", "tom", "bas", "jan", "lot", "fien", "noor",
+    "mies", "lies", "bram", "jet", "stijn", "teun", "wim", "mees", "kees", "ruud", "sep", "jip", "juul",
+    // kleine woordjes van twee klanken (ik, is, in, en, om, op staan hierboven al)
+    // Bewust NIET: "een" en "de" als los leeswoord (daar klinkt de e als "uh").
+    "er", "al", "af", "of", "as", "wie", "die", "hoe", "toe", "doe", "nee", "hij", "zij", "mij", "jij",
+    "dit", "dat", "het", "ook", "aan", "heb", "ben",
     // ou / au
     "hout", "zout", "goud", "koud", "oud", "kou", "saus", "pauw", "klauw", "dauw", "blauw",
     // ch
